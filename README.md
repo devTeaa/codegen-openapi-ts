@@ -271,17 +271,17 @@ In order to compile the project and resolve the imports, you will need to enable
 in your `tsconfig.json` file.
 
 
-[npm-url]: https://npmjs.org/package/openapi-typescript-codegen
-[npm-image]: https://img.shields.io/npm/v/openapi-typescript-codegen.svg
+[npm-url]: https://npmjs.org/package/
+[npm-image]: https://img.shields.io/npm/v/codegen-openapi-ts.svg
 [license-url]: LICENSE
-[license-image]: http://img.shields.io/npm/l/openapi-typescript-codegen.svg
-[coverage-url]: https://codecov.io/gh/ferdikoomen/openapi-typescript-codegen
-[coverage-image]: https://img.shields.io/codecov/c/github/ferdikoomen/openapi-typescript-codegen.svg
-[quality-url]: https://lgtm.com/projects/g/ferdikoomen/openapi-typescript-codegen
-[quality-image]: https://img.shields.io/lgtm/grade/javascript/g/ferdikoomen/openapi-typescript-codegen.svg
-[climate-url]: https://codeclimate.com/github/ferdikoomen/openapi-typescript-codegen
-[climate-image]: https://img.shields.io/codeclimate/maintainability/ferdikoomen/openapi-typescript-codegen.svg
-[downloads-url]: http://npm-stat.com/charts.html?package=openapi-typescript-codegen
-[downloads-image]: http://img.shields.io/npm/dm/openapi-typescript-codegen.svg
-[build-url]: https://circleci.com/gh/ferdikoomen/openapi-typescript-codegen/tree/master
-[build-image]: https://circleci.com/gh/ferdikoomen/openapi-typescript-codegen/tree/master.svg?style=svg
+[license-image]: http://img.shields.io/npm/l/codegen-openapi-ts.svg
+[coverage-url]: https://codecov.io/gh/ferdikoomen/codegen-openapi-ts
+[coverage-image]: https://img.shields.io/codecov/c/github/ferdikoomen/codegen-openapi-ts.svg
+[quality-url]: https://lgtm.com/projects/g/ferdikoomen/codegen-openapi-ts
+[quality-image]: https://img.shields.io/lgtm/grade/javascript/g/ferdikoomen/codegen-openapi-ts.svg
+[climate-url]: https://codeclimate.com/github/ferdikoomen/codegen-openapi-ts
+[climate-image]: https://img.shields.io/codeclimate/maintainability/ferdikoomen/codegen-openapi-ts.svg
+[downloads-url]: http://npm-stat.com/charts.html?package=codegen-openapi-ts
+[downloads-image]: http://img.shields.io/npm/dm/codegen-openapi-ts.svg
+[build-url]: https://circleci.com/gh/ferdikoomen/codegen-openapi-ts/tree/master
+[build-image]: https://circleci.com/gh/ferdikoomen/codegen-openapi-ts/tree/master.svg?style=svg
