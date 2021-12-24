@@ -10,11 +10,11 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
   {{#each operations}}
   {{#hasLength parameters}}
   {{#hasProperty parameters 'path'}}
-  {{capitalizeFirstLetter name}}: ({{#each parameters}}{{#equals in 'path'}}{
-    {{{name}}}{{>isRequired}}
-  }: {
-    {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}},
-  }{{/equals}}{{/each}}) => `{{path}}`,
+  {{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
+    {{{name}}}{{>isRequired}},{{/equals}}{{/each}}
+  }: { {{#each parameters}}{{#equals in 'path'}}
+    {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
+  }) => `{{path}}`,
   {{else}}
   {{capitalizeFirstLetter name}}: '{{path}}',
   {{/hasProperty}}
@@ -24,6 +24,13 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
 
 {{#each operations}}
 {{#hasLength parameters}}
+/**
+{{#each parameters}}
+{{#if default}}
+ * @type {{{name}}} = {{default}}
+{{/if}}
+{{/each}}
+ */
 export type {{capitalizeFirstLetter name}} = {
   response: {{#each results}}{{{type}}}{{/each}}
   request: {
