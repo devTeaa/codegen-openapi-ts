@@ -6,10 +6,29 @@ import type { {{{this}}} } from '../models/{{{this}}}';
 {{/each}}
 {{/if}}
 
+export const {{{name}}}{{{@root.postfix}}}Url = {
+  {{#each operations}}
+  {{#hasLength parameters}}
+  {{#hasProperty parameters 'path'}}
+  {{capitalizeFirstLetter name}}: ({{#each parameters}}{{#equals in 'path'}}{
+    {{{name}}}{{>isRequired}}
+  }: {
+    {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}},
+  }{{/equals}}{{/each}}) => `{{path}}`,
+  {{else}}
+  {{capitalizeFirstLetter name}}: '{{path}}',
+  {{/hasProperty}}
+  {{/hasLength}}
+  {{/each}}
+}
+
 {{#each operations}}
 {{#hasLength parameters}}
-export type {{capitalizeFirstLetter name}}Request = {
-  {{>parametersType}}
+export type {{capitalizeFirstLetter name}} = {
+  response: {{#each results}}{{{type}}}{{/each}}
+  request: {
+    {{>parametersType}}
+  }
 }
 
 {{/hasLength}}

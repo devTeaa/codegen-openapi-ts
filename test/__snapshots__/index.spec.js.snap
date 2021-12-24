@@ -577,20 +577,20 @@ export { $SimpleReference } from './schemas/$SimpleReference';
 export { $SimpleString } from './schemas/$SimpleString';
 export { $SimpleStringWithPattern } from './schemas/$SimpleStringWithPattern';
 
-export { CollectionFormatService } from './services/CollectionFormatService';
-export { ComplexService } from './services/ComplexService';
-export { DefaultsService } from './services/DefaultsService';
-export { DuplicateService } from './services/DuplicateService';
-export { ErrorService } from './services/ErrorService';
-export { HeaderService } from './services/HeaderService';
-export { MultipleTags1Service } from './services/MultipleTags1Service';
-export { MultipleTags2Service } from './services/MultipleTags2Service';
-export { MultipleTags3Service } from './services/MultipleTags3Service';
-export { NoContentService } from './services/NoContentService';
-export { ParametersService } from './services/ParametersService';
-export { ResponseService } from './services/ResponseService';
-export { SimpleService } from './services/SimpleService';
-export { TypesService } from './services/TypesService';
+export { CollectionFormatServiceUrl } from './services/CollectionFormatService';
+export { ComplexServiceUrl } from './services/ComplexService';
+export { DefaultsServiceUrl } from './services/DefaultsService';
+export { DuplicateServiceUrl } from './services/DuplicateService';
+export { ErrorServiceUrl } from './services/ErrorService';
+export { HeaderServiceUrl } from './services/HeaderService';
+export { MultipleTags1ServiceUrl } from './services/MultipleTags1Service';
+export { MultipleTags2ServiceUrl } from './services/MultipleTags2Service';
+export { MultipleTags3ServiceUrl } from './services/MultipleTags3Service';
+export { NoContentServiceUrl } from './services/NoContentService';
+export { ParametersServiceUrl } from './services/ParametersService';
+export { ResponseServiceUrl } from './services/ResponseService';
+export { SimpleServiceUrl } from './services/SimpleService';
+export { TypesServiceUrl } from './services/TypesService';
 "
 `;
 
@@ -1952,13 +1952,20 @@ exports[`v2 should generate: ./test/generated/v2/services/CollectionFormatServic
 /* tslint:disable */
 /* eslint-disable */
 
-export type CollectionFormatRequest = {
-    query: {
-        parameterArrayCsv: Array<string>,
-        parameterArraySsv: Array<string>,
-        parameterArrayTsv: Array<string>,
-        parameterArrayPipes: Array<string>,
-        parameterArrayMulti: Array<string>,
+export const CollectionFormatServiceUrl = {
+    CollectionFormat: '/api/v\${OpenAPI.VERSION}/collectionFormat',
+}
+
+export type CollectionFormat = {
+    response:
+    request: {
+        query: {
+            parameterArrayCsv: Array<string>,
+            parameterArraySsv: Array<string>,
+            parameterArrayTsv: Array<string>,
+            parameterArrayPipes: Array<string>,
+            parameterArrayMulti: Array<string>,
+        }
     }
 }
 
@@ -1971,16 +1978,23 @@ exports[`v2 should generate: ./test/generated/v2/services/ComplexService.ts 1`] 
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type ComplexTypesRequest = {
-    query: {
-        parameterObject: {
-            first?: {
-                second?: {
-                    third?: string;
+export const ComplexServiceUrl = {
+    ComplexTypes: '/api/v\${OpenAPI.VERSION}/complex',
+}
+
+export type ComplexTypes = {
+    response: ModelWithString
+    request: {
+        query: {
+            parameterObject: {
+                first?: {
+                    second?: {
+                        third?: string;
+                    };
                 };
-            };
-        },
-        parameterReference: ModelWithString,
+            },
+            parameterReference: ModelWithString,
+        }
     }
 }
 
@@ -1993,40 +2007,55 @@ exports[`v2 should generate: ./test/generated/v2/services/DefaultsService.ts 1`]
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type CallWithDefaultParametersRequest = {
-    query: {
-        parameterString: string = 'Hello World!',
-        parameterNumber: number = 123,
-        parameterBoolean: boolean = true,
-        parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-        parameterModel: ModelWithString = {
-            \\"prop\\": \\"Hello World!\\"
-        },
+export const DefaultsServiceUrl = {
+    CallWithDefaultParameters: '/api/v\${OpenAPI.VERSION}/defaults',
+    CallWithDefaultOptionalParameters: '/api/v\${OpenAPI.VERSION}/defaults',
+    CallToTestOrderOfParams: '/api/v\${OpenAPI.VERSION}/defaults',
+}
+
+export type CallWithDefaultParameters = {
+    response:
+    request: {
+        query: {
+            parameterString: string = 'Hello World!',
+            parameterNumber: number = 123,
+            parameterBoolean: boolean = true,
+            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
+            parameterModel: ModelWithString = {
+                \\"prop\\": \\"Hello World!\\"
+            },
+        }
     }
 }
 
-export type CallWithDefaultOptionalParametersRequest = {
-    query: {
-        parameterString: string = 'Hello World!',
-        parameterNumber: number = 123,
-        parameterBoolean: boolean = true,
-        parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-        parameterModel: ModelWithString = {
-            \\"prop\\": \\"Hello World!\\"
-        },
+export type CallWithDefaultOptionalParameters = {
+    response:
+    request: {
+        query: {
+            parameterString: string = 'Hello World!',
+            parameterNumber: number = 123,
+            parameterBoolean: boolean = true,
+            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
+            parameterModel: ModelWithString = {
+                \\"prop\\": \\"Hello World!\\"
+            },
+        }
     }
 }
 
-export type CallToTestOrderOfParamsRequest = {
-    query: {
-        parameterStringWithNoDefault: string,
-        parameterOptionalStringWithDefault: string = 'Hello World!',
-        parameterOptionalStringWithEmptyDefault: string = '',
-        parameterOptionalStringWithNoDefault?: string,
-        parameterStringWithDefault: string = 'Hello World!',
-        parameterStringWithEmptyDefault: string = '',
-        parameterStringNullableWithNoDefault?: string | null,
-        parameterStringNullableWithDefault: string | null = null,
+export type CallToTestOrderOfParams = {
+    response:
+    request: {
+        query: {
+            parameterStringWithNoDefault: string,
+            parameterOptionalStringWithDefault: string = 'Hello World!',
+            parameterOptionalStringWithEmptyDefault: string = '',
+            parameterOptionalStringWithNoDefault?: string,
+            parameterStringWithDefault: string = 'Hello World!',
+            parameterStringWithEmptyDefault: string = '',
+            parameterStringNullableWithNoDefault?: string | null,
+            parameterStringNullableWithDefault: string | null = null,
+        }
     }
 }
 
@@ -2038,6 +2067,9 @@ exports[`v2 should generate: ./test/generated/v2/services/DuplicateService.ts 1`
 /* tslint:disable */
 /* eslint-disable */
 
+export const DuplicateServiceUrl = {
+}
+
 "
 `;
 
@@ -2046,9 +2078,16 @@ exports[`v2 should generate: ./test/generated/v2/services/ErrorService.ts 1`] = 
 /* tslint:disable */
 /* eslint-disable */
 
-export type TestErrorCodeRequest = {
-    query: {
-        status: string,
+export const ErrorServiceUrl = {
+    TestErrorCode: '/api/v\${OpenAPI.VERSION}/error',
+}
+
+export type TestErrorCode = {
+    response: any
+    request: {
+        query: {
+            status: string,
+        }
     }
 }
 
@@ -2060,6 +2099,9 @@ exports[`v2 should generate: ./test/generated/v2/services/HeaderService.ts 1`] =
 /* tslint:disable */
 /* eslint-disable */
 
+export const HeaderServiceUrl = {
+}
+
 "
 `;
 
@@ -2067,6 +2109,9 @@ exports[`v2 should generate: ./test/generated/v2/services/MultipleTags1Service.t
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+export const MultipleTags1ServiceUrl = {
+}
 
 "
 `;
@@ -2076,6 +2121,9 @@ exports[`v2 should generate: ./test/generated/v2/services/MultipleTags2Service.t
 /* tslint:disable */
 /* eslint-disable */
 
+export const MultipleTags2ServiceUrl = {
+}
+
 "
 `;
 
@@ -2083,6 +2131,9 @@ exports[`v2 should generate: ./test/generated/v2/services/MultipleTags3Service.t
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+export const MultipleTags3ServiceUrl = {
+}
 
 "
 `;
@@ -2092,6 +2143,9 @@ exports[`v2 should generate: ./test/generated/v2/services/NoContentService.ts 1`
 /* tslint:disable */
 /* eslint-disable */
 
+export const NoContentServiceUrl = {
+}
+
 "
 `;
 
@@ -2100,30 +2154,57 @@ exports[`v2 should generate: ./test/generated/v2/services/ParametersService.ts 1
 /* tslint:disable */
 /* eslint-disable */
 
-export type CallWithParametersRequest = {
-    path: {
+export const ParametersServiceUrl = {
+    CallWithParameters: ({
+        parameterPath
+    }: {
         parameterPath: string,
-    }
-    query: {
-        parameterQuery: string,
-    }
-    body: {
-        parameterBody: string,
+    }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath}\`,
+    CallWithWeirdParameterNames: ({
+        parameterPath1?
+    }: {
+        parameterPath1?: string,
+    }{
+        parameterPath2?
+    }: {
+        parameterPath2?: string,
+    }{
+        parameterPath3?
+    }: {
+        parameterPath3?: string,
+    }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath1}/\${parameterPath2}/\${parameterPath3}\`,
+}
+
+export type CallWithParameters = {
+    response:
+    request: {
+        path: {
+            parameterPath: string,
+        }
+        query: {
+            parameterQuery: string,
+        }
+        body: {
+            parameterBody: string,
+        }
     }
 }
 
-export type CallWithWeirdParameterNamesRequest = {
-    path: {
-        parameterPath1?: string,
-        parameterPath2?: string,
-        parameterPath3?: string,
-    }
-    query: {
-        parameterQuery: string,
-        _default?: string,
-    }
-    body: {
-        parameterBody: string,
+export type CallWithWeirdParameterNames = {
+    response:
+    request: {
+        path: {
+            parameterPath1?: string,
+            parameterPath2?: string,
+            parameterPath3?: string,
+        }
+        query: {
+            parameterQuery: string,
+            _default?: string,
+        }
+        body: {
+            parameterBody: string,
+        }
     }
 }
 
@@ -2138,6 +2219,9 @@ import type { ModelThatExtends } from '../models/ModelThatExtends';
 import type { ModelThatExtendsExtends } from '../models/ModelThatExtendsExtends';
 import type { ModelWithString } from '../models/ModelWithString';
 
+export const ResponseServiceUrl = {
+}
+
 "
 `;
 
@@ -2145,6 +2229,9 @@ exports[`v2 should generate: ./test/generated/v2/services/SimpleService.ts 1`] =
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+export const SimpleServiceUrl = {
+}
 
 "
 `;
@@ -2154,18 +2241,29 @@ exports[`v2 should generate: ./test/generated/v2/services/TypesService.ts 1`] = 
 /* tslint:disable */
 /* eslint-disable */
 
-export type TypesRequest = {
-    path: {
+export const TypesServiceUrl = {
+    Types: ({
+        id?
+    }: {
         id?: number,
-    }
-    query: {
-        parameterArray: Array<string>,
-        parameterDictionary: Record<string, string>,
-        parameterEnum: 'Success' | 'Warning' | 'Error',
-        parameterNumber: number = 123,
-        parameterString: string = 'default',
-        parameterBoolean: boolean = true,
-        parameterObject: any = null,
+    }) => \`/api/v\${OpenAPI.VERSION}/types\`,
+}
+
+export type Types = {
+    response: numberstringbooleanany
+    request: {
+        path: {
+            id?: number,
+        }
+        query: {
+            parameterArray: Array<string>,
+            parameterDictionary: Record<string, string>,
+            parameterEnum: 'Success' | 'Warning' | 'Error',
+            parameterNumber: number = 123,
+            parameterString: string = 'default',
+            parameterBoolean: boolean = true,
+            parameterObject: any = null,
+        }
     }
 }
 
@@ -2765,24 +2863,24 @@ export { $SimpleReference } from './schemas/$SimpleReference';
 export { $SimpleString } from './schemas/$SimpleString';
 export { $SimpleStringWithPattern } from './schemas/$SimpleStringWithPattern';
 
-export { CollectionFormatService } from './services/CollectionFormatService';
-export { ComplexService } from './services/ComplexService';
-export { DefaultsService } from './services/DefaultsService';
-export { DuplicateService } from './services/DuplicateService';
-export { ErrorService } from './services/ErrorService';
-export { FormDataService } from './services/FormDataService';
-export { HeaderService } from './services/HeaderService';
-export { MultipartService } from './services/MultipartService';
-export { MultipleTags1Service } from './services/MultipleTags1Service';
-export { MultipleTags2Service } from './services/MultipleTags2Service';
-export { MultipleTags3Service } from './services/MultipleTags3Service';
-export { NoContentService } from './services/NoContentService';
-export { ParametersService } from './services/ParametersService';
-export { RequestBodyService } from './services/RequestBodyService';
-export { ResponseService } from './services/ResponseService';
-export { SimpleService } from './services/SimpleService';
-export { TypesService } from './services/TypesService';
-export { UploadService } from './services/UploadService';
+export { CollectionFormatServiceUrl } from './services/CollectionFormatService';
+export { ComplexServiceUrl } from './services/ComplexService';
+export { DefaultsServiceUrl } from './services/DefaultsService';
+export { DuplicateServiceUrl } from './services/DuplicateService';
+export { ErrorServiceUrl } from './services/ErrorService';
+export { FormDataServiceUrl } from './services/FormDataService';
+export { HeaderServiceUrl } from './services/HeaderService';
+export { MultipartServiceUrl } from './services/MultipartService';
+export { MultipleTags1ServiceUrl } from './services/MultipleTags1Service';
+export { MultipleTags2ServiceUrl } from './services/MultipleTags2Service';
+export { MultipleTags3ServiceUrl } from './services/MultipleTags3Service';
+export { NoContentServiceUrl } from './services/NoContentService';
+export { ParametersServiceUrl } from './services/ParametersService';
+export { RequestBodyServiceUrl } from './services/RequestBodyService';
+export { ResponseServiceUrl } from './services/ResponseService';
+export { SimpleServiceUrl } from './services/SimpleService';
+export { TypesServiceUrl } from './services/TypesService';
+export { UploadServiceUrl } from './services/UploadService';
 "
 `;
 
@@ -4530,13 +4628,20 @@ exports[`v3 should generate: ./test/generated/v3/services/CollectionFormatServic
 /* tslint:disable */
 /* eslint-disable */
 
-export type CollectionFormatRequest = {
-    query: {
-        parameterArrayCsv: Array<string> | null,
-        parameterArraySsv: Array<string> | null,
-        parameterArrayTsv: Array<string> | null,
-        parameterArrayPipes: Array<string> | null,
-        parameterArrayMulti: Array<string> | null,
+export const CollectionFormatServiceUrl = {
+    CollectionFormat: '/api/v\${OpenAPI.VERSION}/collectionFormat',
+}
+
+export type CollectionFormat = {
+    response:
+    request: {
+        query: {
+            parameterArrayCsv: Array<string> | null,
+            parameterArraySsv: Array<string> | null,
+            parameterArrayTsv: Array<string> | null,
+            parameterArrayPipes: Array<string> | null,
+            parameterArrayMulti: Array<string> | null,
+        }
     }
 }
 
@@ -4552,37 +4657,52 @@ import type { ModelWithDictionary } from '../models/ModelWithDictionary';
 import type { ModelWithEnum } from '../models/ModelWithEnum';
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type ComplexTypesRequest = {
-    query: {
-        parameterObject: {
-            first?: {
-                second?: {
-                    third?: string;
+export const ComplexServiceUrl = {
+    ComplexTypes: '/api/v\${OpenAPI.VERSION}/complex',
+    ComplexParams: ({
+        id
+    }: {
+        id: number,
+    }) => \`/api/v\${OpenAPI.VERSION}/complex/\${id}\`,
+}
+
+export type ComplexTypes = {
+    response: ModelWithString
+    request: {
+        query: {
+            parameterObject: {
+                first?: {
+                    second?: {
+                        third?: string;
+                    };
                 };
-            };
-        },
-        parameterReference: ModelWithString,
+            },
+            parameterReference: ModelWithString,
+        }
     }
 }
 
-export type ComplexParamsRequest = {
-    path: {
-        id: number,
-    }
-    body: {
-        requestBody?: {
-            readonly key: string | null;
-            name: string | null;
-            enabled?: boolean;
-            readonly type: 'Monkey' | 'Horse' | 'Bird';
-            listOfModels?: Array<ModelWithString> | null;
-            listOfStrings?: Array<string> | null;
-            parameters: (ModelWithString | ModelWithEnum | ModelWithArray | ModelWithDictionary);
-            readonly user?: {
-                readonly id?: number;
-                readonly name?: string | null;
-            };
-        },
+export type ComplexParams = {
+    response: ModelWithString
+    request: {
+        path: {
+            id: number,
+        }
+        body: {
+            requestBody?: {
+                readonly key: string | null;
+                name: string | null;
+                enabled?: boolean;
+                readonly type: 'Monkey' | 'Horse' | 'Bird';
+                listOfModels?: Array<ModelWithString> | null;
+                listOfStrings?: Array<string> | null;
+                parameters: (ModelWithString | ModelWithEnum | ModelWithArray | ModelWithDictionary);
+                readonly user?: {
+                    readonly id?: number;
+                    readonly name?: string | null;
+                };
+            },
+        }
     }
 }
 
@@ -4595,40 +4715,55 @@ exports[`v3 should generate: ./test/generated/v3/services/DefaultsService.ts 1`]
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type CallWithDefaultParametersRequest = {
-    query: {
-        parameterString: string | null = 'Hello World!',
-        parameterNumber: number | null = 123,
-        parameterBoolean: boolean | null = true,
-        parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-        parameterModel: ModelWithString | null = {
-            \\"prop\\": \\"Hello World!\\"
-        },
+export const DefaultsServiceUrl = {
+    CallWithDefaultParameters: '/api/v\${OpenAPI.VERSION}/defaults',
+    CallWithDefaultOptionalParameters: '/api/v\${OpenAPI.VERSION}/defaults',
+    CallToTestOrderOfParams: '/api/v\${OpenAPI.VERSION}/defaults',
+}
+
+export type CallWithDefaultParameters = {
+    response:
+    request: {
+        query: {
+            parameterString: string | null = 'Hello World!',
+            parameterNumber: number | null = 123,
+            parameterBoolean: boolean | null = true,
+            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
+            parameterModel: ModelWithString | null = {
+                \\"prop\\": \\"Hello World!\\"
+            },
+        }
     }
 }
 
-export type CallWithDefaultOptionalParametersRequest = {
-    query: {
-        parameterString: string = 'Hello World!',
-        parameterNumber: number = 123,
-        parameterBoolean: boolean = true,
-        parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-        parameterModel: ModelWithString = {
-            \\"prop\\": \\"Hello World!\\"
-        },
+export type CallWithDefaultOptionalParameters = {
+    response:
+    request: {
+        query: {
+            parameterString: string = 'Hello World!',
+            parameterNumber: number = 123,
+            parameterBoolean: boolean = true,
+            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
+            parameterModel: ModelWithString = {
+                \\"prop\\": \\"Hello World!\\"
+            },
+        }
     }
 }
 
-export type CallToTestOrderOfParamsRequest = {
-    query: {
-        parameterStringWithNoDefault: string,
-        parameterOptionalStringWithDefault: string = 'Hello World!',
-        parameterOptionalStringWithEmptyDefault: string = '',
-        parameterOptionalStringWithNoDefault?: string,
-        parameterStringWithDefault: string = 'Hello World!',
-        parameterStringWithEmptyDefault: string = '',
-        parameterStringNullableWithNoDefault?: string | null,
-        parameterStringNullableWithDefault: string | null = null,
+export type CallToTestOrderOfParams = {
+    response:
+    request: {
+        query: {
+            parameterStringWithNoDefault: string,
+            parameterOptionalStringWithDefault: string = 'Hello World!',
+            parameterOptionalStringWithEmptyDefault: string = '',
+            parameterOptionalStringWithNoDefault?: string,
+            parameterStringWithDefault: string = 'Hello World!',
+            parameterStringWithEmptyDefault: string = '',
+            parameterStringNullableWithNoDefault?: string | null,
+            parameterStringNullableWithDefault: string | null = null,
+        }
     }
 }
 
@@ -4640,6 +4775,9 @@ exports[`v3 should generate: ./test/generated/v3/services/DuplicateService.ts 1`
 /* tslint:disable */
 /* eslint-disable */
 
+export const DuplicateServiceUrl = {
+}
+
 "
 `;
 
@@ -4648,9 +4786,16 @@ exports[`v3 should generate: ./test/generated/v3/services/ErrorService.ts 1`] = 
 /* tslint:disable */
 /* eslint-disable */
 
-export type TestErrorCodeRequest = {
-    query: {
-        status: number,
+export const ErrorServiceUrl = {
+    TestErrorCode: '/api/v\${OpenAPI.VERSION}/error',
+}
+
+export type TestErrorCode = {
+    response: any
+    request: {
+        query: {
+            status: number,
+        }
     }
 }
 
@@ -4663,9 +4808,16 @@ exports[`v3 should generate: ./test/generated/v3/services/FormDataService.ts 1`]
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type PostFormDataRequest = {
-    query: {
-        parameter?: string,
+export const FormDataServiceUrl = {
+    PostFormData: '/api/v\${OpenAPI.VERSION}/formData/',
+}
+
+export type PostFormData = {
+    response:
+    request: {
+        query: {
+            parameter?: string,
+        }
     }
 }
 
@@ -4677,6 +4829,9 @@ exports[`v3 should generate: ./test/generated/v3/services/HeaderService.ts 1`] =
 /* tslint:disable */
 /* eslint-disable */
 
+export const HeaderServiceUrl = {
+}
+
 "
 `;
 
@@ -4686,7 +4841,14 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipartService.ts 1`
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type MultipartRequestRequest = {
+export const MultipartServiceUrl = {
+    MultipartRequest: '/api/v\${OpenAPI.VERSION}/multipart',
+}
+
+export type MultipartRequest = {
+    response:
+    request: {
+    }
 }
 
 "
@@ -4697,6 +4859,9 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipleTags1Service.t
 /* tslint:disable */
 /* eslint-disable */
 
+export const MultipleTags1ServiceUrl = {
+}
+
 "
 `;
 
@@ -4704,6 +4869,9 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipleTags2Service.t
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+export const MultipleTags2ServiceUrl = {
+}
 
 "
 `;
@@ -4713,6 +4881,9 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipleTags3Service.t
 /* tslint:disable */
 /* eslint-disable */
 
+export const MultipleTags3ServiceUrl = {
+}
+
 "
 `;
 
@@ -4720,6 +4891,9 @@ exports[`v3 should generate: ./test/generated/v3/services/NoContentService.ts 1`
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+export const NoContentServiceUrl = {
+}
 
 "
 `;
@@ -4730,48 +4904,83 @@ exports[`v3 should generate: ./test/generated/v3/services/ParametersService.ts 1
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type CallWithParametersRequest = {
-    path: {
+export const ParametersServiceUrl = {
+    CallWithParameters: ({
+        parameterPath
+    }: {
         parameterPath: string | null,
-    }
-    query: {
-        parameterQuery: string | null,
-    }
-    body: {
-        requestBody: ModelWithString | null,
-    }
-}
-
-export type CallWithWeirdParameterNamesRequest = {
-    path: {
+    }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath}\`,
+    CallWithWeirdParameterNames: ({
+        parameterPath1?
+    }: {
         parameterPath1?: string,
+    }{
+        parameterPath2?
+    }: {
         parameterPath2?: string,
+    }{
+        parameterPath3?
+    }: {
         parameterPath3?: string,
-    }
-    query: {
-        parameterQuery: string | null,
-        _default?: string,
-    }
-    body: {
-        requestBody: ModelWithString | null,
+    }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath1}/\${parameterPath2}/\${parameterPath3}\`,
+    GetCallWithOptionalParam: '/api/v\${OpenAPI.VERSION}/parameters/',
+    PostCallWithOptionalParam: '/api/v\${OpenAPI.VERSION}/parameters/',
+}
+
+export type CallWithParameters = {
+    response:
+    request: {
+        path: {
+            parameterPath: string | null,
+        }
+        query: {
+            parameterQuery: string | null,
+        }
+        body: {
+            requestBody: ModelWithString | null,
+        }
     }
 }
 
-export type GetCallWithOptionalParamRequest = {
-    query: {
-        parameter?: string,
-    }
-    body: {
-        requestBody: ModelWithString,
+export type CallWithWeirdParameterNames = {
+    response:
+    request: {
+        path: {
+            parameterPath1?: string,
+            parameterPath2?: string,
+            parameterPath3?: string,
+        }
+        query: {
+            parameterQuery: string | null,
+            _default?: string,
+        }
+        body: {
+            requestBody: ModelWithString | null,
+        }
     }
 }
 
-export type PostCallWithOptionalParamRequest = {
-    query: {
-        parameter: string,
+export type GetCallWithOptionalParam = {
+    response:
+    request: {
+        query: {
+            parameter?: string,
+        }
+        body: {
+            requestBody: ModelWithString,
+        }
     }
-    body: {
-        requestBody?: ModelWithString,
+}
+
+export type PostCallWithOptionalParam = {
+    response:
+    request: {
+        query: {
+            parameter: string,
+        }
+        body: {
+            requestBody?: ModelWithString,
+        }
     }
 }
 
@@ -4784,12 +4993,19 @@ exports[`v3 should generate: ./test/generated/v3/services/RequestBodyService.ts 
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
-export type PostRequestBodyRequest = {
-    query: {
-        parameter?: string,
-    }
-    body: {
-        requestBody?: ModelWithString,
+export const RequestBodyServiceUrl = {
+    PostRequestBody: '/api/v\${OpenAPI.VERSION}/requestBody/',
+}
+
+export type PostRequestBody = {
+    response:
+    request: {
+        query: {
+            parameter?: string,
+        }
+        body: {
+            requestBody?: ModelWithString,
+        }
     }
 }
 
@@ -4804,6 +5020,9 @@ import type { ModelThatExtends } from '../models/ModelThatExtends';
 import type { ModelThatExtendsExtends } from '../models/ModelThatExtendsExtends';
 import type { ModelWithString } from '../models/ModelWithString';
 
+export const ResponseServiceUrl = {
+}
+
 "
 `;
 
@@ -4811,6 +5030,9 @@ exports[`v3 should generate: ./test/generated/v3/services/SimpleService.ts 1`] =
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+export const SimpleServiceUrl = {
+}
 
 "
 `;
@@ -4820,18 +5042,29 @@ exports[`v3 should generate: ./test/generated/v3/services/TypesService.ts 1`] = 
 /* tslint:disable */
 /* eslint-disable */
 
-export type TypesRequest = {
-    path: {
+export const TypesServiceUrl = {
+    Types: ({
+        id?
+    }: {
         id?: number,
-    }
-    query: {
-        parameterArray: Array<string> | null,
-        parameterDictionary: any,
-        parameterEnum: 'Success' | 'Warning' | 'Error' | null,
-        parameterNumber: number = 123,
-        parameterString: string | null = 'default',
-        parameterBoolean: boolean | null = true,
-        parameterObject: any = null,
+    }) => \`/api/v\${OpenAPI.VERSION}/types\`,
+}
+
+export type Types = {
+    response: numberstringbooleanany
+    request: {
+        path: {
+            id?: number,
+        }
+        query: {
+            parameterArray: Array<string> | null,
+            parameterDictionary: any,
+            parameterEnum: 'Success' | 'Warning' | 'Error' | null,
+            parameterNumber: number = 123,
+            parameterString: string | null = 'default',
+            parameterBoolean: boolean | null = true,
+            parameterObject: any = null,
+        }
     }
 }
 
@@ -4843,7 +5076,14 @@ exports[`v3 should generate: ./test/generated/v3/services/UploadService.ts 1`] =
 /* tslint:disable */
 /* eslint-disable */
 
-export type UploadFileRequest = {
+export const UploadServiceUrl = {
+    UploadFile: '/api/v\${OpenAPI.VERSION}/upload',
+}
+
+export type UploadFile = {
+    response: boolean
+    request: {
+    }
 }
 
 "
