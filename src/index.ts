@@ -76,10 +76,10 @@ export async function generate({
                 httpClient,
                 useOptions,
                 useUnionTypes,
-                exportCore,
+                false,
                 exportServices,
                 exportModels,
-                exportSchemas,
+                false,
                 postfix,
                 request
             );
@@ -97,10 +97,10 @@ export async function generate({
                 httpClient,
                 useOptions,
                 useUnionTypes,
-                exportCore,
+                false,
                 exportServices,
                 exportModels,
-                exportSchemas,
+                false,
                 postfix,
                 request
             );
