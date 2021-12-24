@@ -2,30 +2,25 @@
 
 [![NPM][npm-image]][npm-url]
 [![License][license-image]][license-url]
-[![Coverage][coverage-image]][coverage-url]
-[![Quality][quality-image]][quality-url]
-[![Code Climate][climate-image]][climate-url]
-[![Downloads][downloads-image]][downloads-url]
-[![Build][build-image]][build-url]
 
 > Node.js library that generates Typescript clients based on the OpenAPI specification.
+
+> This project is a fork from [Openapi Typescript Codegen](https://github.com/ferdikoomen/openapi-typescript-codegen) by [Ferdi Koomen](https://github.com/ferdikoomen), the reason is because I need some changes and use some of the lower level generated code that I can use on my projects.
 
 ## Why?
 - Frontend ❤️ OpenAPI, but we do not want to use JAVA codegen in our builds
 - Quick, lightweight, robust and framework-agnostic 🚀
 - Supports generation of TypeScript clients
-- Supports generations of Fetch, [Node-Fetch](#node-fetch-support), [Axios](#axios-support) and XHR http clients
 - Supports OpenAPI specification v2.0 and v3.0
 - Supports JSON and YAML files for input
 - Supports generation through CLI, Node.js and NPX
 - Supports tsc and @babel/plugin-transform-typescript
-- Supports aborting of requests (cancelable promise pattern)
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
 
 ## Install
 
 ```
-npm install openapi-typescript-codegen --save-dev
+npm install codegen-openapi-ts --save-dev
 ```
 
 
@@ -40,13 +35,9 @@ $ openapi --help
     -V, --version             output the version number
     -i, --input <value>       OpenAPI specification, can be a path, url or string content (required)
     -o, --output <value>      Output directory (required)
-    -c, --client <value>      HTTP client to generate [fetch, xhr, axios, node] (default: "fetch")
-    --useOptions              Use options instead of arguments
     --useUnionTypes           Use union types instead of enums
-    --exportCore <value>      Write core files to disk (default: true)
     --exportServices <value>  Write services to disk (default: true)
     --exportModels <value>    Write models to disk (default: true)
-    --exportSchemas <value>   Write schemas to disk (default: false)
     --postfix <value>         Service name postfix (default: "Service")
     --request <value>         Path to custom request file
     -h, --help                display help for command
@@ -72,13 +63,13 @@ $ openapi --help
 **NPX**
 
 ```
-npx openapi-typescript-codegen --input ./spec.json --output ./dist
+npx codegen-openapi-ts --input ./spec.json --output ./dist
 ```
 
 **Node.js API**
 
 ```javascript
-const OpenAPI = require('openapi-typescript-codegen');
+const OpenAPI = require('codegen-openapi-ts');
 
 OpenAPI.generate({
     input: './spec.json',
@@ -94,39 +85,6 @@ OpenAPI.generate({
 
 
 ## Features
-
-### Argument style vs. Object style `--useOptions`
-There's no [named parameter](https://en.wikipedia.org/wiki/Named_parameter) in JavaScript or TypeScript, because of
-that, we offer the flag `--useOptions` to generate code in two different styles.
-
-**Argument-style:**
-```typescript
-function createUser(name: string, password: string, type?: string, address?: string) {
-    // ...
-}
-
-// Usage
-createUser('Jack', '123456', undefined, 'NY US');
-```
-
-**Object-style:**
-```typescript
-function createUser({ name, password, type, address }: {
-    name: string,
-    password: string,
-    type?: string
-    address?: string
-}) {
-    // ...
-}
-
-// Usage
-createUser({
-    name: 'Jack',
-    password: '123456',
-    address: 'NY US'
-});
-```
 
 ### Enums vs. Union Types `--useUnionTypes`
 The OpenAPI spec allows you to define [enums](https://swagger.io/docs/specification/data-models/enums/) inside the
@@ -177,117 +135,6 @@ const order: Order = {
     status: 'placed'
 }
 ```
-
-### Runtime schemas `--exportSchemas`
-By default, the OpenAPI generator only exports interfaces for your models. These interfaces will help you during
-development, but will not be available in JavaScript during runtime. However, Swagger allows you to define properties
-that can be useful during runtime, for instance: `maxLength` of a string or a `pattern` to match, etc. Let's say
-we have the following model:
-
-```json
-{
-    "MyModel": {
-        "required": [
-            "key",
-            "name"
-        ],
-        "type": "object",
-        "properties": {
-            "key": {
-                "maxLength": 64,
-                "pattern": "^[a-zA-Z0-9_]*$",
-                "type": "string"
-            },
-            "name": {
-                "maxLength": 255,
-                "type": "string"
-            },
-            "enabled": {
-                "type": "boolean",
-                "readOnly": true
-            },
-            "modified": {
-                "type": "string",
-                "format": "date-time",
-                "readOnly": true
-            }
-        }
-    }
-}
-```
-
-This will generate the following interface:
-
-```typescript
-export interface MyModel {
-    key: string;
-    name: string;
-    readonly enabled?: boolean;
-    readonly modified?: string;
-}
-```
-
-The interface does not contain any properties like `maxLength` or `pattern`. However, they could be useful
-if we wanted to create some form where a user could create such a model. In that form you would iterate
-over the properties to render form fields based on their type and validate the input based on the `maxLength`
-or `pattern` property. This requires us to have this information somewhere... For this we can use the
-flag `--exportSchemas` to generate a runtime model next to the normal interface:
-
-```typescript
-export const $MyModel = {
-    properties: {
-        key: {
-            type: 'string',
-            isRequired: true,
-            maxLength: 64,
-            pattern: '^[a-zA-Z0-9_]*$',
-        },
-        name: {
-            type: 'string',
-            isRequired: true,
-            maxLength: 255,
-        },
-        enabled: {
-            type: 'boolean',
-            isReadOnly: true,
-        },
-        modified: {
-            type: 'string',
-            isReadOnly: true,
-            format: 'date-time',
-        },
-    },
-} as const;
-```
-
-These runtime object are prefixed with a `$` character and expose all the interesting attributes of a model
-and its properties. We can now use this object to generate the form:
-
-```typescript jsx
-import { $MyModel } from './generated';
-
-// Some pseudo code to iterate over the properties and return a form field
-// the form field could be some abstract component that renders the correct
-// field type and validation rules based on the given input.
-const formFields = Object.entries($MyModel.properties).map(([key, value]) => (
-    <FormField
-        name={key}
-        type={value.type}
-        format={value.format}
-        maxLength={value.maxLength}
-        pattern={value.pattern}
-        isReadOnly={value.isReadOnly}
-    />
-));
-
-const MyForm = () => (
-    <form>
-        {formFields}
-    </form>
-);
-
-```
-
 
 ### Enum with custom names and descriptions
 You can use `x-enum-varnames` and `x-enum-descriptions` in your spec to generate enum with custom names and descriptions.
@@ -370,31 +217,6 @@ interface ModelWithNullableString {
 }
 ```
 
-
-### Authorization
-The OpenAPI generator supports Bearer Token authorization. In order to enable the sending
-of tokens in each request you can set the token using the global OpenAPI configuration:
-
-```typescript
-import { OpenAPI } from './generated';
-
-OpenAPI.TOKEN = 'some-bearer-token';
-```
-
-Alternatively, we also support an async method that provides the token for each request.
-You can simply assign this method to the same `TOKEN `property in the global OpenAPI object.
-
-```typescript
-import { OpenAPI } from './generated';
-
-const getToken = async () => {
-    // Some code that requests a token...
-    return 'SOME_TOKEN';
-}
-
-OpenAPI.TOKEN = getToken;
-```
-
 ### References
 
 Local references to schema definitions (those beginning with `#/definitions/schemas/`)
@@ -443,47 +265,6 @@ module.exports = {
         }],
     ],
 };
-```
-
-### Axios support
-This tool allows you to generate a client based on the [`axios`](https://www.npmjs.com/package/axios) client.
-The advantage of the Axios client is that it works in both NodeJS and Browser based environments.
-If you want to generate the Axios based client then you can specify `--client axios` in the openapi call:
-
-`openapi --input ./spec.json --output ./dist --client axios`
-
-The only downside is that this client needs some additional dependencies to work (due to the missing Blob and FormData
-classes in NodeJS).
-
-```
-npm install axios --save-dev
-npm install cross-blob@2.x --save-dev
-npm install form-data@4.x --save-dev
-```
-
-In order to compile the project and resolve the imports, you will need to enable the `allowSyntheticDefaultImports`
-in your `tsconfig.json` file.
-
-
-### Node-Fetch support
-By default, this tool will generate a client that is compatible with the (browser based) Fetch API.
-However, this client will not work inside the Node.js environment. If you want to generate the Node.js compatible
-client then you can specify `--client node` in the openapi call:
-
-`openapi --input ./spec.json --output ./dist --client node`
-
-This will generate a client that uses [`node-fetch`](https://www.npmjs.com/package/node-fetch) internally. However,
-in order to compile and run this client, you might need to install the `node-fetch@2.x` dependencies.
-
-> Since version 3.x [`node-fetch`](https://www.npmjs.com/package/node-fetch) switched to ESM only,
-> breaking many CommonJS based toolchains (like Jest). Right now we do not support this new version!
-
-```
-npm install @types/node-fetch@2.x --save-dev
-npm install abort-controller@3.x --save-dev
-npm install cross-blob@2.x --save-dev
-npm install form-data@4.x --save-dev
-npm install node-fetch@2.x --save-dev
 ```
 
 In order to compile the project and resolve the imports, you will need to enable the `allowSyntheticDefaultImports`

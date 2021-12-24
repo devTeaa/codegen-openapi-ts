@@ -1,15 +1,15 @@
 {
     "name": "openapi-typescript-codegen",
-    "version": "0.12.5",
+    "version": "0.1.1",
     "description": "Library that generates Typescript clients based on the OpenAPI specification.",
-    "author": "Ferdi Koomen",
-    "homepage": "https://github.com/ferdikoomen/openapi-typescript-codegen",
+    "author": "devteaa",
+    "homepage": "https://github.com/devteaa/codegen-openapi-ts",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ferdikoomen/openapi-typescript-codegen.git"
+        "url": "git+https://github.com/devteaa/codegen-openapi-ts.git"
     },
     "bugs": {
-        "url": "https://github.com/ferdikoomen/openapi-typescript-codegen/issues"
+        "url": "https://github.com/devteaa/codegen-openapi/issues"
     },
     "license": "MIT",
     "keywords": [
@@ -17,18 +17,15 @@
         "swagger",
         "codegen",
         "generator",
-        "client",
         "typescript",
         "yaml",
         "json",
-        "fetch",
-        "xhr",
         "node"
     ],
     "maintainers": [
         {
-            "name": "Ferdi Koomen",
-            "email": "info@madebyferdi.com"
+            "name": "devteaa",
+            "email": "devtea@protonmail.com"
         }
     ],
     "main": "dist/index.js",

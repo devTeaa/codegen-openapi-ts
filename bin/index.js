@@ -15,10 +15,8 @@ const params = program
     .option('-c, --client <value>', 'HTTP client to generate [fetch, xhr, node, axios]', 'fetch')
     .option('--useOptions', 'Use options instead of arguments')
     .option('--useUnionTypes', 'Use union types instead of enums')
-    .option('--exportCore <value>', 'Write core files to disk', true)
     .option('--exportServices <value>', 'Write services to disk', true)
     .option('--exportModels <value>', 'Write models to disk', true)
-    .option('--exportSchemas <value>', 'Write schemas to disk', false)
     .option('--postfix <value>', 'Service name postfix', 'Service')
     .option('--request <value>', 'Path to custom request file')
     .parse(process.argv)
@@ -33,10 +31,10 @@ if (OpenAPI) {
         httpClient: params.client,
         useOptions: params.useOptions,
         useUnionTypes: params.useUnionTypes,
-        exportCore: JSON.parse(params.exportCore) === true,
+        exportCore: false,
         exportServices: JSON.parse(params.exportServices) === true,
         exportModels: JSON.parse(params.exportModels) === true,
-        exportSchemas: JSON.parse(params.exportSchemas) === true,
+        exportSchemas: false,
         postfix: params.postfix,
         request: params.request,
     })
