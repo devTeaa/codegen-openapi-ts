@@ -29,11 +29,11 @@ export { ${{{name}}} } from './schemas/${{{name}}}';
 {{/each}}
 {{/if}}
 {{/if}}
+
 {{#if @root.exportServices}}
 {{#if services}}
-
 {{#each services}}
-export { {{{name}}}{{{@root.postfix}}} } from './services/{{{name}}}{{{@root.postfix}}}';
+export { {{{name}}}{{{@root.postfix}}}Url } from './services/{{{name}}}{{{@root.postfix}}}';
 {{/each}}
 {{/if}}
 {{/if}}
