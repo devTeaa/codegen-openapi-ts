@@ -1,3 +1,6 @@
+const Converter = require('api-spec-converter');
+import { ConverterInput } from 'api-spec-converter';
+import fs from 'fs'
 import { HttpClient } from './HttpClient';
 import { parse as parseV2 } from './openApi/v2';
 import { parse as parseV3 } from './openApi/v3';
@@ -32,7 +35,6 @@ export type Options = {
  * @param input The relative location of the OpenAPI spec
  * @param output The relative location of the output directory
  * @param httpClient The selected httpClient (fetch, xhr, node or axios)
- * @param useOptions Use options or arguments functions
  * @param useUnionTypes Use union types instead of enums
  * @param exportCore: Generate core client classes
  * @param exportServices: Generate services
@@ -61,7 +63,7 @@ export async function generate({
     const templates = registerHandlebarTemplates({
         httpClient,
         useUnionTypes,
-        useOptions,
+        useOptions: false,
     });
 
     switch (openApiVersion) {
@@ -107,4 +109,38 @@ export async function generate({
             break;
         }
     }
+}
+
+/**
+ * Generate the OpenAPI client with options to convert swagger to openapi etc.
+ * @param converterInput.from The relative location of the OpenAPI spec
+ * @param converterInput.to The relative location of the output converted JSON schema directory
+ * @param converterInput.source The relative location of the OpenAPI spec
+ * @param options.httpClient The selected httpClient (fetch, xhr, node or axios)
+ * @param options.useUnionTypes Use union types instead of enums
+ * @param options.exportCore: Generate core client classes
+ * @param options.exportServices: Generate services
+ * @param options.exportModels: Generate models
+ * @param options.exportSchemas: Generate schemas
+ * @param options.postfix: Service name postfix
+ * @param options.request: Path to custom request file
+ * @param options.write Write the files to disk (true or false)
+ */
+export async function convertAndGenerate(converterInput: ConverterInput, options: Options): Promise<void> {
+  try {
+    const converted = await Converter.convert(converterInput)
+    converted.validate()
+
+    if (!isString(options.input)) {
+      console.error('Please provide correct path for input file to be generated')
+      return
+    }
+
+    fs.writeFileSync(options.input, converted.stringify())
+    generate(options)
+  } catch ({ errors, warnings }) {
+    if (errors || warnings) {
+      console.error(JSON.stringify(errors || warnings, null, 2))
+    }
+  }
 }
