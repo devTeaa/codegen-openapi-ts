@@ -1,7 +1,7 @@
 # OpenAPI Typescript Codegen
 
 [![NPM][npm-image]][npm-url]
-[![License][license-image]][license-url]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Node.js library that generates Typescript clients based on the OpenAPI specification.
 
@@ -273,8 +273,6 @@ in your `tsconfig.json` file.
 
 [npm-url]: https://npmjs.org/package/
 [npm-image]: https://img.shields.io/npm/v/codegen-openapi-ts.svg
-[license-url]: LICENSE
-[license-image]: http://img.shields.io/npm/l/codegen-openapi-ts.svg
 [coverage-url]: https://codecov.io/gh/ferdikoomen/codegen-openapi-ts
 [coverage-image]: https://img.shields.io/codecov/c/github/ferdikoomen/codegen-openapi-ts.svg
 [quality-url]: https://lgtm.com/projects/g/ferdikoomen/codegen-openapi-ts
