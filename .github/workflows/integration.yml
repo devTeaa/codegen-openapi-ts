@@ -1,7 +1,0 @@
-name: Integration Testing
-on: [push]
-jobs:
-  Integration-Testing:
-    runs-on: ubuntu-latest
-    steps:
-      - run: npm run test
