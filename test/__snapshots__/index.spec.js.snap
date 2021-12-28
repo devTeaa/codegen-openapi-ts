@@ -1,496 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`v2 should generate: ./test/generated/v2/core/ApiError.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-import type { ApiResult } from './ApiResult';
-
-export class ApiError extends Error {
-    public readonly url: string;
-    public readonly status: number;
-    public readonly statusText: string;
-    public readonly body: any;
-
-    constructor(response: ApiResult, message: string) {
-        super(message);
-
-        this.name = 'ApiError';
-        this.url = response.url;
-        this.status = response.status;
-        this.statusText = response.statusText;
-        this.body = response.body;
-    }
-}"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/core/ApiRequestOptions.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export type ApiRequestOptions = {
-    readonly method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'PATCH';
-    readonly path: string;
-    readonly cookies?: Record<string, any>;
-    readonly headers?: Record<string, any>;
-    readonly query?: Record<string, any>;
-    readonly formData?: Record<string, any>;
-    readonly body?: any;
-    readonly mediaType?: string;
-    readonly responseHeader?: string;
-    readonly errors?: Record<number, string>;
-}"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/core/ApiResult.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export type ApiResult = {
-    readonly url: string;
-    readonly ok: boolean;
-    readonly status: number;
-    readonly statusText: string;
-    readonly body: any;
-}"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/core/CancelablePromise.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export class CancelError extends Error {
-
-    constructor(reason: string = 'Promise was canceled') {
-        super(reason);
-        this.name = 'CancelError';
-    }
-
-    public get isCancelled(): boolean {
-        return true;
-    }
-}
-
-export interface OnCancel {
-    readonly isPending: boolean;
-    readonly isCancelled: boolean;
-
-    (cancelHandler: () => void): void;
-}
-
-export class CancelablePromise<T> implements Promise<T> {
-    readonly [Symbol.toStringTag]: string;
-
-    #isPending: boolean;
-    #isCancelled: boolean;
-    readonly #cancelHandlers: (() => void)[];
-    readonly #promise: Promise<T>;
-    #resolve?: (value: T | PromiseLike<T>) => void;
-    #reject?: (reason?: any) => void;
-
-    constructor(
-        executor: (
-            resolve: (value: T | PromiseLike<T>) => void,
-            reject: (reason?: any) => void,
-            onCancel: OnCancel
-        ) => void
-    ) {
-        this.#isPending = true;
-        this.#isCancelled = false;
-        this.#cancelHandlers = [];
-        this.#promise = new Promise<T>((resolve, reject) => {
-            this.#resolve = resolve;
-            this.#reject = reject;
-
-            const onResolve = (value: T | PromiseLike<T>): void => {
-                if (!this.#isCancelled) {
-                    this.#isPending = false;
-                    this.#resolve?.(value);
-                }
-            };
-
-            const onReject = (reason?: any): void => {
-                this.#isPending = false;
-                this.#reject?.(reason);
-            };
-
-            const onCancel = (cancelHandler: () => void): void => {
-                if (this.#isPending) {
-                    this.#cancelHandlers.push(cancelHandler);
-                }
-            };
-
-            Object.defineProperty(onCancel, 'isPending', {
-                get: (): boolean => this.#isPending,
-            });
-
-            Object.defineProperty(onCancel, 'isCancelled', {
-                get: (): boolean => this.#isCancelled,
-            });
-
-            return executor(onResolve, onReject, onCancel as OnCancel);
-        });
-    }
-
-    public then<TResult1 = T, TResult2 = never>(
-        onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-        onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
-    ): Promise<TResult1 | TResult2> {
-        return this.#promise.then(onFulfilled, onRejected);
-    }
-
-    public catch<TResult = never>(
-        onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
-    ): Promise<T | TResult> {
-        return this.#promise.catch(onRejected);
-    }
-
-    public finally(onFinally?: (() => void) | null): Promise<T> {
-        return this.#promise.finally(onFinally);
-    }
-
-    public cancel(): void {
-        if (!this.#isPending || this.#isCancelled) {
-            return;
-        }
-        this.#isCancelled = true;
-        if (this.#cancelHandlers.length) {
-            try {
-                for (const cancelHandler of this.#cancelHandlers) {
-                    cancelHandler();
-                }
-            } catch (error) {
-                this.#reject?.(error);
-                return;
-            }
-        }
-    }
-
-    public get isCancelled(): boolean {
-        return this.#isCancelled;
-    }
-}"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/core/OpenAPI.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-import type { ApiRequestOptions } from './ApiRequestOptions';
-
-type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
-type Headers = Record<string, string>;
-
-type Config = {
-    BASE: string;
-    VERSION: string;
-    WITH_CREDENTIALS: boolean;
-    CREDENTIALS: 'include' | 'omit' | 'same-origin';
-    TOKEN?: string | Resolver<string>;
-    USERNAME?: string | Resolver<string>;
-    PASSWORD?: string | Resolver<string>;
-    HEADERS?: Headers | Resolver<Headers>;
-    ENCODE_PATH?: (path: string) => string;
-}
-
-export const OpenAPI: Config = {
-    BASE: 'http://localhost:3000/base',
-    VERSION: '1.0',
-    WITH_CREDENTIALS: false,
-    CREDENTIALS: 'include',
-    TOKEN: undefined,
-    USERNAME: undefined,
-    PASSWORD: undefined,
-    HEADERS: undefined,
-    ENCODE_PATH: undefined,
-};"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/core/request.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-import { ApiError } from './ApiError';
-import type { ApiRequestOptions } from './ApiRequestOptions';
-import type { ApiResult } from './ApiResult';
-import { CancelablePromise } from './CancelablePromise';
-import type { OnCancel } from './CancelablePromise';
-import { OpenAPI } from './OpenAPI';
-
-function isDefined<T>(value: T | null | undefined): value is Exclude<T, null | undefined> {
-    return value !== undefined && value !== null;
-}
-
-function isString(value: any): value is string {
-    return typeof value === 'string';
-}
-
-function isStringWithValue(value: any): value is string {
-    return isString(value) && value !== '';
-}
-
-function isBlob(value: any): value is Blob {
-    return value instanceof Blob;
-}
-
-function base64(str: string): string {
-    try {
-        return btoa(str);
-    } catch (err) {
-        // @ts-ignore
-        return Buffer.from(str).toString('base64');
-    }
-}
-
-function getQueryString(params: Record<string, any>): string {
-    const qs: string[] = [];
-
-    const append = (key: string, value: any) => {
-        qs.push(\`\${encodeURIComponent(key)}=\${encodeURIComponent(String(value))}\`);
-    };
-
-    Object.entries(params)
-        .filter(([_, value]) => isDefined(value))
-        .forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                value.forEach(v => append(key, v));
-            } else {
-                append(key, value);
-            }
-        });
-
-    if (qs.length > 0) {
-        return \`?\${qs.join('&')}\`;
-    }
-
-    return '';
-}
-
-function getUrl(options: ApiRequestOptions): string {
-    const path = OpenAPI.ENCODE_PATH ? OpenAPI.ENCODE_PATH(options.path) : options.path;
-    const url = \`\${OpenAPI.BASE}\${path}\`;
-    if (options.query) {
-        return \`\${url}\${getQueryString(options.query)}\`;
-    }
-
-    return url;
-}
-
-function getFormData(options: ApiRequestOptions): FormData | undefined {
-    if (options.formData) {
-        const formData = new FormData();
-
-        const append = (key: string, value: any) => {
-            if (isString(value) || isBlob(value)) {
-                formData.append(key, value);
-            } else {
-                formData.append(key, JSON.stringify(value));
-            }
-        };
-
-        Object.entries(options.formData)
-            .filter(([_, value]) => isDefined(value))
-            .forEach(([key, value]) => {
-                if (Array.isArray(value)) {
-                    value.forEach(v => append(key, v));
-                } else {
-                    append(key, value);
-                }
-            });
-
-        return formData;
-    }
-    return;
-}
-
-type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
-
-async function resolve<T>(options: ApiRequestOptions, resolver?: T | Resolver<T>): Promise<T | undefined> {
-    if (typeof resolver === 'function') {
-        return (resolver as Resolver<T>)(options);
-    }
-    return resolver;
-}
-
-async function getHeaders(options: ApiRequestOptions): Promise<Headers> {
-    const token = await resolve(options, OpenAPI.TOKEN);
-    const username = await resolve(options, OpenAPI.USERNAME);
-    const password = await resolve(options, OpenAPI.PASSWORD);
-    const additionalHeaders = await resolve(options, OpenAPI.HEADERS);
-
-    const defaultHeaders = Object.entries({
-        Accept: 'application/json',
-        ...additionalHeaders,
-        ...options.headers,
-    })
-        .filter(([_, value]) => isDefined(value))
-        .reduce((headers, [key, value]) => ({
-            ...headers,
-            [key]: String(value),
-        }), {} as Record<string, string>);
-
-    const headers = new Headers(defaultHeaders);
-
-    if (isStringWithValue(token)) {
-        headers.append('Authorization', \`Bearer \${token}\`);
-    }
-
-    if (isStringWithValue(username) && isStringWithValue(password)) {
-        const credentials = base64(\`\${username}:\${password}\`);
-        headers.append('Authorization', \`Basic \${credentials}\`);
-    }
-
-    if (options.body) {
-        if (options.mediaType) {
-            headers.append('Content-Type', options.mediaType);
-        } else if (isBlob(options.body)) {
-            headers.append('Content-Type', options.body.type || 'application/octet-stream');
-        } else if (isString(options.body)) {
-            headers.append('Content-Type', 'text/plain');
-        } else {
-            headers.append('Content-Type', 'application/json');
-        }
-    }
-
-    return headers;
-}
-
-function getRequestBody(options: ApiRequestOptions): BodyInit | undefined {
-    if (options.body) {
-        if (options.mediaType?.includes('/json')) {
-            return JSON.stringify(options.body)
-        } else if (isString(options.body) || isBlob(options.body)) {
-            return options.body;
-        } else {
-            return JSON.stringify(options.body);
-        }
-    }
-    return;
-}
-
-async function sendRequest(
-    options: ApiRequestOptions,
-    url: string,
-    formData: FormData | undefined,
-    body: BodyInit | undefined,
-    headers: Headers,
-    onCancel: OnCancel
-): Promise<Response> {
-    const controller = new AbortController();
-
-    const request: RequestInit = {
-        headers,
-        body: body || formData,
-        method: options.method,
-        signal: controller.signal,
-    };
-
-    if (OpenAPI.WITH_CREDENTIALS) {
-        request.credentials = OpenAPI.CREDENTIALS;
-    }
-
-    onCancel(() => controller.abort());
-
-    return await fetch(url, request);
-}
-
-function getResponseHeader(response: Response, responseHeader?: string): string | undefined {
-    if (responseHeader) {
-        const content = response.headers.get(responseHeader);
-        if (isString(content)) {
-            return content;
-        }
-    }
-    return;
-}
-
-async function getResponseBody(response: Response): Promise<any> {
-    if (response.status !== 204) {
-        try {
-            const contentType = response.headers.get('Content-Type');
-            if (contentType) {
-                const isJSON = contentType.toLowerCase().startsWith('application/json');
-                if (isJSON) {
-                    return await response.json();
-                } else {
-                    return await response.text();
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    return;
-}
-
-function catchErrors(options: ApiRequestOptions, result: ApiResult): void {
-    const errors: Record<number, string> = {
-        400: 'Bad Request',
-        401: 'Unauthorized',
-        403: 'Forbidden',
-        404: 'Not Found',
-        500: 'Internal Server Error',
-        502: 'Bad Gateway',
-        503: 'Service Unavailable',
-        ...options.errors,
-    }
-
-    const error = errors[result.status];
-    if (error) {
-        throw new ApiError(result, error);
-    }
-
-    if (!result.ok) {
-        throw new ApiError(result, 'Generic Error');
-    }
-}
-
-/**
- * Request using fetch client
- * @param options The request options from the the service
- * @returns CancelablePromise<T>
- * @throws ApiError
- */
-export function request<T>(options: ApiRequestOptions): CancelablePromise<T> {
-    return new CancelablePromise(async (resolve, reject, onCancel) => {
-        try {
-            const url = getUrl(options);
-            const formData = getFormData(options);
-            const body = getRequestBody(options);
-            const headers = await getHeaders(options);
-
-            if (!onCancel.isCancelled) {
-                const response = await sendRequest(options, url, formData, body, headers, onCancel);
-                const responseBody = await getResponseBody(response);
-                const responseHeader = getResponseHeader(response, options.responseHeader);
-
-                const result: ApiResult = {
-                    url,
-                    ok: response.ok,
-                    status: response.status,
-                    statusText: response.statusText,
-                    body: responseHeader || responseBody,
-                };
-
-                catchErrors(options, result);
-
-                resolve(result.body);
-            }
-        } catch (error) {
-            reject(error);
-        }
-    });
-}"
-`;
-
 exports[`v2 should generate: ./test/generated/v2/index.ts 1`] = `
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export { ApiError } from './core/ApiError';
-export { CancelablePromise } from './core/CancelablePromise';
-export { OpenAPI } from './core/OpenAPI';
-
 export type { ArrayWithArray } from './models/ArrayWithArray';
 export type { ArrayWithBooleans } from './models/ArrayWithBooleans';
 export type { ArrayWithNumbers } from './models/ArrayWithNumbers';
@@ -533,49 +46,6 @@ export type { SimpleInteger } from './models/SimpleInteger';
 export type { SimpleReference } from './models/SimpleReference';
 export type { SimpleString } from './models/SimpleString';
 export type { SimpleStringWithPattern } from './models/SimpleStringWithPattern';
-
-export { $ArrayWithArray } from './schemas/$ArrayWithArray';
-export { $ArrayWithBooleans } from './schemas/$ArrayWithBooleans';
-export { $ArrayWithNumbers } from './schemas/$ArrayWithNumbers';
-export { $ArrayWithProperties } from './schemas/$ArrayWithProperties';
-export { $ArrayWithReferences } from './schemas/$ArrayWithReferences';
-export { $ArrayWithStrings } from './schemas/$ArrayWithStrings';
-export { $Date } from './schemas/$Date';
-export { $DictionaryWithArray } from './schemas/$DictionaryWithArray';
-export { $DictionaryWithDictionary } from './schemas/$DictionaryWithDictionary';
-export { $DictionaryWithProperties } from './schemas/$DictionaryWithProperties';
-export { $DictionaryWithReference } from './schemas/$DictionaryWithReference';
-export { $DictionaryWithString } from './schemas/$DictionaryWithString';
-export { $EnumFromDescription } from './schemas/$EnumFromDescription';
-export { $EnumWithExtensions } from './schemas/$EnumWithExtensions';
-export { $EnumWithNumbers } from './schemas/$EnumWithNumbers';
-export { $EnumWithStrings } from './schemas/$EnumWithStrings';
-export { $ModelThatExtends } from './schemas/$ModelThatExtends';
-export { $ModelThatExtendsExtends } from './schemas/$ModelThatExtendsExtends';
-export { $ModelWithArray } from './schemas/$ModelWithArray';
-export { $ModelWithBoolean } from './schemas/$ModelWithBoolean';
-export { $ModelWithCircularReference } from './schemas/$ModelWithCircularReference';
-export { $ModelWithDictionary } from './schemas/$ModelWithDictionary';
-export { $ModelWithDuplicateImports } from './schemas/$ModelWithDuplicateImports';
-export { $ModelWithDuplicateProperties } from './schemas/$ModelWithDuplicateProperties';
-export { $ModelWithEnum } from './schemas/$ModelWithEnum';
-export { $ModelWithEnumFromDescription } from './schemas/$ModelWithEnumFromDescription';
-export { $ModelWithInteger } from './schemas/$ModelWithInteger';
-export { $ModelWithNestedEnums } from './schemas/$ModelWithNestedEnums';
-export { $ModelWithNestedProperties } from './schemas/$ModelWithNestedProperties';
-export { $ModelWithNullableString } from './schemas/$ModelWithNullableString';
-export { $ModelWithOrderedProperties } from './schemas/$ModelWithOrderedProperties';
-export { $ModelWithPattern } from './schemas/$ModelWithPattern';
-export { $ModelWithProperties } from './schemas/$ModelWithProperties';
-export { $ModelWithReference } from './schemas/$ModelWithReference';
-export { $ModelWithString } from './schemas/$ModelWithString';
-export { $MultilineComment } from './schemas/$MultilineComment';
-export { $SimpleBoolean } from './schemas/$SimpleBoolean';
-export { $SimpleFile } from './schemas/$SimpleFile';
-export { $SimpleInteger } from './schemas/$SimpleInteger';
-export { $SimpleReference } from './schemas/$SimpleReference';
-export { $SimpleString } from './schemas/$SimpleString';
-export { $SimpleStringWithPattern } from './schemas/$SimpleStringWithPattern';
 
 export { CollectionFormatServiceUrl } from './services/CollectionFormatService';
 export { ComplexServiceUrl } from './services/ComplexService';
@@ -1280,673 +750,6 @@ exports[`v2 should generate: ./test/generated/v2/models/SimpleStringWithPattern.
 export type SimpleStringWithPattern = string;"
 `;
 
-exports[`v2 should generate: ./test/generated/v2/schemas/$ArrayWithArray.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithArray = {
-    type: 'array',
-    contains: {
-        type: 'array',
-        contains: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ArrayWithBooleans.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithBooleans = {
-    type: 'array',
-    contains: {
-        type: 'boolean',
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ArrayWithNumbers.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithNumbers = {
-    type: 'array',
-    contains: {
-        type: 'number',
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ArrayWithProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithProperties = {
-    type: 'array',
-    contains: {
-        properties: {
-            foo: {
-                type: 'string',
-            },
-            bar: {
-                type: 'string',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ArrayWithReferences.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithReferences = {
-    type: 'array',
-    contains: {
-        type: 'ModelWithString',
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ArrayWithStrings.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithStrings = {
-    type: 'array',
-    contains: {
-        type: 'string',
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$Date.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $Date = {
-    type: 'string',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$DictionaryWithArray.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithArray = {
-    type: 'dictionary',
-    contains: {
-        type: 'array',
-        contains: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$DictionaryWithDictionary.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithDictionary = {
-    type: 'dictionary',
-    contains: {
-        type: 'dictionary',
-        contains: {
-            type: 'string',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$DictionaryWithProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithProperties = {
-    type: 'dictionary',
-    contains: {
-        properties: {
-            foo: {
-                type: 'string',
-            },
-            bar: {
-                type: 'string',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$DictionaryWithReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithReference = {
-    type: 'dictionary',
-    contains: {
-        type: 'ModelWithString',
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$DictionaryWithString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithString = {
-    type: 'dictionary',
-    contains: {
-        type: 'string',
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$EnumFromDescription.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumFromDescription = {
-    type: 'number',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$EnumWithExtensions.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumWithExtensions = {
-    type: 'Enum',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$EnumWithNumbers.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumWithNumbers = {
-    type: 'Enum',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$EnumWithStrings.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumWithStrings = {
-    type: 'Enum',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelThatExtends.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelThatExtends = {
-    type: 'all-of',
-    contains: [{
-        type: 'ModelWithString',
-    }, {
-        properties: {
-            propExtendsA: {
-                type: 'string',
-            },
-            propExtendsB: {
-                type: 'ModelWithString',
-            },
-        },
-    }],
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelThatExtendsExtends.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelThatExtendsExtends = {
-    type: 'all-of',
-    contains: [{
-        type: 'ModelWithString',
-    }, {
-        type: 'ModelThatExtends',
-    }, {
-        properties: {
-            propExtendsC: {
-                type: 'string',
-            },
-            propExtendsD: {
-                type: 'ModelWithString',
-            },
-        },
-    }],
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithArray.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithArray = {
-    properties: {
-        prop: {
-            type: 'array',
-            contains: {
-                type: 'ModelWithString',
-            },
-        },
-        propWithFile: {
-            type: 'array',
-            contains: {
-                type: 'binary',
-            },
-        },
-        propWithNumber: {
-            type: 'array',
-            contains: {
-                type: 'number',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithBoolean.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithBoolean = {
-    properties: {
-        prop: {
-            type: 'boolean',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithCircularReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithCircularReference = {
-    properties: {
-        prop: {
-            type: 'ModelWithCircularReference',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithDictionary.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithDictionary = {
-    properties: {
-        prop: {
-            type: 'dictionary',
-            contains: {
-                type: 'string',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithDuplicateImports.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithDuplicateImports = {
-    properties: {
-        propA: {
-            type: 'ModelWithString',
-        },
-        propB: {
-            type: 'ModelWithString',
-        },
-        propC: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithDuplicateProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithDuplicateProperties = {
-    properties: {
-        prop: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithEnum.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithEnum = {
-    properties: {
-        test: {
-            type: 'Enum',
-        },
-        statusCode: {
-            type: 'Enum',
-        },
-        bool: {
-            type: 'boolean',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithEnumFromDescription.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithEnumFromDescription = {
-    properties: {
-        test: {
-            type: 'Enum',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithInteger.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithInteger = {
-    properties: {
-        prop: {
-            type: 'number',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithNestedEnums.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithNestedEnums = {
-    properties: {
-        dictionaryWithEnum: {
-            type: 'dictionary',
-            contains: {
-                type: 'Enum',
-            },
-        },
-        dictionaryWithEnumFromDescription: {
-            type: 'dictionary',
-            contains: {
-                type: 'Enum',
-            },
-        },
-        arrayWithEnum: {
-            type: 'array',
-            contains: {
-                type: 'Enum',
-            },
-        },
-        arrayWithDescription: {
-            type: 'array',
-            contains: {
-                type: 'Enum',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithNestedProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithNestedProperties = {
-    properties: {
-        first: {
-            properties: {
-                second: {
-                    properties: {
-                        third: {
-                            type: 'string',
-                            isReadOnly: true,
-                            isRequired: true,
-                        },
-                    },
-                    isReadOnly: true,
-                    isRequired: true,
-                },
-            },
-            isReadOnly: true,
-            isRequired: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithNullableString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithNullableString = {
-    properties: {
-        nullableProp: {
-            type: 'string',
-            isNullable: true,
-        },
-        nullableRequiredProp: {
-            type: 'string',
-            isRequired: true,
-            isNullable: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithOrderedProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithOrderedProperties = {
-    properties: {
-        zebra: {
-            type: 'string',
-        },
-        apple: {
-            type: 'string',
-        },
-        hawaii: {
-            type: 'string',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithPattern.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithPattern = {
-    properties: {
-        key: {
-            type: 'string',
-            isRequired: true,
-            maxLength: 64,
-            pattern: '^[a-zA-Z0-9_]*$',
-        },
-        name: {
-            type: 'string',
-            isRequired: true,
-            maxLength: 255,
-        },
-        enabled: {
-            type: 'boolean',
-            isReadOnly: true,
-        },
-        modified: {
-            type: 'string',
-            isReadOnly: true,
-            format: 'date-time',
-        },
-        id: {
-            type: 'string',
-            pattern: '^\\\\\\\\d{2}-\\\\\\\\d{3}-\\\\\\\\d{4}$',
-        },
-        text: {
-            type: 'string',
-            pattern: '^\\\\\\\\w+$',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithProperties = {
-    properties: {
-        required: {
-            type: 'string',
-            isRequired: true,
-        },
-        requiredAndReadOnly: {
-            type: 'string',
-            isReadOnly: true,
-            isRequired: true,
-        },
-        string: {
-            type: 'string',
-        },
-        number: {
-            type: 'number',
-        },
-        boolean: {
-            type: 'boolean',
-        },
-        reference: {
-            type: 'ModelWithString',
-        },
-        'property with space': {
-            type: 'string',
-        },
-        default: {
-            type: 'string',
-        },
-        try: {
-            type: 'string',
-        },
-        '@namespace.string': {
-            type: 'string',
-            isReadOnly: true,
-        },
-        '@namespace.integer': {
-            type: 'number',
-            isReadOnly: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithReference = {
-    properties: {
-        prop: {
-            type: 'ModelWithProperties',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$ModelWithString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithString = {
-    properties: {
-        prop: {
-            type: 'string',
-        },
-    },
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$MultilineComment.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $MultilineComment = {
-    type: 'number',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$SimpleBoolean.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleBoolean = {
-    type: 'boolean',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$SimpleFile.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleFile = {
-    type: 'binary',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$SimpleInteger.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleInteger = {
-    type: 'number',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$SimpleReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleReference = {
-    type: 'ModelWithString',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$SimpleString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleString = {
-    type: 'string',
-} as const;"
-`;
-
-exports[`v2 should generate: ./test/generated/v2/schemas/$SimpleStringWithPattern.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleStringWithPattern = {
-    type: 'string',
-    maxLength: 64,
-    pattern: '^[a-zA-Z0-9_]*$',
-} as const;"
-`;
-
 exports[`v2 should generate: ./test/generated/v2/services/CollectionFormatService.ts 1`] = `
 "/* istanbul ignore file */
 /* tslint:disable */
@@ -1956,15 +759,17 @@ export const CollectionFormatServiceUrl = {
     CollectionFormat: '/api/v\${OpenAPI.VERSION}/collectionFormat',
 }
 
-export type CollectionFormat = {
+/**
+ */
+export interface CollectionFormat {
     response:
     request: {
         query: {
-            parameterArrayCsv: Array<string>,
-            parameterArraySsv: Array<string>,
-            parameterArrayTsv: Array<string>,
-            parameterArrayPipes: Array<string>,
-            parameterArrayMulti: Array<string>,
+            parameterArrayCsv: Array<string>
+            parameterArraySsv: Array<string>
+            parameterArrayTsv: Array<string>
+            parameterArrayPipes: Array<string>
+            parameterArrayMulti: Array<string>
         }
     }
 }
@@ -1982,7 +787,9 @@ export const ComplexServiceUrl = {
     ComplexTypes: '/api/v\${OpenAPI.VERSION}/complex',
 }
 
-export type ComplexTypes = {
+/**
+ */
+export interface ComplexTypes {
     response: ModelWithString
     request: {
         query: {
@@ -1992,8 +799,8 @@ export type ComplexTypes = {
                         third?: string;
                     };
                 };
-            },
-            parameterReference: ModelWithString,
+            }
+            parameterReference: ModelWithString
         }
     }
 }
@@ -2013,48 +820,69 @@ export const DefaultsServiceUrl = {
     CallToTestOrderOfParams: '/api/v\${OpenAPI.VERSION}/defaults',
 }
 
-export type CallWithDefaultParameters = {
+/**
+ * @type parameterString = 'Hello World!'
+ * @type parameterNumber = 123
+ * @type parameterBoolean = true
+ * @type parameterEnum = 'Success'
+ * @type parameterModel = {
+    \\"prop\\": \\"Hello World!\\"
+}
+ */
+export interface CallWithDefaultParameters {
     response:
     request: {
         query: {
-            parameterString: string = 'Hello World!',
-            parameterNumber: number = 123,
-            parameterBoolean: boolean = true,
-            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-            parameterModel: ModelWithString = {
-                \\"prop\\": \\"Hello World!\\"
-            },
+            parameterString: string
+            parameterNumber: number
+            parameterBoolean: boolean
+            parameterEnum: 'Success' | 'Warning' | 'Error'
+            parameterModel: ModelWithString
         }
     }
 }
 
-export type CallWithDefaultOptionalParameters = {
+/**
+ * @type parameterString = 'Hello World!'
+ * @type parameterNumber = 123
+ * @type parameterBoolean = true
+ * @type parameterEnum = 'Success'
+ * @type parameterModel = {
+    \\"prop\\": \\"Hello World!\\"
+}
+ */
+export interface CallWithDefaultOptionalParameters {
     response:
     request: {
         query: {
-            parameterString: string = 'Hello World!',
-            parameterNumber: number = 123,
-            parameterBoolean: boolean = true,
-            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-            parameterModel: ModelWithString = {
-                \\"prop\\": \\"Hello World!\\"
-            },
+            parameterString: string
+            parameterNumber: number
+            parameterBoolean: boolean
+            parameterEnum: 'Success' | 'Warning' | 'Error'
+            parameterModel: ModelWithString
         }
     }
 }
 
-export type CallToTestOrderOfParams = {
+/**
+ * @type parameterOptionalStringWithDefault = 'Hello World!'
+ * @type parameterOptionalStringWithEmptyDefault = ''
+ * @type parameterStringWithDefault = 'Hello World!'
+ * @type parameterStringWithEmptyDefault = ''
+ * @type parameterStringNullableWithDefault = null
+ */
+export interface CallToTestOrderOfParams {
     response:
     request: {
         query: {
-            parameterStringWithNoDefault: string,
-            parameterOptionalStringWithDefault: string = 'Hello World!',
-            parameterOptionalStringWithEmptyDefault: string = '',
-            parameterOptionalStringWithNoDefault?: string,
-            parameterStringWithDefault: string = 'Hello World!',
-            parameterStringWithEmptyDefault: string = '',
-            parameterStringNullableWithNoDefault?: string | null,
-            parameterStringNullableWithDefault: string | null = null,
+            parameterStringWithNoDefault: string
+            parameterOptionalStringWithDefault: string
+            parameterOptionalStringWithEmptyDefault: string
+            parameterOptionalStringWithNoDefault?: string
+            parameterStringWithDefault: string
+            parameterStringWithEmptyDefault: string
+            parameterStringNullableWithNoDefault?: string | null
+            parameterStringNullableWithDefault: string | null
         }
     }
 }
@@ -2082,11 +910,13 @@ export const ErrorServiceUrl = {
     TestErrorCode: '/api/v\${OpenAPI.VERSION}/error',
 }
 
-export type TestErrorCode = {
+/**
+ */
+export interface TestErrorCode {
     response: any
     request: {
         query: {
-            status: string,
+            status: string
         }
     }
 }
@@ -2156,54 +986,54 @@ exports[`v2 should generate: ./test/generated/v2/services/ParametersService.ts 1
 
 export const ParametersServiceUrl = {
     CallWithParameters: ({
-        parameterPath
+        parameterPath,
     }: {
-        parameterPath: string,
+        parameterPath: string
     }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath}\`,
     CallWithWeirdParameterNames: ({
-        parameterPath1?
+        parameterPath1?,
+        parameterPath2?,
+        parameterPath3?,
     }: {
-        parameterPath1?: string,
-    }{
-        parameterPath2?
-    }: {
-        parameterPath2?: string,
-    }{
-        parameterPath3?
-    }: {
-        parameterPath3?: string,
+        parameterPath1?: string
+        parameterPath2?: string
+        parameterPath3?: string
     }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath1}/\${parameterPath2}/\${parameterPath3}\`,
 }
 
-export type CallWithParameters = {
+/**
+ */
+export interface CallWithParameters {
     response:
     request: {
         path: {
-            parameterPath: string,
+            parameterPath: string
         }
         query: {
-            parameterQuery: string,
+            parameterQuery: string
         }
         body: {
-            parameterBody: string,
+            parameterBody: string
         }
     }
 }
 
-export type CallWithWeirdParameterNames = {
+/**
+ */
+export interface CallWithWeirdParameterNames {
     response:
     request: {
         path: {
-            parameterPath1?: string,
-            parameterPath2?: string,
-            parameterPath3?: string,
+            parameterPath1?: string
+            parameterPath2?: string
+            parameterPath3?: string
         }
         query: {
-            parameterQuery: string,
-            _default?: string,
+            parameterQuery: string
+            _default?: string
         }
         body: {
-            parameterBody: string,
+            parameterBody: string
         }
     }
 }
@@ -2243,26 +1073,32 @@ exports[`v2 should generate: ./test/generated/v2/services/TypesService.ts 1`] = 
 
 export const TypesServiceUrl = {
     Types: ({
-        id?
+        id?,
     }: {
-        id?: number,
+        id?: number
     }) => \`/api/v\${OpenAPI.VERSION}/types\`,
 }
 
-export type Types = {
-    response: numberstringbooleanany
+/**
+ * @type parameterNumber = 123
+ * @type parameterString = 'default'
+ * @type parameterBoolean = true
+ * @type parameterObject = null
+ */
+export interface Types {
+    response: number | string | boolean
     request: {
         path: {
-            id?: number,
+            id?: number
         }
         query: {
-            parameterArray: Array<string>,
-            parameterDictionary: Record<string, string>,
-            parameterEnum: 'Success' | 'Warning' | 'Error',
-            parameterNumber: number = 123,
-            parameterString: string = 'default',
-            parameterBoolean: boolean = true,
-            parameterObject: any = null,
+            parameterArray: Array<string>
+            parameterDictionary: Record<string, string>
+            parameterEnum: 'Success' | 'Warning' | 'Error'
+            parameterNumber: number
+            parameterString: string
+            parameterBoolean: boolean
+            parameterObject: any
         }
     }
 }
@@ -2270,497 +1106,10 @@ export type Types = {
 "
 `;
 
-exports[`v3 should generate: ./test/generated/v3/core/ApiError.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-import type { ApiResult } from './ApiResult';
-
-export class ApiError extends Error {
-    public readonly url: string;
-    public readonly status: number;
-    public readonly statusText: string;
-    public readonly body: any;
-
-    constructor(response: ApiResult, message: string) {
-        super(message);
-
-        this.name = 'ApiError';
-        this.url = response.url;
-        this.status = response.status;
-        this.statusText = response.statusText;
-        this.body = response.body;
-    }
-}"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/core/ApiRequestOptions.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export type ApiRequestOptions = {
-    readonly method: 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'PATCH';
-    readonly path: string;
-    readonly cookies?: Record<string, any>;
-    readonly headers?: Record<string, any>;
-    readonly query?: Record<string, any>;
-    readonly formData?: Record<string, any>;
-    readonly body?: any;
-    readonly mediaType?: string;
-    readonly responseHeader?: string;
-    readonly errors?: Record<number, string>;
-}"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/core/ApiResult.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export type ApiResult = {
-    readonly url: string;
-    readonly ok: boolean;
-    readonly status: number;
-    readonly statusText: string;
-    readonly body: any;
-}"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/core/CancelablePromise.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export class CancelError extends Error {
-
-    constructor(reason: string = 'Promise was canceled') {
-        super(reason);
-        this.name = 'CancelError';
-    }
-
-    public get isCancelled(): boolean {
-        return true;
-    }
-}
-
-export interface OnCancel {
-    readonly isPending: boolean;
-    readonly isCancelled: boolean;
-
-    (cancelHandler: () => void): void;
-}
-
-export class CancelablePromise<T> implements Promise<T> {
-    readonly [Symbol.toStringTag]: string;
-
-    #isPending: boolean;
-    #isCancelled: boolean;
-    readonly #cancelHandlers: (() => void)[];
-    readonly #promise: Promise<T>;
-    #resolve?: (value: T | PromiseLike<T>) => void;
-    #reject?: (reason?: any) => void;
-
-    constructor(
-        executor: (
-            resolve: (value: T | PromiseLike<T>) => void,
-            reject: (reason?: any) => void,
-            onCancel: OnCancel
-        ) => void
-    ) {
-        this.#isPending = true;
-        this.#isCancelled = false;
-        this.#cancelHandlers = [];
-        this.#promise = new Promise<T>((resolve, reject) => {
-            this.#resolve = resolve;
-            this.#reject = reject;
-
-            const onResolve = (value: T | PromiseLike<T>): void => {
-                if (!this.#isCancelled) {
-                    this.#isPending = false;
-                    this.#resolve?.(value);
-                }
-            };
-
-            const onReject = (reason?: any): void => {
-                this.#isPending = false;
-                this.#reject?.(reason);
-            };
-
-            const onCancel = (cancelHandler: () => void): void => {
-                if (this.#isPending) {
-                    this.#cancelHandlers.push(cancelHandler);
-                }
-            };
-
-            Object.defineProperty(onCancel, 'isPending', {
-                get: (): boolean => this.#isPending,
-            });
-
-            Object.defineProperty(onCancel, 'isCancelled', {
-                get: (): boolean => this.#isCancelled,
-            });
-
-            return executor(onResolve, onReject, onCancel as OnCancel);
-        });
-    }
-
-    public then<TResult1 = T, TResult2 = never>(
-        onFulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-        onRejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
-    ): Promise<TResult1 | TResult2> {
-        return this.#promise.then(onFulfilled, onRejected);
-    }
-
-    public catch<TResult = never>(
-        onRejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
-    ): Promise<T | TResult> {
-        return this.#promise.catch(onRejected);
-    }
-
-    public finally(onFinally?: (() => void) | null): Promise<T> {
-        return this.#promise.finally(onFinally);
-    }
-
-    public cancel(): void {
-        if (!this.#isPending || this.#isCancelled) {
-            return;
-        }
-        this.#isCancelled = true;
-        if (this.#cancelHandlers.length) {
-            try {
-                for (const cancelHandler of this.#cancelHandlers) {
-                    cancelHandler();
-                }
-            } catch (error) {
-                this.#reject?.(error);
-                return;
-            }
-        }
-    }
-
-    public get isCancelled(): boolean {
-        return this.#isCancelled;
-    }
-}"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/core/OpenAPI.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-import type { ApiRequestOptions } from './ApiRequestOptions';
-
-type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
-type Headers = Record<string, string>;
-
-type Config = {
-    BASE: string;
-    VERSION: string;
-    WITH_CREDENTIALS: boolean;
-    CREDENTIALS: 'include' | 'omit' | 'same-origin';
-    TOKEN?: string | Resolver<string>;
-    USERNAME?: string | Resolver<string>;
-    PASSWORD?: string | Resolver<string>;
-    HEADERS?: Headers | Resolver<Headers>;
-    ENCODE_PATH?: (path: string) => string;
-}
-
-export const OpenAPI: Config = {
-    BASE: 'http://localhost:3000/base',
-    VERSION: '1.0',
-    WITH_CREDENTIALS: false,
-    CREDENTIALS: 'include',
-    TOKEN: undefined,
-    USERNAME: undefined,
-    PASSWORD: undefined,
-    HEADERS: undefined,
-    ENCODE_PATH: undefined,
-};"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/core/request.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-import { ApiError } from './ApiError';
-import type { ApiRequestOptions } from './ApiRequestOptions';
-import type { ApiResult } from './ApiResult';
-import { CancelablePromise } from './CancelablePromise';
-import type { OnCancel } from './CancelablePromise';
-import { OpenAPI } from './OpenAPI';
-
-function isDefined<T>(value: T | null | undefined): value is Exclude<T, null | undefined> {
-    return value !== undefined && value !== null;
-}
-
-function isString(value: any): value is string {
-    return typeof value === 'string';
-}
-
-function isStringWithValue(value: any): value is string {
-    return isString(value) && value !== '';
-}
-
-function isBlob(value: any): value is Blob {
-    return value instanceof Blob;
-}
-
-function base64(str: string): string {
-    try {
-        return btoa(str);
-    } catch (err) {
-        // @ts-ignore
-        return Buffer.from(str).toString('base64');
-    }
-}
-
-function getQueryString(params: Record<string, any>): string {
-    const qs: string[] = [];
-
-    const append = (key: string, value: any) => {
-        qs.push(\`\${encodeURIComponent(key)}=\${encodeURIComponent(String(value))}\`);
-    };
-
-    Object.entries(params)
-        .filter(([_, value]) => isDefined(value))
-        .forEach(([key, value]) => {
-            if (Array.isArray(value)) {
-                value.forEach(v => append(key, v));
-            } else {
-                append(key, value);
-            }
-        });
-
-    if (qs.length > 0) {
-        return \`?\${qs.join('&')}\`;
-    }
-
-    return '';
-}
-
-function getUrl(options: ApiRequestOptions): string {
-    const path = OpenAPI.ENCODE_PATH ? OpenAPI.ENCODE_PATH(options.path) : options.path;
-    const url = \`\${OpenAPI.BASE}\${path}\`;
-    if (options.query) {
-        return \`\${url}\${getQueryString(options.query)}\`;
-    }
-
-    return url;
-}
-
-function getFormData(options: ApiRequestOptions): FormData | undefined {
-    if (options.formData) {
-        const formData = new FormData();
-
-        const append = (key: string, value: any) => {
-            if (isString(value) || isBlob(value)) {
-                formData.append(key, value);
-            } else {
-                formData.append(key, JSON.stringify(value));
-            }
-        };
-
-        Object.entries(options.formData)
-            .filter(([_, value]) => isDefined(value))
-            .forEach(([key, value]) => {
-                if (Array.isArray(value)) {
-                    value.forEach(v => append(key, v));
-                } else {
-                    append(key, value);
-                }
-            });
-
-        return formData;
-    }
-    return;
-}
-
-type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
-
-async function resolve<T>(options: ApiRequestOptions, resolver?: T | Resolver<T>): Promise<T | undefined> {
-    if (typeof resolver === 'function') {
-        return (resolver as Resolver<T>)(options);
-    }
-    return resolver;
-}
-
-async function getHeaders(options: ApiRequestOptions): Promise<Headers> {
-    const token = await resolve(options, OpenAPI.TOKEN);
-    const username = await resolve(options, OpenAPI.USERNAME);
-    const password = await resolve(options, OpenAPI.PASSWORD);
-    const additionalHeaders = await resolve(options, OpenAPI.HEADERS);
-
-    const defaultHeaders = Object.entries({
-        Accept: 'application/json',
-        ...additionalHeaders,
-        ...options.headers,
-    })
-        .filter(([_, value]) => isDefined(value))
-        .reduce((headers, [key, value]) => ({
-            ...headers,
-            [key]: String(value),
-        }), {} as Record<string, string>);
-
-    const headers = new Headers(defaultHeaders);
-
-    if (isStringWithValue(token)) {
-        headers.append('Authorization', \`Bearer \${token}\`);
-    }
-
-    if (isStringWithValue(username) && isStringWithValue(password)) {
-        const credentials = base64(\`\${username}:\${password}\`);
-        headers.append('Authorization', \`Basic \${credentials}\`);
-    }
-
-    if (options.body) {
-        if (options.mediaType) {
-            headers.append('Content-Type', options.mediaType);
-        } else if (isBlob(options.body)) {
-            headers.append('Content-Type', options.body.type || 'application/octet-stream');
-        } else if (isString(options.body)) {
-            headers.append('Content-Type', 'text/plain');
-        } else {
-            headers.append('Content-Type', 'application/json');
-        }
-    }
-
-    return headers;
-}
-
-function getRequestBody(options: ApiRequestOptions): BodyInit | undefined {
-    if (options.body) {
-        if (options.mediaType?.includes('/json')) {
-            return JSON.stringify(options.body)
-        } else if (isString(options.body) || isBlob(options.body)) {
-            return options.body;
-        } else {
-            return JSON.stringify(options.body);
-        }
-    }
-    return;
-}
-
-async function sendRequest(
-    options: ApiRequestOptions,
-    url: string,
-    formData: FormData | undefined,
-    body: BodyInit | undefined,
-    headers: Headers,
-    onCancel: OnCancel
-): Promise<Response> {
-    const controller = new AbortController();
-
-    const request: RequestInit = {
-        headers,
-        body: body || formData,
-        method: options.method,
-        signal: controller.signal,
-    };
-
-    if (OpenAPI.WITH_CREDENTIALS) {
-        request.credentials = OpenAPI.CREDENTIALS;
-    }
-
-    onCancel(() => controller.abort());
-
-    return await fetch(url, request);
-}
-
-function getResponseHeader(response: Response, responseHeader?: string): string | undefined {
-    if (responseHeader) {
-        const content = response.headers.get(responseHeader);
-        if (isString(content)) {
-            return content;
-        }
-    }
-    return;
-}
-
-async function getResponseBody(response: Response): Promise<any> {
-    if (response.status !== 204) {
-        try {
-            const contentType = response.headers.get('Content-Type');
-            if (contentType) {
-                const isJSON = contentType.toLowerCase().startsWith('application/json');
-                if (isJSON) {
-                    return await response.json();
-                } else {
-                    return await response.text();
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    return;
-}
-
-function catchErrors(options: ApiRequestOptions, result: ApiResult): void {
-    const errors: Record<number, string> = {
-        400: 'Bad Request',
-        401: 'Unauthorized',
-        403: 'Forbidden',
-        404: 'Not Found',
-        500: 'Internal Server Error',
-        502: 'Bad Gateway',
-        503: 'Service Unavailable',
-        ...options.errors,
-    }
-
-    const error = errors[result.status];
-    if (error) {
-        throw new ApiError(result, error);
-    }
-
-    if (!result.ok) {
-        throw new ApiError(result, 'Generic Error');
-    }
-}
-
-/**
- * Request using fetch client
- * @param options The request options from the the service
- * @returns CancelablePromise<T>
- * @throws ApiError
- */
-export function request<T>(options: ApiRequestOptions): CancelablePromise<T> {
-    return new CancelablePromise(async (resolve, reject, onCancel) => {
-        try {
-            const url = getUrl(options);
-            const formData = getFormData(options);
-            const body = getRequestBody(options);
-            const headers = await getHeaders(options);
-
-            if (!onCancel.isCancelled) {
-                const response = await sendRequest(options, url, formData, body, headers, onCancel);
-                const responseBody = await getResponseBody(response);
-                const responseHeader = getResponseHeader(response, options.responseHeader);
-
-                const result: ApiResult = {
-                    url,
-                    ok: response.ok,
-                    status: response.status,
-                    statusText: response.statusText,
-                    body: responseHeader || responseBody,
-                };
-
-                catchErrors(options, result);
-
-                resolve(result.body);
-            }
-        } catch (error) {
-            reject(error);
-        }
-    });
-}"
-`;
-
 exports[`v3 should generate: ./test/generated/v3/index.ts 1`] = `
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export { ApiError } from './core/ApiError';
-export { CancelablePromise } from './core/CancelablePromise';
-export { OpenAPI } from './core/OpenAPI';
-
 export type { ArrayWithArray } from './models/ArrayWithArray';
 export type { ArrayWithBooleans } from './models/ArrayWithBooleans';
 export type { ArrayWithNumbers } from './models/ArrayWithNumbers';
@@ -2811,57 +1160,6 @@ export type { SimpleInteger } from './models/SimpleInteger';
 export type { SimpleReference } from './models/SimpleReference';
 export type { SimpleString } from './models/SimpleString';
 export type { SimpleStringWithPattern } from './models/SimpleStringWithPattern';
-
-export { $ArrayWithArray } from './schemas/$ArrayWithArray';
-export { $ArrayWithBooleans } from './schemas/$ArrayWithBooleans';
-export { $ArrayWithNumbers } from './schemas/$ArrayWithNumbers';
-export { $ArrayWithProperties } from './schemas/$ArrayWithProperties';
-export { $ArrayWithReferences } from './schemas/$ArrayWithReferences';
-export { $ArrayWithStrings } from './schemas/$ArrayWithStrings';
-export { $CompositionBaseModel } from './schemas/$CompositionBaseModel';
-export { $CompositionExtendedModel } from './schemas/$CompositionExtendedModel';
-export { $CompositionWithAllOfAndNullable } from './schemas/$CompositionWithAllOfAndNullable';
-export { $CompositionWithAnyOf } from './schemas/$CompositionWithAnyOf';
-export { $CompositionWithAnyOfAndNullable } from './schemas/$CompositionWithAnyOfAndNullable';
-export { $CompositionWithAnyOfAnonymous } from './schemas/$CompositionWithAnyOfAnonymous';
-export { $CompositionWithOneOf } from './schemas/$CompositionWithOneOf';
-export { $CompositionWithOneOfAndNullable } from './schemas/$CompositionWithOneOfAndNullable';
-export { $CompositionWithOneOfAnonymous } from './schemas/$CompositionWithOneOfAnonymous';
-export { $DictionaryWithArray } from './schemas/$DictionaryWithArray';
-export { $DictionaryWithDictionary } from './schemas/$DictionaryWithDictionary';
-export { $DictionaryWithProperties } from './schemas/$DictionaryWithProperties';
-export { $DictionaryWithReference } from './schemas/$DictionaryWithReference';
-export { $DictionaryWithString } from './schemas/$DictionaryWithString';
-export { $EnumFromDescription } from './schemas/$EnumFromDescription';
-export { $EnumWithExtensions } from './schemas/$EnumWithExtensions';
-export { $EnumWithNumbers } from './schemas/$EnumWithNumbers';
-export { $EnumWithStrings } from './schemas/$EnumWithStrings';
-export { $ModelThatExtends } from './schemas/$ModelThatExtends';
-export { $ModelThatExtendsExtends } from './schemas/$ModelThatExtendsExtends';
-export { $ModelWithArray } from './schemas/$ModelWithArray';
-export { $ModelWithBoolean } from './schemas/$ModelWithBoolean';
-export { $ModelWithCircularReference } from './schemas/$ModelWithCircularReference';
-export { $ModelWithDictionary } from './schemas/$ModelWithDictionary';
-export { $ModelWithDuplicateImports } from './schemas/$ModelWithDuplicateImports';
-export { $ModelWithDuplicateProperties } from './schemas/$ModelWithDuplicateProperties';
-export { $ModelWithEnum } from './schemas/$ModelWithEnum';
-export { $ModelWithEnumFromDescription } from './schemas/$ModelWithEnumFromDescription';
-export { $ModelWithInteger } from './schemas/$ModelWithInteger';
-export { $ModelWithNestedEnums } from './schemas/$ModelWithNestedEnums';
-export { $ModelWithNestedProperties } from './schemas/$ModelWithNestedProperties';
-export { $ModelWithNullableString } from './schemas/$ModelWithNullableString';
-export { $ModelWithOrderedProperties } from './schemas/$ModelWithOrderedProperties';
-export { $ModelWithPattern } from './schemas/$ModelWithPattern';
-export { $ModelWithProperties } from './schemas/$ModelWithProperties';
-export { $ModelWithReference } from './schemas/$ModelWithReference';
-export { $ModelWithString } from './schemas/$ModelWithString';
-export { $MultilineComment } from './schemas/$MultilineComment';
-export { $SimpleBoolean } from './schemas/$SimpleBoolean';
-export { $SimpleFile } from './schemas/$SimpleFile';
-export { $SimpleInteger } from './schemas/$SimpleInteger';
-export { $SimpleReference } from './schemas/$SimpleReference';
-export { $SimpleString } from './schemas/$SimpleString';
-export { $SimpleStringWithPattern } from './schemas/$SimpleStringWithPattern';
 
 export { CollectionFormatServiceUrl } from './services/CollectionFormatService';
 export { ComplexServiceUrl } from './services/ComplexService';
@@ -3731,898 +2029,6 @@ exports[`v3 should generate: ./test/generated/v3/models/SimpleStringWithPattern.
 export type SimpleStringWithPattern = string | null;"
 `;
 
-exports[`v3 should generate: ./test/generated/v3/schemas/$ArrayWithArray.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithArray = {
-    type: 'array',
-    contains: {
-        type: 'array',
-        contains: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ArrayWithBooleans.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithBooleans = {
-    type: 'array',
-    contains: {
-        type: 'boolean',
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ArrayWithNumbers.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithNumbers = {
-    type: 'array',
-    contains: {
-        type: 'number',
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ArrayWithProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithProperties = {
-    type: 'array',
-    contains: {
-        properties: {
-            foo: {
-                type: 'string',
-            },
-            bar: {
-                type: 'string',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ArrayWithReferences.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithReferences = {
-    type: 'array',
-    contains: {
-        type: 'ModelWithString',
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ArrayWithStrings.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ArrayWithStrings = {
-    type: 'array',
-    contains: {
-        type: 'string',
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionBaseModel.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionBaseModel = {
-    properties: {
-        firstName: {
-            type: 'string',
-        },
-        lastname: {
-            type: 'string',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionExtendedModel.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionExtendedModel = {
-    type: 'all-of',
-    contains: [{
-        type: 'CompositionBaseModel',
-    }, {
-        properties: {
-            firstName: {
-                type: 'string',
-                isRequired: true,
-            },
-            lastname: {
-                type: 'string',
-                isRequired: true,
-            },
-            age: {
-                type: 'number',
-                isRequired: true,
-            },
-        },
-    }],
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionWithAllOfAndNullable.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionWithAllOfAndNullable = {
-    properties: {
-        propA: {
-            type: 'all-of',
-            contains: [{
-                properties: {
-                    boolean: {
-                        type: 'boolean',
-                    },
-                },
-            }, {
-                type: 'ModelWithEnum',
-            }, {
-                type: 'ModelWithArray',
-            }, {
-                type: 'ModelWithDictionary',
-            }],
-            isNullable: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionWithAnyOf.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionWithAnyOf = {
-    properties: {
-        propA: {
-            type: 'any-of',
-            contains: [{
-                type: 'ModelWithString',
-            }, {
-                type: 'ModelWithEnum',
-            }, {
-                type: 'ModelWithArray',
-            }, {
-                type: 'ModelWithDictionary',
-            }],
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionWithAnyOfAndNullable.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionWithAnyOfAndNullable = {
-    properties: {
-        propA: {
-            type: 'any-of',
-            contains: [{
-                properties: {
-                    boolean: {
-                        type: 'boolean',
-                    },
-                },
-            }, {
-                type: 'ModelWithEnum',
-            }, {
-                type: 'ModelWithArray',
-            }, {
-                type: 'ModelWithDictionary',
-            }],
-            isNullable: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionWithAnyOfAnonymous.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionWithAnyOfAnonymous = {
-    properties: {
-        propA: {
-            type: 'any-of',
-            contains: [{
-                properties: {
-                    propA: {
-                        type: 'string',
-                    },
-                },
-            }, {
-                type: 'string',
-            }, {
-                type: 'number',
-            }],
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionWithOneOf.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionWithOneOf = {
-    properties: {
-        propA: {
-            type: 'one-of',
-            contains: [{
-                type: 'ModelWithString',
-            }, {
-                type: 'ModelWithEnum',
-            }, {
-                type: 'ModelWithArray',
-            }, {
-                type: 'ModelWithDictionary',
-            }],
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionWithOneOfAndNullable.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionWithOneOfAndNullable = {
-    properties: {
-        propA: {
-            type: 'one-of',
-            contains: [{
-                properties: {
-                    boolean: {
-                        type: 'boolean',
-                    },
-                },
-            }, {
-                type: 'ModelWithEnum',
-            }, {
-                type: 'ModelWithArray',
-            }, {
-                type: 'ModelWithDictionary',
-            }],
-            isNullable: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$CompositionWithOneOfAnonymous.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $CompositionWithOneOfAnonymous = {
-    properties: {
-        propA: {
-            type: 'one-of',
-            contains: [{
-                properties: {
-                    propA: {
-                        type: 'string',
-                    },
-                },
-            }, {
-                type: 'string',
-            }, {
-                type: 'number',
-            }],
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$DictionaryWithArray.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithArray = {
-    type: 'dictionary',
-    contains: {
-        type: 'array',
-        contains: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$DictionaryWithDictionary.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithDictionary = {
-    type: 'dictionary',
-    contains: {
-        type: 'dictionary',
-        contains: {
-            type: 'string',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$DictionaryWithProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithProperties = {
-    type: 'dictionary',
-    contains: {
-        properties: {
-            foo: {
-                type: 'string',
-            },
-            bar: {
-                type: 'string',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$DictionaryWithReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithReference = {
-    type: 'dictionary',
-    contains: {
-        type: 'ModelWithString',
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$DictionaryWithString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $DictionaryWithString = {
-    type: 'dictionary',
-    contains: {
-        type: 'string',
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$EnumFromDescription.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumFromDescription = {
-    type: 'number',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$EnumWithExtensions.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumWithExtensions = {
-    type: 'Enum',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$EnumWithNumbers.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumWithNumbers = {
-    type: 'Enum',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$EnumWithStrings.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $EnumWithStrings = {
-    type: 'Enum',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelThatExtends.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelThatExtends = {
-    type: 'all-of',
-    contains: [{
-        type: 'ModelWithString',
-    }, {
-        properties: {
-            propExtendsA: {
-                type: 'string',
-            },
-            propExtendsB: {
-                type: 'ModelWithString',
-            },
-        },
-    }],
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelThatExtendsExtends.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelThatExtendsExtends = {
-    type: 'all-of',
-    contains: [{
-        type: 'ModelWithString',
-    }, {
-        type: 'ModelThatExtends',
-    }, {
-        properties: {
-            propExtendsC: {
-                type: 'string',
-            },
-            propExtendsD: {
-                type: 'ModelWithString',
-            },
-        },
-    }],
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithArray.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithArray = {
-    properties: {
-        prop: {
-            type: 'array',
-            contains: {
-                type: 'ModelWithString',
-            },
-        },
-        propWithFile: {
-            type: 'array',
-            contains: {
-                type: 'binary',
-            },
-        },
-        propWithNumber: {
-            type: 'array',
-            contains: {
-                type: 'number',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithBoolean.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithBoolean = {
-    properties: {
-        prop: {
-            type: 'boolean',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithCircularReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithCircularReference = {
-    properties: {
-        prop: {
-            type: 'ModelWithCircularReference',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithDictionary.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithDictionary = {
-    properties: {
-        prop: {
-            type: 'dictionary',
-            contains: {
-                type: 'string',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithDuplicateImports.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithDuplicateImports = {
-    properties: {
-        propA: {
-            type: 'ModelWithString',
-        },
-        propB: {
-            type: 'ModelWithString',
-        },
-        propC: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithDuplicateProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithDuplicateProperties = {
-    properties: {
-        prop: {
-            type: 'ModelWithString',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithEnum.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithEnum = {
-    properties: {
-        test: {
-            type: 'Enum',
-        },
-        statusCode: {
-            type: 'Enum',
-        },
-        bool: {
-            type: 'boolean',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithEnumFromDescription.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithEnumFromDescription = {
-    properties: {
-        test: {
-            type: 'Enum',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithInteger.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithInteger = {
-    properties: {
-        prop: {
-            type: 'number',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithNestedEnums.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithNestedEnums = {
-    properties: {
-        dictionaryWithEnum: {
-            type: 'dictionary',
-            contains: {
-                type: 'Enum',
-            },
-        },
-        dictionaryWithEnumFromDescription: {
-            type: 'dictionary',
-            contains: {
-                type: 'Enum',
-            },
-        },
-        arrayWithEnum: {
-            type: 'array',
-            contains: {
-                type: 'Enum',
-            },
-        },
-        arrayWithDescription: {
-            type: 'array',
-            contains: {
-                type: 'Enum',
-            },
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithNestedProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithNestedProperties = {
-    properties: {
-        first: {
-            properties: {
-                second: {
-                    properties: {
-                        third: {
-                            type: 'string',
-                            isReadOnly: true,
-                            isRequired: true,
-                            isNullable: true,
-                        },
-                    },
-                    isReadOnly: true,
-                    isRequired: true,
-                    isNullable: true,
-                },
-            },
-            isReadOnly: true,
-            isRequired: true,
-            isNullable: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithNullableString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithNullableString = {
-    properties: {
-        nullableProp1: {
-            type: 'string',
-            isNullable: true,
-        },
-        nullableRequiredProp1: {
-            type: 'string',
-            isRequired: true,
-            isNullable: true,
-        },
-        nullableProp2: {
-            type: 'string',
-            isNullable: true,
-        },
-        nullableRequiredProp2: {
-            type: 'string',
-            isRequired: true,
-            isNullable: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithOrderedProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithOrderedProperties = {
-    properties: {
-        zebra: {
-            type: 'string',
-        },
-        apple: {
-            type: 'string',
-        },
-        hawaii: {
-            type: 'string',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithPattern.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithPattern = {
-    properties: {
-        key: {
-            type: 'string',
-            isRequired: true,
-            maxLength: 64,
-            pattern: '^[a-zA-Z0-9_]*$',
-        },
-        name: {
-            type: 'string',
-            isRequired: true,
-            maxLength: 255,
-        },
-        enabled: {
-            type: 'boolean',
-            isReadOnly: true,
-        },
-        modified: {
-            type: 'string',
-            isReadOnly: true,
-            format: 'date-time',
-        },
-        id: {
-            type: 'string',
-            pattern: '^\\\\\\\\d{2}-\\\\\\\\d{3}-\\\\\\\\d{4}$',
-        },
-        text: {
-            type: 'string',
-            pattern: '^\\\\\\\\w+$',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithProperties.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithProperties = {
-    properties: {
-        required: {
-            type: 'string',
-            isRequired: true,
-        },
-        requiredAndReadOnly: {
-            type: 'string',
-            isReadOnly: true,
-            isRequired: true,
-        },
-        requiredAndNullable: {
-            type: 'string',
-            isRequired: true,
-            isNullable: true,
-        },
-        string: {
-            type: 'string',
-        },
-        number: {
-            type: 'number',
-        },
-        boolean: {
-            type: 'boolean',
-        },
-        reference: {
-            type: 'ModelWithString',
-        },
-        'property with space': {
-            type: 'string',
-        },
-        default: {
-            type: 'string',
-        },
-        try: {
-            type: 'string',
-        },
-        '@namespace.string': {
-            type: 'string',
-            isReadOnly: true,
-        },
-        '@namespace.integer': {
-            type: 'number',
-            isReadOnly: true,
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithReference = {
-    properties: {
-        prop: {
-            type: 'ModelWithProperties',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$ModelWithString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $ModelWithString = {
-    properties: {
-        prop: {
-            type: 'string',
-        },
-    },
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$MultilineComment.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $MultilineComment = {
-    type: 'number',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$SimpleBoolean.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleBoolean = {
-    type: 'boolean',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$SimpleFile.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleFile = {
-    type: 'binary',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$SimpleInteger.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleInteger = {
-    type: 'number',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$SimpleReference.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleReference = {
-    type: 'ModelWithString',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$SimpleString.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleString = {
-    type: 'string',
-} as const;"
-`;
-
-exports[`v3 should generate: ./test/generated/v3/schemas/$SimpleStringWithPattern.ts 1`] = `
-"/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
-export const $SimpleStringWithPattern = {
-    type: 'string',
-    isNullable: true,
-    maxLength: 64,
-    pattern: '^[a-zA-Z0-9_]*$',
-} as const;"
-`;
-
 exports[`v3 should generate: ./test/generated/v3/services/CollectionFormatService.ts 1`] = `
 "/* istanbul ignore file */
 /* tslint:disable */
@@ -4632,15 +2038,17 @@ export const CollectionFormatServiceUrl = {
     CollectionFormat: '/api/v\${OpenAPI.VERSION}/collectionFormat',
 }
 
-export type CollectionFormat = {
+/**
+ */
+export interface CollectionFormat {
     response:
     request: {
         query: {
-            parameterArrayCsv: Array<string> | null,
-            parameterArraySsv: Array<string> | null,
-            parameterArrayTsv: Array<string> | null,
-            parameterArrayPipes: Array<string> | null,
-            parameterArrayMulti: Array<string> | null,
+            parameterArrayCsv: Array<string> | null
+            parameterArraySsv: Array<string> | null
+            parameterArrayTsv: Array<string> | null
+            parameterArrayPipes: Array<string> | null
+            parameterArrayMulti: Array<string> | null
         }
     }
 }
@@ -4660,13 +2068,15 @@ import type { ModelWithString } from '../models/ModelWithString';
 export const ComplexServiceUrl = {
     ComplexTypes: '/api/v\${OpenAPI.VERSION}/complex',
     ComplexParams: ({
-        id
+        id,
     }: {
-        id: number,
+        id: number
     }) => \`/api/v\${OpenAPI.VERSION}/complex/\${id}\`,
 }
 
-export type ComplexTypes = {
+/**
+ */
+export interface ComplexTypes {
     response: ModelWithString
     request: {
         query: {
@@ -4676,17 +2086,19 @@ export type ComplexTypes = {
                         third?: string;
                     };
                 };
-            },
-            parameterReference: ModelWithString,
+            }
+            parameterReference: ModelWithString
         }
     }
 }
 
-export type ComplexParams = {
+/**
+ */
+export interface ComplexParams {
     response: ModelWithString
     request: {
         path: {
-            id: number,
+            id: number
         }
         body: {
             requestBody?: {
@@ -4701,7 +2113,7 @@ export type ComplexParams = {
                     readonly id?: number;
                     readonly name?: string | null;
                 };
-            },
+            }
         }
     }
 }
@@ -4721,48 +2133,69 @@ export const DefaultsServiceUrl = {
     CallToTestOrderOfParams: '/api/v\${OpenAPI.VERSION}/defaults',
 }
 
-export type CallWithDefaultParameters = {
+/**
+ * @type parameterString = 'Hello World!'
+ * @type parameterNumber = 123
+ * @type parameterBoolean = true
+ * @type parameterEnum = 'Success'
+ * @type parameterModel = {
+    \\"prop\\": \\"Hello World!\\"
+}
+ */
+export interface CallWithDefaultParameters {
     response:
     request: {
         query: {
-            parameterString: string | null = 'Hello World!',
-            parameterNumber: number | null = 123,
-            parameterBoolean: boolean | null = true,
-            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-            parameterModel: ModelWithString | null = {
-                \\"prop\\": \\"Hello World!\\"
-            },
+            parameterString: string | null
+            parameterNumber: number | null
+            parameterBoolean: boolean | null
+            parameterEnum: 'Success' | 'Warning' | 'Error'
+            parameterModel: ModelWithString | null
         }
     }
 }
 
-export type CallWithDefaultOptionalParameters = {
+/**
+ * @type parameterString = 'Hello World!'
+ * @type parameterNumber = 123
+ * @type parameterBoolean = true
+ * @type parameterEnum = 'Success'
+ * @type parameterModel = {
+    \\"prop\\": \\"Hello World!\\"
+}
+ */
+export interface CallWithDefaultOptionalParameters {
     response:
     request: {
         query: {
-            parameterString: string = 'Hello World!',
-            parameterNumber: number = 123,
-            parameterBoolean: boolean = true,
-            parameterEnum: 'Success' | 'Warning' | 'Error' = 'Success',
-            parameterModel: ModelWithString = {
-                \\"prop\\": \\"Hello World!\\"
-            },
+            parameterString: string
+            parameterNumber: number
+            parameterBoolean: boolean
+            parameterEnum: 'Success' | 'Warning' | 'Error'
+            parameterModel: ModelWithString
         }
     }
 }
 
-export type CallToTestOrderOfParams = {
+/**
+ * @type parameterOptionalStringWithDefault = 'Hello World!'
+ * @type parameterOptionalStringWithEmptyDefault = ''
+ * @type parameterStringWithDefault = 'Hello World!'
+ * @type parameterStringWithEmptyDefault = ''
+ * @type parameterStringNullableWithDefault = null
+ */
+export interface CallToTestOrderOfParams {
     response:
     request: {
         query: {
-            parameterStringWithNoDefault: string,
-            parameterOptionalStringWithDefault: string = 'Hello World!',
-            parameterOptionalStringWithEmptyDefault: string = '',
-            parameterOptionalStringWithNoDefault?: string,
-            parameterStringWithDefault: string = 'Hello World!',
-            parameterStringWithEmptyDefault: string = '',
-            parameterStringNullableWithNoDefault?: string | null,
-            parameterStringNullableWithDefault: string | null = null,
+            parameterStringWithNoDefault: string
+            parameterOptionalStringWithDefault: string
+            parameterOptionalStringWithEmptyDefault: string
+            parameterOptionalStringWithNoDefault?: string
+            parameterStringWithDefault: string
+            parameterStringWithEmptyDefault: string
+            parameterStringNullableWithNoDefault?: string | null
+            parameterStringNullableWithDefault: string | null
         }
     }
 }
@@ -4790,11 +2223,13 @@ export const ErrorServiceUrl = {
     TestErrorCode: '/api/v\${OpenAPI.VERSION}/error',
 }
 
-export type TestErrorCode = {
+/**
+ */
+export interface TestErrorCode {
     response: any
     request: {
         query: {
-            status: number,
+            status: number
         }
     }
 }
@@ -4812,11 +2247,13 @@ export const FormDataServiceUrl = {
     PostFormData: '/api/v\${OpenAPI.VERSION}/formData/',
 }
 
-export type PostFormData = {
+/**
+ */
+export interface PostFormData {
     response:
     request: {
         query: {
-            parameter?: string,
+            parameter?: string
         }
     }
 }
@@ -4845,7 +2282,9 @@ export const MultipartServiceUrl = {
     MultipartRequest: '/api/v\${OpenAPI.VERSION}/multipart',
 }
 
-export type MultipartRequest = {
+/**
+ */
+export interface MultipartRequest {
     response:
     request: {
     }
@@ -4906,80 +2345,84 @@ import type { ModelWithString } from '../models/ModelWithString';
 
 export const ParametersServiceUrl = {
     CallWithParameters: ({
-        parameterPath
+        parameterPath,
     }: {
-        parameterPath: string | null,
+        parameterPath: string | null
     }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath}\`,
     CallWithWeirdParameterNames: ({
-        parameterPath1?
+        parameterPath1?,
+        parameterPath2?,
+        parameterPath3?,
     }: {
-        parameterPath1?: string,
-    }{
-        parameterPath2?
-    }: {
-        parameterPath2?: string,
-    }{
-        parameterPath3?
-    }: {
-        parameterPath3?: string,
+        parameterPath1?: string
+        parameterPath2?: string
+        parameterPath3?: string
     }) => \`/api/v\${OpenAPI.VERSION}/parameters/\${parameterPath1}/\${parameterPath2}/\${parameterPath3}\`,
     GetCallWithOptionalParam: '/api/v\${OpenAPI.VERSION}/parameters/',
     PostCallWithOptionalParam: '/api/v\${OpenAPI.VERSION}/parameters/',
 }
 
-export type CallWithParameters = {
+/**
+ */
+export interface CallWithParameters {
     response:
     request: {
         path: {
-            parameterPath: string | null,
+            parameterPath: string | null
         }
         query: {
-            parameterQuery: string | null,
+            parameterQuery: string | null
         }
         body: {
-            requestBody: ModelWithString | null,
+            requestBody: ModelWithString | null
         }
     }
 }
 
-export type CallWithWeirdParameterNames = {
+/**
+ */
+export interface CallWithWeirdParameterNames {
     response:
     request: {
         path: {
-            parameterPath1?: string,
-            parameterPath2?: string,
-            parameterPath3?: string,
+            parameterPath1?: string
+            parameterPath2?: string
+            parameterPath3?: string
         }
         query: {
-            parameterQuery: string | null,
-            _default?: string,
+            parameterQuery: string | null
+            _default?: string
         }
         body: {
-            requestBody: ModelWithString | null,
+            requestBody: ModelWithString | null
         }
     }
 }
 
-export type GetCallWithOptionalParam = {
+/**
+ */
+export interface GetCallWithOptionalParam {
     response:
     request: {
         query: {
-            parameter?: string,
+            parameter?: string
         }
         body: {
-            requestBody: ModelWithString,
+            requestBody: ModelWithString
         }
     }
 }
 
-export type PostCallWithOptionalParam = {
+/**
+ */
+export interface PostCallWithOptionalParam {
     response:
     request: {
         query: {
-            parameter: string,
+            parameter: string
         }
         body: {
-            requestBody?: ModelWithString,
+            requestBody?: ModelWithString
         }
     }
 }
@@ -4997,14 +2440,16 @@ export const RequestBodyServiceUrl = {
     PostRequestBody: '/api/v\${OpenAPI.VERSION}/requestBody/',
 }
 
-export type PostRequestBody = {
+/**
+ */
+export interface PostRequestBody {
     response:
     request: {
         query: {
-            parameter?: string,
+            parameter?: string
         }
         body: {
-            requestBody?: ModelWithString,
+            requestBody?: ModelWithString
         }
     }
 }
@@ -5044,26 +2489,32 @@ exports[`v3 should generate: ./test/generated/v3/services/TypesService.ts 1`] = 
 
 export const TypesServiceUrl = {
     Types: ({
-        id?
+        id?,
     }: {
-        id?: number,
+        id?: number
     }) => \`/api/v\${OpenAPI.VERSION}/types\`,
 }
 
-export type Types = {
-    response: numberstringbooleanany
+/**
+ * @type parameterNumber = 123
+ * @type parameterString = 'default'
+ * @type parameterBoolean = true
+ * @type parameterObject = null
+ */
+export interface Types {
+    response: number | string | boolean
     request: {
         path: {
-            id?: number,
+            id?: number
         }
         query: {
-            parameterArray: Array<string> | null,
-            parameterDictionary: any,
-            parameterEnum: 'Success' | 'Warning' | 'Error' | null,
-            parameterNumber: number = 123,
-            parameterString: string | null = 'default',
-            parameterBoolean: boolean | null = true,
-            parameterObject: any = null,
+            parameterArray: Array<string> | null
+            parameterDictionary: any
+            parameterEnum: 'Success' | 'Warning' | 'Error' | null
+            parameterNumber: number
+            parameterString: string | null
+            parameterBoolean: boolean | null
+            parameterObject: any
         }
     }
 }
@@ -5080,7 +2531,9 @@ export const UploadServiceUrl = {
     UploadFile: '/api/v\${OpenAPI.VERSION}/upload',
 }
 
-export type UploadFile = {
+/**
+ */
+export interface UploadFile {
     response: boolean
     request: {
     }
