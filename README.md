@@ -11,9 +11,9 @@
 - Frontend ❤️ OpenAPI, but we do not want to use JAVA codegen in our builds
 - Quick, lightweight, robust and framework-agnostic 🚀
 - Supports generation of TypeScript clients
-- Supports conversion from Swagger 1.x/2.x to OpenAPI 2.x/3.x
+- Supports conversion from Swagger 1.x/2.x to OpenAPI 2.x/3.x with [`api-spec-converter`](https://github.com/LucyBot-Inc/api-spec-converter)
 - Supports JSON and YAML files for input
-- Supports generation through CLI, Node.js and NPX
+- Supports generation through Node.js
 - Supports tsc and @babel/plugin-transform-typescript
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
 
@@ -27,61 +27,63 @@ npm install codegen-openapi-ts --save-dev
 ## Usage
 
 ```
-$ openapi --help
+const OpenAPI = require('codegen-openapi-ts')
 
-  Usage: openapi [options]
-
-  Options:
-    -V, --version             output the version number
-    -i, --input <value>       OpenAPI specification, can be a path, url or string content (required)
-    -o, --output <value>      Output directory (required)
-    --useUnionTypes           Use union types instead of enums
-    --exportServices <value>  Write services to disk (default: true)
-    --exportModels <value>    Write models to disk (default: true)
-    --postfix <value>         Service name postfix (default: "Service")
-    --request <value>         Path to custom request file
-    -h, --help                display help for command
-
-  Examples
-    $ openapi --input ./spec.json
-    $ openapi --input ./spec.json --output ./dist
-    $ openapi --input ./spec.json --output ./dist --client xhr
+OpenAPI.convertAndGenerate({
+  from: string,           // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
+  to: string,             // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
+  source: string          // url or local file (JSON, YAML)
+}, {
+  input: string,          // generated conversion output path, also used as input
+  output: string,         // generated output folder location
+  useOptions: boolean,    // use options as url methods argument
+  useUnionTypes: boolean  // use union types instead of enum
+})
 ```
 
 
 ## Example
+**fetch-schema.js**
+```javascript
+// fetch-schema.js
+const OpenAPI = require('codegen-openapi-ts')
+
+OpenAPI.convertAndGenerate(
+  {
+    from: process.argv[2], // swagger_2
+    to: 'openapi_3',
+    source: process.argv[3] // https://pokemon-api/docs/api
+  },
+  {
+    input: 'scripts/api-schema.json',
+    output: 'src/api-types/' + process.argv[4], // pokemon-api
+    useOptions: true,
+    useUnionTypes: true
+  }
+)
+```
 
 **package.json**
 ```json
 {
     "scripts": {
-        "generate": "openapi --input ./spec.json --output ./dist"
+        "generate": "node fetch-schema.js swagger_2 https://pokemon-api/docs/api pokemon-api"
     }
 }
+
+// npm run generate
 ```
-
-**NPX**
-
-```
-npx codegen-openapi-ts --input ./spec.json --output ./dist
-```
-
-**Node.js API**
-
-```javascript
-const OpenAPI = require('codegen-openapi-ts');
-
-OpenAPI.generate({
-    input: './spec.json',
-    output: './dist'
-});
-
-// Or by providing the content of the spec directly 🚀
-OpenAPI.generate({
-    input: require('./spec.json'),
-    output: './dist'
-});
-```
+### Output folder
+    .
+    ├── ...
+    ├── src                         # output value ('src/api-types/')
+    │   ├── api-types               
+    │   |   ├── pokemon-api         # process.argv[4]
+    │   |   |   ├── models          # API schema models
+    │   |   |   ├── services        # API service level with methods/url/response/request types
+    │   |   |   └── index.ts        
+    |   |   └── ...
+    └── ...
 
 
 ## Features
