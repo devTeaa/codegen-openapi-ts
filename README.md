@@ -11,7 +11,7 @@
 - Frontend ❤️ OpenAPI, but we do not want to use JAVA codegen in our builds
 - Quick, lightweight, robust and framework-agnostic 🚀
 - Supports generation of TypeScript clients
-- Supports OpenAPI specification v2.0 and v3.0
+- Supports conversion from Swagger 1.x/2.x to OpenAPI 2.x/3.x
 - Supports JSON and YAML files for input
 - Supports generation through CLI, Node.js and NPX
 - Supports tsc and @babel/plugin-transform-typescript

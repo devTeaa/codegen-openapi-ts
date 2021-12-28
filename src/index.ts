@@ -113,8 +113,8 @@ export async function generate({
 
 /**
  * Generate the OpenAPI client with options to convert swagger to openapi etc.
- * @param converterInput.from The relative location of the OpenAPI spec
- * @param converterInput.to The relative location of the output converted JSON schema directory
+ * @param converterInput.from The schema specification for the response (swagger_1, swagger_2, openapi_3)
+ * @param converterInput.to The schema specification for the output (openapi_3)
  * @param converterInput.source The relative location of the OpenAPI spec
  * @param options.httpClient The selected httpClient (fetch, xhr, node or axios)
  * @param options.useUnionTypes Use union types instead of enums
@@ -138,9 +138,7 @@ export async function convertAndGenerate(converterInput: ConverterInput, options
 
     fs.writeFileSync(options.input, converted.stringify())
     generate(options)
-  } catch ({ errors, warnings }) {
-    if (errors || warnings) {
-      console.error(JSON.stringify(errors || warnings, null, 2))
-    }
+  } catch (err) {
+    console.error(err)
   }
 }
