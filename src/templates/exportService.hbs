@@ -31,8 +31,8 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
 {{/if}}
 {{/each}}
  */
-export type {{capitalizeFirstLetter name}} = {
-  response: {{#each results}}{{{type}}}{{/each}}
+export interface {{capitalizeFirstLetter name}} {
+  response: {{#with results.[0]}}{{type}}{{/with}}
   request: {
     {{>parametersType}}
   }
