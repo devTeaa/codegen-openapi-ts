@@ -32,7 +32,7 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
 {{/each}}
  */
 export interface {{capitalizeFirstLetter name}} {
-  response: {{#with results.[0]}}{{type}}{{/with}}
+  response: {{unionTypeBesideAny results}}
   request: {
     {{>parametersType}}
   }

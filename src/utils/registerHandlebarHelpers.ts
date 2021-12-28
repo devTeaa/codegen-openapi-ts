@@ -12,6 +12,20 @@ export function registerHandlebarHelpers(root: {
     useUnionTypes: boolean;
 }): void {
     Handlebars.registerHelper(
+      'unionTypeBesideAny',
+      function (this: any, a: Model[]): string {
+        const listType = a.map(item => item.type)
+        const listTypeWithoutAny = listType.filter(value => value !== 'any')
+
+        if (listTypeWithoutAny.length === 0) {
+          return listType.join(' | ')
+        }
+
+        return listTypeWithoutAny.join(' | ')
+      }
+    );
+
+    Handlebars.registerHelper(
       'capitalizeFirstLetter',
       function (this: any, a: string): string {
         return a.charAt(0).toUpperCase() + a.slice(1)
