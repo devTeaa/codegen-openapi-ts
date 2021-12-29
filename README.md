@@ -3,6 +3,8 @@
 [![NPM][npm-image]][npm-url]
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Build](https://github.com/devTeaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg)
+![Size](https://github-size-badge.herokuapp.com/devTeaa/codegen-openapi-ts.svg)
+
 
 > Node.js library that generates Typescript clients based on the OpenAPI specification.
 
