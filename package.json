@@ -59,7 +59,7 @@
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
         "abort-controller": "^3.0.0",
-        "axios": "^0.24.0",
+        "axios": "^0.25.0",
         "api-spec-converter": "^2.12.0",
         "camelcase": "^6.2.1",
         "commander": "^8.3.0",
