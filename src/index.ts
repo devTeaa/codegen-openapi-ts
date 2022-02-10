@@ -126,18 +126,34 @@ export async function generate({
  * @param options.request: Path to custom request file
  * @param options.write Write the files to disk (true or false)
  */
-export async function convertAndGenerate(converterInput: ConverterInput, options: Options): Promise<void> {
+export async function convertAndGenerate({ from, to, source }: ConverterInput, { input, output, useOptions, useUnionTypes }: Options, replaceOperations: [string, 'get' | 'post' | 'put' | 'delete', string][]): Promise<void> {
   try {
-    const converted = await Converter.convert(converterInput)
+    const converted = await Converter.convert({
+      from,
+      to,
+      source,
+    })
     converted.validate()
 
-    if (!isString(options.input)) {
+    if (!isString(input)) {
       console.error('Please provide correct path for input file to be generated')
       return
     }
 
-    fs.writeFileSync(options.input, converted.stringify())
-    generate(options)
+    replaceOperations.forEach(value => {
+      converted.spec.paths[value[0]][value[1]].operationId = value[2]
+    })
+
+    if (typeof input === 'string') {
+      fs.writeFileSync(input, converted.stringify())
+    }
+
+    generate({
+      input,
+      output,
+      useOptions,
+      useUnionTypes,
+    })
   } catch (err) {
     console.error(err)
   }
