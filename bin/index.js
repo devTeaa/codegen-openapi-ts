@@ -7,42 +7,29 @@ const program = require('commander');
 const pkg = require('../package.json');
 
 const params = program
-    .name('openapi')
+    .name('codegen-openapi-ts')
     .usage('[options]')
     .version(pkg.version)
-    .requiredOption('-i, --input <value>', 'OpenAPI specification, can be a path, url or string content (required)')
-    .requiredOption('-o, --output <value>', 'Output directory (required)')
-    .option('-c, --client <value>', 'HTTP client to generate [fetch, xhr, node, axios]', 'fetch')
-    .option('--useOptions', 'Use options instead of arguments')
-    .option('--useUnionTypes', 'Use union types instead of enums')
-    .option('--exportServices <value>', 'Write services to disk', true)
-    .option('--exportModels <value>', 'Write models to disk', true)
-    .option('--postfix <value>', 'Service name postfix', 'Service')
-    .option('--request <value>', 'Path to custom request file')
+    .argument('<from>', 'Original response specification version')
+    .argument('<source>', 'Swagger/OpenAPI response url')
+    .argument('[output]', 'Output folder name', 'output')
     .parse(process.argv)
-    .opts();
+    .processedArgs;
 
 const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
 
 if (OpenAPI) {
-    OpenAPI.generate({
-        input: params.input,
-        output: params.output,
-        httpClient: params.client,
-        useOptions: params.useOptions,
-        useUnionTypes: params.useUnionTypes,
-        exportCore: false,
-        exportServices: JSON.parse(params.exportServices) === true,
-        exportModels: JSON.parse(params.exportModels) === true,
-        exportSchemas: false,
-        postfix: params.postfix,
-        request: params.request,
-    })
-        .then(() => {
-            process.exit(0);
-        })
-        .catch(error => {
-            console.error(error);
-            process.exit(1);
-        });
+    OpenAPI.convertAndGenerate(
+      {
+        from: params[0],
+        to: 'openapi_3',
+        source: params[1]
+      },
+      {
+        input: 'api-schema.json',
+        output: params[2],
+        useOptions: true,
+        useUnionTypes: true
+      },
+    )
 }
