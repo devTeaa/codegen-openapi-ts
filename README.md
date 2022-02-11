@@ -2,6 +2,7 @@
 
 [![NPM][npm-image]][npm-url]
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Build](https://github.com/devTeaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg)
 
 > Node.js library that generates Typescript clients based on the OpenAPI specification.
 
@@ -16,6 +17,7 @@
 - Supports generation through Node.js
 - Supports tsc and @babel/plugin-transform-typescript
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
+- Supports generate multiple api based on config file 
 
 ## Install
 
@@ -26,9 +28,34 @@ npm install codegen-openapi-ts --save-dev
 
 ## Usage
 
+**codegen.config.js**
 ```
-const OpenAPI = require('codegen-openapi-ts')
+codegen-openapi-ts --help
+Usage: codegen-openapi-ts [options]
 
+Options:
+  -V, --version     output the version number
+  --config <value>  Path to config file (default: "codegen.config.js")
+  -h, --help        display help for command
+```
+
+**CLI**
+```
+codegen-openapi-ts-cli --help
+Usage: codegen-openapi-ts-cli [options]
+
+Arguments:
+  from           Original response specification version
+  source         Swagger/OpenAPI response url
+  output         Output folder name (default: "output")
+
+Options:
+  -V, --version  output the version number
+  -h, --help     display help for command
+```
+
+**Node**
+```
 OpenAPI.convertAndGenerate({
   from: string,           // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
   to: string,             // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
@@ -43,7 +70,26 @@ OpenAPI.convertAndGenerate({
 
 
 ## Example
-**fetch-schema.js**
+**codegen.config.js**
+```javascript
+'use strict';
+
+module.exports = [
+  {
+    source: 'http://pokemon-api/docs/api',
+    from: 'openapi_3',
+    output: 'src/api-types/pokemon-api', // pokemon-api
+  },
+];
+```
+
+**CLI**
+```bash
+codegen-openapi-ts-cli swagger_2 https://pokemonapi/docs/api
+codegen-openapi-ts-cli swagger_2 https://pokemonapi/docs/api pokemon-api
+```
+
+**fetch-schema.js (Node)**
 ```javascript
 // fetch-schema.js
 const OpenAPI = require('codegen-openapi-ts')
@@ -62,9 +108,8 @@ OpenAPI.convertAndGenerate(
   }
 )
 ```
-
-**package.json**
 ```json
+// package.json
 {
     "scripts": {
         "generate": "node fetch-schema.js swagger_2 https://pokemon-api/docs/api pokemon-api"
@@ -78,7 +123,7 @@ OpenAPI.convertAndGenerate(
     ├── ...
     ├── src                         # output value ('src/api-types/')
     │   ├── api-types               
-    │   |   ├── pokemon-api         # process.argv[4]
+    │   |   ├── pokemon-api         # output
     │   |   |   ├── models          # API schema models
     │   |   |   ├── services        # API service level with methods/url/response/request types
     │   |   |   └── index.ts        
@@ -87,103 +132,6 @@ OpenAPI.convertAndGenerate(
 
 
 ## Features
-
-### Enums vs. Union Types `--useUnionTypes`
-The OpenAPI spec allows you to define [enums](https://swagger.io/docs/specification/data-models/enums/) inside the
-data model. By default, we convert these enums definitions to [TypeScript enums](https://www.typescriptlang.org/docs/handbook/enums.html).
-However, these enums are merged inside the namespace of the model, this is unsupported by Babel, [see docs](https://babeljs.io/docs/en/babel-plugin-transform-typescript#impartial-namespace-support).
-Because we also want to support projects that use Babel [@babel/plugin-transform-typescript](https://babeljs.io/docs/en/babel-plugin-transform-typescript),
-we offer the flag `--useUnionTypes` to generate [union types](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#union-types)
-instead of the traditional enums. The difference can be seen below:
-
-**Enums:**
-```typescript
-// Model
-export interface Order {
-    id?: number;
-    quantity?: number;
-    status?: Order.status;
-}
-
-export namespace Order {
-    export enum status {
-        PLACED = 'placed',
-        APPROVED = 'approved',
-        DELIVERED = 'delivered',
-    }
-}
-
-// Usage
-const order: Order = {
-    id: 1,
-    quantity: 40,
-    status: Order.status.PLACED
-}
-```
-
-**Union Types:**
-```typescript
-// Model
-export interface Order {
-    id?: number;
-    quantity?: number;
-    status?: 'placed' | 'approved' | 'delivered';
-}
-
-// Usage
-const order: Order = {
-    id: 1,
-    quantity: 40,
-    status: 'placed'
-}
-```
-
-### Enum with custom names and descriptions
-You can use `x-enum-varnames` and `x-enum-descriptions` in your spec to generate enum with custom names and descriptions.
-It's not in official [spec](https://github.com/OAI/OpenAPI-Specification/issues/681) yet. But it's a supported extension
-that can help developers use more meaningful enumerators.
-```json
-{
-    "EnumWithStrings": {
-        "description": "This is a simple enum with strings",
-        "enum": [
-            0,
-            1,
-            2
-        ],
-        "x-enum-varnames": [
-            "Success",
-            "Warning",
-            "Error"
-        ],
-        "x-enum-descriptions": [
-            "Used when the status of something is successful",
-            "Used when the status of something has a warning",
-            "Used when the status of something has an error"
-        ]
-    }
-}
-```
-
-Generated code:
-```typescript
-enum EnumWithStrings {
-    /*
-    * Used when the status of something is successful
-    */
-    Success = 0,
-    /*
-    * Used when the status of something has a warning
-    */
-    Waring = 1,
-    /*
-    * Used when the status of something has an error
-    */
-    Error = 2,
-}
-```
-
-
 ### Nullable in OpenAPI v2
 In the OpenAPI v3 spec you can create properties that can be NULL, by providing a `nullable: true` in your schema.
 However, the v2 spec does not allow you to do this. You can use the unofficial `x-nullable` in your specification

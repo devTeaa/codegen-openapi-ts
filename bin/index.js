@@ -5,44 +5,43 @@
 const path = require('path');
 const program = require('commander');
 const pkg = require('../package.json');
+const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
+
+const appRoot = process.cwd().split('/node_modules')[0]
 
 const params = program
-    .name('openapi')
+    .name('codegen-openapi-ts')
     .usage('[options]')
     .version(pkg.version)
-    .requiredOption('-i, --input <value>', 'OpenAPI specification, can be a path, url or string content (required)')
-    .requiredOption('-o, --output <value>', 'Output directory (required)')
-    .option('-c, --client <value>', 'HTTP client to generate [fetch, xhr, node, axios]', 'fetch')
-    .option('--useOptions', 'Use options instead of arguments')
-    .option('--useUnionTypes', 'Use union types instead of enums')
-    .option('--exportServices <value>', 'Write services to disk', true)
-    .option('--exportModels <value>', 'Write models to disk', true)
-    .option('--postfix <value>', 'Service name postfix', 'Service')
-    .option('--request <value>', 'Path to custom request file')
+    .option('--config <value>', 'Path to config file', 'codegen.config.js')
     .parse(process.argv)
     .opts();
 
-const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
+async function generateOnConfig () {
+  try {
+    const configFile = require(path.join(appRoot, params.config))
 
-if (OpenAPI) {
-    OpenAPI.generate({
-        input: params.input,
-        output: params.output,
-        httpClient: params.client,
-        useOptions: params.useOptions,
-        useUnionTypes: params.useUnionTypes,
-        exportCore: false,
-        exportServices: JSON.parse(params.exportServices) === true,
-        exportModels: JSON.parse(params.exportModels) === true,
-        exportSchemas: false,
-        postfix: params.postfix,
-        request: params.request,
-    })
-        .then(() => {
-            process.exit(0);
-        })
-        .catch(error => {
-            console.error(error);
-            process.exit(1);
-        });
+    for (let i = 0; i < configFile.length - 1; i++) {
+      await OpenAPI.convertAndGenerate(
+        {
+          from: configFile[i].from,
+          to: 'openapi_3',
+          source: configFile[i].source
+        },
+        {
+          input: 'api-schema.json',
+          output: configFile[i].output || 'output',
+          useOptions: true,
+          useUnionTypes: true
+        },
+        configFile[i].urlMethodMapping || [],
+      )
+
+      continue
+    }
+  } catch (err) {
+    console.log(err)
+  }
 }
+
+generateOnConfig()
