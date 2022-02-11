@@ -21,7 +21,8 @@ async function generateOnConfig () {
   try {
     const configFile = require(path.join(appRoot, params.config))
 
-    for (let i = 0; i < configFile.length - 1; i++) {
+    for (let i = 0; i < configFile.length; i++) {
+      console.log('Generating ' + configFile[i].source)
       await OpenAPI.convertAndGenerate(
         {
           from: configFile[i].from,
@@ -36,8 +37,6 @@ async function generateOnConfig () {
         },
         configFile[i].urlMethodMapping || [],
       )
-
-      continue
     }
   } catch (err) {
     console.log(err)

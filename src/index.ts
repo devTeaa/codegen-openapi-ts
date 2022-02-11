@@ -136,8 +136,7 @@ export async function convertAndGenerate({ from, to, source }: ConverterInput, {
     converted.validate()
 
     if (!isString(input)) {
-      console.error('Please provide correct path for input file to be generated')
-      return
+      throw 'Please provide correct path for input file to be generated'
     }
 
     replaceOperations.forEach(value => {
@@ -155,6 +154,6 @@ export async function convertAndGenerate({ from, to, source }: ConverterInput, {
       useUnionTypes,
     })
   } catch (err) {
-    console.error(err)
+    throw err
   }
 }
