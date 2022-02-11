@@ -31,7 +31,8 @@
     "main": "dist/index.js",
     "types": "types/index.d.ts",
     "bin": {
-        "codegen-openapi-ts": "bin/index.js"
+        "codegen-openapi-ts": "bin/index.js",
+        "codegen-openapi-ts-cli": "bin/cli.js"
     },
     "files": [
         "bin/index.js",

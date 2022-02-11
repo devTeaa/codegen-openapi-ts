@@ -126,7 +126,7 @@ export async function generate({
  * @param options.request: Path to custom request file
  * @param options.write Write the files to disk (true or false)
  */
-export async function convertAndGenerate({ from, to, source }: ConverterInput, { input, output, useOptions, useUnionTypes }: Options, replaceOperations: [string, 'get' | 'post' | 'put' | 'delete', string][]): Promise<void> {
+export async function convertAndGenerate({ from, to, source }: ConverterInput, { input, output, useOptions, useUnionTypes }: Options, replaceOperations: [string, 'get' | 'post' | 'put' | 'delete', string][] = []): Promise<void> {
   try {
     const converted = await Converter.convert({
       from,

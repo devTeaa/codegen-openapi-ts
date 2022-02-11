@@ -5,31 +5,43 @@
 const path = require('path');
 const program = require('commander');
 const pkg = require('../package.json');
+const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
+
+const appRoot = process.cwd().split('/node_modules')[0]
 
 const params = program
     .name('codegen-openapi-ts')
     .usage('[options]')
     .version(pkg.version)
-    .argument('<from>', 'Original response specification version')
-    .argument('<source>', 'Swagger/OpenAPI response url')
-    .argument('[output]', 'Output folder name', 'output')
+    .option('--config <value>', 'Path to config file', 'codegen.config.js')
     .parse(process.argv)
-    .processedArgs;
+    .opts();
 
-const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
+async function generateOnConfig () {
+  try {
+    const configFile = require(path.join(appRoot, params.config))
 
-if (OpenAPI) {
-    OpenAPI.convertAndGenerate(
-      {
-        from: params[0],
-        to: 'openapi_3',
-        source: params[1]
-      },
-      {
-        input: 'api-schema.json',
-        output: params[2],
-        useOptions: true,
-        useUnionTypes: true
-      },
-    )
+    for (let i = 0; i < configFile.length - 1; i++) {
+      await OpenAPI.convertAndGenerate(
+        {
+          from: configFile[i].from,
+          to: 'openapi_3',
+          source: configFile[i].source
+        },
+        {
+          input: 'api-schema.json',
+          output: configFile[i].output || 'output',
+          useOptions: true,
+          useUnionTypes: true
+        },
+        configFile[i].urlMethodMapping || [],
+      )
+
+      continue
+    }
+  } catch (err) {
+    console.log(err)
+  }
 }
+
+generateOnConfig()

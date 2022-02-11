@@ -17,6 +17,7 @@
 - Supports generation through Node.js
 - Supports tsc and @babel/plugin-transform-typescript
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
+- Supports generate multiple api based on config file 
 
 ## Install
 
@@ -27,10 +28,21 @@ npm install codegen-openapi-ts --save-dev
 
 ## Usage
 
+**codegen.config.js**
 ```
-// CLI
 codegen-openapi-ts --help
 Usage: codegen-openapi-ts [options]
+
+Options:
+  -V, --version     output the version number
+  --config <value>  Path to config file (default: "codegen.config.js")
+  -h, --help        display help for command
+```
+
+**CLI**
+```
+codegen-openapi-ts-cli --help
+Usage: codegen-openapi-ts-cli [options]
 
 Arguments:
   from           Original response specification version
@@ -40,8 +52,10 @@ Arguments:
 Options:
   -V, --version  output the version number
   -h, --help     display help for command
+```
 
-// Node
+**Node**
+```
 OpenAPI.convertAndGenerate({
   from: string,           // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
   to: string,             // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
@@ -56,13 +70,26 @@ OpenAPI.convertAndGenerate({
 
 
 ## Example
-**CLI**
-```bash
-codegen-openapi-ts swagger_2 https://pokemonapi/docs/api
-codegen-openapi-ts swagger_2 https://pokemonapi/docs/api pokemon-api
+**codegen.config.js**
+```javascript
+'use strict';
+
+module.exports = [
+  {
+    source: 'http://pokemon-api/docs/api',
+    from: 'openapi_3',
+    output: 'src/api-types/pokemon-api', // pokemon-api
+  },
+];
 ```
 
-**fetch-schema.js**
+**CLI**
+```bash
+codegen-openapi-ts-cli swagger_2 https://pokemonapi/docs/api
+codegen-openapi-ts-cli swagger_2 https://pokemonapi/docs/api pokemon-api
+```
+
+**fetch-schema.js (Node)**
 ```javascript
 // fetch-schema.js
 const OpenAPI = require('codegen-openapi-ts')
