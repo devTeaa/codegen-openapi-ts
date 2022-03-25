@@ -1,4 +1,5 @@
 const Converter = require('api-spec-converter');
+const shell = require('shelljs')
 import { ConverterInput } from 'api-spec-converter';
 import fs from 'fs'
 import { HttpClient } from './HttpClient';
@@ -128,6 +129,17 @@ export async function generate({
  */
 export async function convertAndGenerate({ from, to, source }: ConverterInput, { input, output, useOptions, useUnionTypes }: Options, replaceOperations: [string, 'get' | 'post' | 'put' | 'delete', string][] = []): Promise<void> {
   try {
+    const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
+
+    if (sshRegex.test(source)) {
+      const sshFile = source.split(' ')[2]
+      shell.exec(`git archive --remote=${source} | tar xvf - ${sshFile} && mv ${sshFile} ${input}`, {silent: true})
+      
+      if (typeof(input) === 'string') {
+        source = input
+      }
+    }
+
     const converted = await Converter.convert({
       from,
       to,
