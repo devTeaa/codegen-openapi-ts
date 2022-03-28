@@ -18,7 +18,7 @@
 - Supports tsc and @babel/plugin-transform-typescript
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
 - Supports generate multiple api based on config file 
-- Supports fetching single file (well, technically) and generate type from that
+- Supports fetching single file and generate type from that
 
 ## Install
 
