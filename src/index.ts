@@ -147,7 +147,12 @@ export async function convertAndGenerate({ from, to, source }: ConverterInput, {
       to,
       source,
     })
-    converted.validate()
+    
+    // const validationResult = await converted.validate()
+
+    // if (!validationResult.valid) {
+    //   throw validationResult.errors.message
+    // }
 
     if (!isString(input)) {
       throw 'Please provide correct path for input file to be generated'
