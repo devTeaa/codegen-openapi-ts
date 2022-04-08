@@ -19,6 +19,7 @@
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
 - Supports generate multiple api based on config file 
 - Supports fetching single file and generate type from that
+- Supports only generate specified api based on the url and http method (v4.0.x)
 
 ## Install
 
@@ -38,6 +39,21 @@ Options:
   -V, --version     output the version number
   --config <value>  Path to config file (default: "codegen.config.js")
   -h, --help        display help for command
+```
+```
+'use strict';
+
+module.exports = [
+  {
+    source: OpenAPI Swagger response (can check on the network response on the spec page),
+    from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
+    output: output folder
+    urlMethodMapping: [
+      [api path, http method (get/post/put/delete), desired operation name]
+    ],
+    selectedOnly: this will make it so only generate services under urlMethodMapping, the default is false
+  },
+];
 ```
 
 **CLI**
@@ -80,6 +96,10 @@ module.exports = [
     source: 'http://pokemon-api/docs/api',
     from: 'openapi_3',
     output: 'src/api-types/pokemon-api', // pokemon-api
+    urlMethodMapping: [
+      ['get-pokemon-list/gen1', 'get', 'GetPokemonListGen1']
+    ],
+    selectedOnly: true
   },
   {
     source: 'ssh://git@github.com/pokemon/pokemon-api.git HEAD docs/evolution-path.json',
