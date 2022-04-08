@@ -36,6 +36,7 @@ async function generateOnConfig () {
           useUnionTypes: true
         },
         configFile[i].urlMethodMapping || [],
+        configFile[i].selectedOnly || false
       )
     }
   } catch (err) {

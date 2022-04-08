@@ -128,7 +128,12 @@ export async function generate({
  * @param options.request: Path to custom request file
  * @param options.write Write the files to disk (true or false)
  */
-export async function convertAndGenerate({ from, to, source }: ConverterInput, { input, output, useOptions, useUnionTypes }: Options, replaceOperations: [string, 'get' | 'post' | 'put' | 'delete', string][] = []): Promise<void> {
+export async function convertAndGenerate(
+    { from, to, source }: ConverterInput,
+    { input, output, useOptions, useUnionTypes }: Options,
+    replaceOperations: [string, 'get' | 'post' | 'put' | 'delete', string][] = [],
+    selectedOnly: boolean = false
+  ): Promise<void> {
   try {
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
 
@@ -161,6 +166,12 @@ export async function convertAndGenerate({ from, to, source }: ConverterInput, {
     replaceOperations.forEach(value => {
       converted.spec.paths[value[0]][value[1]].operationId = value[2]
     })
+
+    if (selectedOnly) {
+      converted.spec.paths = Object.fromEntries(
+        Object.entries(converted.spec.paths).filter(item => replaceOperations.find(config => config[0] === item[0]))
+      )
+    }
 
     if (typeof input === 'string') {
       fs.writeFileSync(input, converted.stringify())
