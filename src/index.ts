@@ -131,8 +131,9 @@ export async function generate({
 export async function convertAndGenerate(
     { from, to, source }: ConverterInput,
     { input, output, useOptions, useUnionTypes }: Options,
-    replaceOperations: [string, 'get' | 'post' | 'put' | 'delete', string][] = [],
-    selectedOnly: boolean = false
+    urlMethodMapping: [string, 'get' | 'post' | 'put' | 'delete', string][] = [],
+    selectedOnly: boolean = false,
+    modelNameMapping: [string, string][] = []
   ): Promise<void> {
   try {
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
@@ -147,7 +148,7 @@ export async function convertAndGenerate(
       }
     }
 
-    const converted = await Converter.convert({
+    let converted = await Converter.convert({
       from,
       to,
       source,
@@ -163,18 +164,24 @@ export async function convertAndGenerate(
       throw 'Please provide correct path for input file to be generated'
     }
 
-    replaceOperations.forEach(value => {
+    urlMethodMapping.forEach(value => {
       converted.spec.paths[value[0]][value[1]].operationId = value[2]
     })
 
     if (selectedOnly) {
       converted.spec.paths = Object.fromEntries(
-        Object.entries(converted.spec.paths).filter(item => replaceOperations.find(config => config[0] === item[0]))
+        Object.entries(converted.spec.paths).filter(item => urlMethodMapping.find(config => config[0] === item[0]))
       )
     }
 
+    converted = converted.stringify()
+
+    modelNameMapping.forEach(value => {
+      converted = converted.replace(value[0], value[1])
+    })
+
     if (typeof input === 'string') {
-      fs.writeFileSync(input, converted.stringify())
+      fs.writeFileSync(input, converted)
     }
 
     generate({

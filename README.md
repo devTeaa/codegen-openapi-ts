@@ -19,7 +19,8 @@
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
 - Supports generate multiple api based on config file 
 - Supports fetching single file and generate type from that
-- Supports only generate specified api based on the url and http method (v4.0.x)
+- Supports only generate specified api based on the url and http method (v4.0.1)
+- Supports custom map model naming (v.4.0.2)
 
 ## Install
 
@@ -49,9 +50,12 @@ module.exports = [
     from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
     output: output folder
     urlMethodMapping: [
-      [api path, http method (get/post/put/delete), desired operation name]
+      [api path, http method (get/post/put/delete), output operation name]
     ],
-    selectedOnly: this will make it so only generate services under urlMethodMapping, the default is false
+    selectedOnly: this will make it so only generate services under urlMethodMapping, the default is false,
+    modelNameMapping: [
+      [regex model name on schema, output model name]
+    ]
   },
 ];
 ```
@@ -99,7 +103,10 @@ module.exports = [
     urlMethodMapping: [
       ['get-pokemon-list/gen1', 'get', 'GetPokemonListGen1']
     ],
-    selectedOnly: true
+    selectedOnly: true,
+    modelNameMapping: [
+      [/some.custom.model.naming/g, 'CustomModelNaming']
+    ],
   },
   {
     source: 'ssh://git@github.com/pokemon/pokemon-api.git HEAD docs/evolution-path.json',
