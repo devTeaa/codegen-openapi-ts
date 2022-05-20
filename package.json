@@ -1,6 +1,6 @@
 {
     "name": "codegen-openapi-ts",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "Library that generates Typescript clients based on the OpenAPI specification.",
     "author": "devteaa",
     "homepage": "https://github.com/devteaa/codegen-openapi-ts",
