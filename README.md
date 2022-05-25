@@ -19,8 +19,8 @@
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
 - Supports generate multiple api based on config file 
 - Supports fetching single file and generate type from that
-- Supports only generate specified api based on the url and http method (v4.0.1)
-- Supports custom map model naming (v.4.0.2)
+- Supports only generate specified api based on the url and http method (v0.4.1)
+- Supports custom map model naming (v0.4.2)
 
 ## Install
 
