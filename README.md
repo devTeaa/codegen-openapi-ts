@@ -18,9 +18,9 @@
 - Supports tsc and @babel/plugin-transform-typescript
 - Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
 - Supports generate multiple api based on config file 
-- Supports fetching single file and generate type from that
 - Supports only generate specified api based on the url and http method (v0.4.1)
 - Supports custom map model naming (v0.4.2)
+- Supports fetching single file and generate type from that (v0.4.3)
 
 ## Install
 
@@ -109,7 +109,8 @@ module.exports = [
     ],
   },
   {
-    source: 'ssh://git@github.com/pokemon/pokemon-api.git HEAD docs/evolution-path.json',
+    // source: '<git repo> <branch name> <file to path>',
+    source: 'ssh://git@github.com/pokemon/pokemon-api.git master -- docs/evolution-path.json',
     from: 'openapi_3',
     output: 'src/api-types/evolution-path', // evolution-path
   }, 
