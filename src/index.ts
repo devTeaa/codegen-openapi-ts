@@ -5,7 +5,6 @@ import fs from 'fs'
 import { HttpClient } from './HttpClient';
 import { parse as parseV2 } from './openApi/v2';
 import { parse as parseV3 } from './openApi/v3';
-import { generateTmpDir } from './utils/fileSystem';
 import { getOpenApiSpec } from './utils/getOpenApiSpec';
 import { getOpenApiVersion, OpenApiVersion } from './utils/getOpenApiVersion';
 import { isString } from './utils/isString';
@@ -139,10 +138,8 @@ export async function convertAndGenerate(
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
 
     if (sshRegex.test(source)) {
-      const osTmpDir = await generateTmpDir()
-      const sshFile = source.split(' ')[2]
-      shell.exec(`git archive --remote=${source} --output=${osTmpDir}/repo.tar && tar xvf ${osTmpDir}/repo.tar -C ${osTmpDir} && mv ${osTmpDir}/${sshFile} ${input}`, {silent: true})
-      
+      shell.exec(`git archive --remote=${source} | tar -xO > ./api-schema.json`)
+
       if (typeof(input) === 'string') {
         source = input
       }
