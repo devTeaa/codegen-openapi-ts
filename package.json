@@ -1,6 +1,6 @@
 {
     "name": "codegen-openapi-ts",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "description": "Library that generates Typescript clients based on the OpenAPI specification.",
     "author": "devteaa",
     "homepage": "https://github.com/devteaa/codegen-openapi-ts",
@@ -37,7 +37,8 @@
     "files": [
         "bin/index.js",
         "dist/index.js",
-        "types/index.d.ts"
+        "types/index.d.ts",
+        "types/helper.d.ts"
     ],
     "scripts": {
         "clean": "rimraf ./dist ./test/generated ./test/e2e/generated ./samples/generated ./coverage ./node_modules/.cache",
