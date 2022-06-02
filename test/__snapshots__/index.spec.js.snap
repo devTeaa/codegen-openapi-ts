@@ -755,6 +755,35 @@ exports[`v2 should generate: ./test/generated/v2/services/CollectionFormatServic
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const CollectionFormatServiceUrl = {
     CollectionFormat: '/api/v\${OpenAPI.VERSION}/collectionFormat',
 }
@@ -764,13 +793,13 @@ export const CollectionFormatServiceUrl = {
 export interface CollectionFormat {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterArrayCsv: Array<string>
             parameterArraySsv: Array<string>
             parameterArrayTsv: Array<string>
             parameterArrayPipes: Array<string>
             parameterArrayMulti: Array<string>
-        }
+        }>
     }
 }
 
@@ -783,6 +812,35 @@ exports[`v2 should generate: ./test/generated/v2/services/ComplexService.ts 1`] 
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const ComplexServiceUrl = {
     ComplexTypes: '/api/v\${OpenAPI.VERSION}/complex',
 }
@@ -792,7 +850,7 @@ export const ComplexServiceUrl = {
 export interface ComplexTypes {
     response: ModelWithString
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterObject: {
                 first?: {
                     second?: {
@@ -801,7 +859,7 @@ export interface ComplexTypes {
                 };
             }
             parameterReference: ModelWithString
-        }
+        }>
     }
 }
 
@@ -813,6 +871,35 @@ exports[`v2 should generate: ./test/generated/v2/services/DefaultsService.ts 1`]
 /* tslint:disable */
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const DefaultsServiceUrl = {
     CallWithDefaultParameters: '/api/v\${OpenAPI.VERSION}/defaults',
@@ -832,13 +919,13 @@ export const DefaultsServiceUrl = {
 export interface CallWithDefaultParameters {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterString: string
             parameterNumber: number
             parameterBoolean: boolean
             parameterEnum: 'Success' | 'Warning' | 'Error'
             parameterModel: ModelWithString
-        }
+        }>
     }
 }
 
@@ -854,13 +941,13 @@ export interface CallWithDefaultParameters {
 export interface CallWithDefaultOptionalParameters {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterString: string
             parameterNumber: number
             parameterBoolean: boolean
             parameterEnum: 'Success' | 'Warning' | 'Error'
             parameterModel: ModelWithString
-        }
+        }>
     }
 }
 
@@ -874,7 +961,7 @@ export interface CallWithDefaultOptionalParameters {
 export interface CallToTestOrderOfParams {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterStringWithNoDefault: string
             parameterOptionalStringWithDefault: string
             parameterOptionalStringWithEmptyDefault: string
@@ -883,7 +970,7 @@ export interface CallToTestOrderOfParams {
             parameterStringWithEmptyDefault: string
             parameterStringNullableWithNoDefault?: string | null
             parameterStringNullableWithDefault: string | null
-        }
+        }>
     }
 }
 
@@ -894,6 +981,35 @@ exports[`v2 should generate: ./test/generated/v2/services/DuplicateService.ts 1`
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const DuplicateServiceUrl = {
 }
@@ -906,6 +1022,35 @@ exports[`v2 should generate: ./test/generated/v2/services/ErrorService.ts 1`] = 
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const ErrorServiceUrl = {
     TestErrorCode: '/api/v\${OpenAPI.VERSION}/error',
 }
@@ -915,9 +1060,9 @@ export const ErrorServiceUrl = {
 export interface TestErrorCode {
     response: any
     request: {
-        query: {
+        query: DeepFlatten<{
             status: string
-        }
+        }>
     }
 }
 
@@ -928,6 +1073,35 @@ exports[`v2 should generate: ./test/generated/v2/services/HeaderService.ts 1`] =
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const HeaderServiceUrl = {
 }
@@ -940,6 +1114,35 @@ exports[`v2 should generate: ./test/generated/v2/services/MultipleTags1Service.t
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const MultipleTags1ServiceUrl = {
 }
 
@@ -950,6 +1153,35 @@ exports[`v2 should generate: ./test/generated/v2/services/MultipleTags2Service.t
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const MultipleTags2ServiceUrl = {
 }
@@ -962,6 +1194,35 @@ exports[`v2 should generate: ./test/generated/v2/services/MultipleTags3Service.t
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const MultipleTags3ServiceUrl = {
 }
 
@@ -973,6 +1234,35 @@ exports[`v2 should generate: ./test/generated/v2/services/NoContentService.ts 1`
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const NoContentServiceUrl = {
 }
 
@@ -983,6 +1273,35 @@ exports[`v2 should generate: ./test/generated/v2/services/ParametersService.ts 1
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const ParametersServiceUrl = {
     CallWithParameters: ({
@@ -1009,9 +1328,9 @@ export interface CallWithParameters {
         path: {
             parameterPath: string
         }
-        query: {
+        query: DeepFlatten<{
             parameterQuery: string
-        }
+        }>
         body: {
             parameterBody: string
         }
@@ -1028,10 +1347,10 @@ export interface CallWithWeirdParameterNames {
             parameterPath2?: string
             parameterPath3?: string
         }
-        query: {
+        query: DeepFlatten<{
             parameterQuery: string
             _default?: string
-        }
+        }>
         body: {
             parameterBody: string
         }
@@ -1049,6 +1368,35 @@ import type { ModelThatExtends } from '../models/ModelThatExtends';
 import type { ModelThatExtendsExtends } from '../models/ModelThatExtendsExtends';
 import type { ModelWithString } from '../models/ModelWithString';
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const ResponseServiceUrl = {
 }
 
@@ -1060,6 +1408,35 @@ exports[`v2 should generate: ./test/generated/v2/services/SimpleService.ts 1`] =
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const SimpleServiceUrl = {
 }
 
@@ -1070,6 +1447,35 @@ exports[`v2 should generate: ./test/generated/v2/services/TypesService.ts 1`] = 
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const TypesServiceUrl = {
     Types: ({
@@ -1091,7 +1497,7 @@ export interface Types {
         path: {
             id?: number
         }
-        query: {
+        query: DeepFlatten<{
             parameterArray: Array<string>
             parameterDictionary: Record<string, string>
             parameterEnum: 'Success' | 'Warning' | 'Error'
@@ -1099,7 +1505,7 @@ export interface Types {
             parameterString: string
             parameterBoolean: boolean
             parameterObject: any
-        }
+        }>
     }
 }
 
@@ -2034,6 +2440,35 @@ exports[`v3 should generate: ./test/generated/v3/services/CollectionFormatServic
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const CollectionFormatServiceUrl = {
     CollectionFormat: '/api/v\${OpenAPI.VERSION}/collectionFormat',
 }
@@ -2043,13 +2478,13 @@ export const CollectionFormatServiceUrl = {
 export interface CollectionFormat {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterArrayCsv: Array<string> | null
             parameterArraySsv: Array<string> | null
             parameterArrayTsv: Array<string> | null
             parameterArrayPipes: Array<string> | null
             parameterArrayMulti: Array<string> | null
-        }
+        }>
     }
 }
 
@@ -2065,6 +2500,35 @@ import type { ModelWithDictionary } from '../models/ModelWithDictionary';
 import type { ModelWithEnum } from '../models/ModelWithEnum';
 import type { ModelWithString } from '../models/ModelWithString';
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const ComplexServiceUrl = {
     ComplexTypes: '/api/v\${OpenAPI.VERSION}/complex',
     ComplexParams: ({
@@ -2079,7 +2543,7 @@ export const ComplexServiceUrl = {
 export interface ComplexTypes {
     response: ModelWithString
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterObject: {
                 first?: {
                     second?: {
@@ -2088,7 +2552,7 @@ export interface ComplexTypes {
                 };
             }
             parameterReference: ModelWithString
-        }
+        }>
     }
 }
 
@@ -2127,6 +2591,35 @@ exports[`v3 should generate: ./test/generated/v3/services/DefaultsService.ts 1`]
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const DefaultsServiceUrl = {
     CallWithDefaultParameters: '/api/v\${OpenAPI.VERSION}/defaults',
     CallWithDefaultOptionalParameters: '/api/v\${OpenAPI.VERSION}/defaults',
@@ -2145,13 +2638,13 @@ export const DefaultsServiceUrl = {
 export interface CallWithDefaultParameters {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterString: string | null
             parameterNumber: number | null
             parameterBoolean: boolean | null
             parameterEnum: 'Success' | 'Warning' | 'Error'
             parameterModel: ModelWithString | null
-        }
+        }>
     }
 }
 
@@ -2167,13 +2660,13 @@ export interface CallWithDefaultParameters {
 export interface CallWithDefaultOptionalParameters {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterString: string
             parameterNumber: number
             parameterBoolean: boolean
             parameterEnum: 'Success' | 'Warning' | 'Error'
             parameterModel: ModelWithString
-        }
+        }>
     }
 }
 
@@ -2187,7 +2680,7 @@ export interface CallWithDefaultOptionalParameters {
 export interface CallToTestOrderOfParams {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameterStringWithNoDefault: string
             parameterOptionalStringWithDefault: string
             parameterOptionalStringWithEmptyDefault: string
@@ -2196,7 +2689,7 @@ export interface CallToTestOrderOfParams {
             parameterStringWithEmptyDefault: string
             parameterStringNullableWithNoDefault?: string | null
             parameterStringNullableWithDefault: string | null
-        }
+        }>
     }
 }
 
@@ -2207,6 +2700,35 @@ exports[`v3 should generate: ./test/generated/v3/services/DuplicateService.ts 1`
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const DuplicateServiceUrl = {
 }
@@ -2219,6 +2741,35 @@ exports[`v3 should generate: ./test/generated/v3/services/ErrorService.ts 1`] = 
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const ErrorServiceUrl = {
     TestErrorCode: '/api/v\${OpenAPI.VERSION}/error',
 }
@@ -2228,9 +2779,9 @@ export const ErrorServiceUrl = {
 export interface TestErrorCode {
     response: any
     request: {
-        query: {
+        query: DeepFlatten<{
             status: number
-        }
+        }>
     }
 }
 
@@ -2243,6 +2794,35 @@ exports[`v3 should generate: ./test/generated/v3/services/FormDataService.ts 1`]
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const FormDataServiceUrl = {
     PostFormData: '/api/v\${OpenAPI.VERSION}/formData/',
 }
@@ -2252,9 +2832,9 @@ export const FormDataServiceUrl = {
 export interface PostFormData {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameter?: string
-        }
+        }>
     }
 }
 
@@ -2265,6 +2845,35 @@ exports[`v3 should generate: ./test/generated/v3/services/HeaderService.ts 1`] =
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const HeaderServiceUrl = {
 }
@@ -2277,6 +2886,35 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipartService.ts 1`
 /* tslint:disable */
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const MultipartServiceUrl = {
     MultipartRequest: '/api/v\${OpenAPI.VERSION}/multipart',
@@ -2298,6 +2936,35 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipleTags1Service.t
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const MultipleTags1ServiceUrl = {
 }
 
@@ -2308,6 +2975,35 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipleTags2Service.t
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const MultipleTags2ServiceUrl = {
 }
@@ -2320,6 +3016,35 @@ exports[`v3 should generate: ./test/generated/v3/services/MultipleTags3Service.t
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const MultipleTags3ServiceUrl = {
 }
 
@@ -2330,6 +3055,35 @@ exports[`v3 should generate: ./test/generated/v3/services/NoContentService.ts 1`
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const NoContentServiceUrl = {
 }
@@ -2342,6 +3096,35 @@ exports[`v3 should generate: ./test/generated/v3/services/ParametersService.ts 1
 /* tslint:disable */
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const ParametersServiceUrl = {
     CallWithParameters: ({
@@ -2370,9 +3153,9 @@ export interface CallWithParameters {
         path: {
             parameterPath: string | null
         }
-        query: {
+        query: DeepFlatten<{
             parameterQuery: string | null
-        }
+        }>
         body: {
             requestBody: ModelWithString | null
         }
@@ -2389,10 +3172,10 @@ export interface CallWithWeirdParameterNames {
             parameterPath2?: string
             parameterPath3?: string
         }
-        query: {
+        query: DeepFlatten<{
             parameterQuery: string | null
             _default?: string
-        }
+        }>
         body: {
             requestBody: ModelWithString | null
         }
@@ -2404,9 +3187,9 @@ export interface CallWithWeirdParameterNames {
 export interface GetCallWithOptionalParam {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameter?: string
-        }
+        }>
         body: {
             requestBody: ModelWithString
         }
@@ -2418,9 +3201,9 @@ export interface GetCallWithOptionalParam {
 export interface PostCallWithOptionalParam {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameter: string
-        }
+        }>
         body: {
             requestBody?: ModelWithString
         }
@@ -2436,6 +3219,35 @@ exports[`v3 should generate: ./test/generated/v3/services/RequestBodyService.ts 
 /* eslint-disable */
 import type { ModelWithString } from '../models/ModelWithString';
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const RequestBodyServiceUrl = {
     PostRequestBody: '/api/v\${OpenAPI.VERSION}/requestBody/',
 }
@@ -2445,9 +3257,9 @@ export const RequestBodyServiceUrl = {
 export interface PostRequestBody {
 
     request: {
-        query: {
+        query: DeepFlatten<{
             parameter?: string
-        }
+        }>
         body: {
             requestBody?: ModelWithString
         }
@@ -2465,6 +3277,35 @@ import type { ModelThatExtends } from '../models/ModelThatExtends';
 import type { ModelThatExtendsExtends } from '../models/ModelThatExtendsExtends';
 import type { ModelWithString } from '../models/ModelWithString';
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const ResponseServiceUrl = {
 }
 
@@ -2476,6 +3317,35 @@ exports[`v3 should generate: ./test/generated/v3/services/SimpleService.ts 1`] =
 /* tslint:disable */
 /* eslint-disable */
 
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
+
 export const SimpleServiceUrl = {
 }
 
@@ -2486,6 +3356,35 @@ exports[`v3 should generate: ./test/generated/v3/services/TypesService.ts 1`] = 
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const TypesServiceUrl = {
     Types: ({
@@ -2507,7 +3406,7 @@ export interface Types {
         path: {
             id?: number
         }
-        query: {
+        query: DeepFlatten<{
             parameterArray: Array<string> | null
             parameterDictionary: any
             parameterEnum: 'Success' | 'Warning' | 'Error' | null
@@ -2515,7 +3414,7 @@ export interface Types {
             parameterString: string | null
             parameterBoolean: boolean | null
             parameterObject: any
-        }
+        }>
     }
 }
 
@@ -2526,6 +3425,35 @@ exports[`v3 should generate: ./test/generated/v3/services/UploadService.ts 1`] =
 "/* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+
+type NonObjectKeysOf<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
+}[keyof T];
+
+type ValuesOf<T> = T[keyof T];
+type ObjectValuesOf<T extends Object> = Exclude<
+Exclude<Extract<ValuesOf<T>, object>, never>,
+Array<any>
+>;
+
+type UnionToIntersection<U> = (U extends any
+? (k: U) => void
+: never) extends ((k: infer I) => void)
+? I
+: never;
+
+type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
+UnionToIntersection<Recursor>;
+
+type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
+type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
+type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
+type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
+type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
+type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
+type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
+type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
+type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
 
 export const UploadServiceUrl = {
     UploadFile: '/api/v\${OpenAPI.VERSION}/upload',

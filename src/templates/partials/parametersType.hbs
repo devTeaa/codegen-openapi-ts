@@ -9,13 +9,13 @@ path: {
 }
 {{/hasProperty}}
 {{#hasProperty parameters 'query'}}
-query: {
+query: DeepFlatten<{
 {{#each parameters}}
   {{#equals in 'query'}}
   {{{name}}}{{>isRequired}}: {{>type}}
   {{/equals}}
 {{/each}}
-}
+}>
 {{/hasProperty}}
 {{#hasProperty parameters 'body'}}
 body: {
