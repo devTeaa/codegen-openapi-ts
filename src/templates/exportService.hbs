@@ -6,35 +6,6 @@ import type { {{{this}}} } from '../models/{{{this}}}';
 {{/each}}
 {{/if}}
 
-type NonObjectKeysOf<T> = {
-  [K in keyof T]: T[K] extends Array<any> ? K : T[K] extends object ? never : K
-}[keyof T];
-
-type ValuesOf<T> = T[keyof T];
-type ObjectValuesOf<T extends Object> = Exclude<
-  Exclude<Extract<ValuesOf<T>, object>, never>,
-  Array<any>
->;
-
-type UnionToIntersection<U> = (U extends any
-  ? (k: U) => void
-  : never) extends ((k: infer I) => void)
-  ? I
-  : never;
-
-type DFBase<T, Recursor> = Pick<T, NonObjectKeysOf<T>> &
-  UnionToIntersection<Recursor>;
-
-type DeepFlatten<T> = T extends any ? DFBase<T, DF2<ObjectValuesOf<T>>> : never;
-type DF2<T> = T extends any ? DFBase<T, DF3<ObjectValuesOf<T>>> : never;
-type DF3<T> = T extends any ? DFBase<T, DF4<ObjectValuesOf<T>>> : never;
-type DF4<T> = T extends any ? DFBase<T, DF5<ObjectValuesOf<T>>> : never;
-type DF5<T> = T extends any ? DFBase<T, DF6<ObjectValuesOf<T>>> : never;
-type DF6<T> = T extends any ? DFBase<T, DF7<ObjectValuesOf<T>>> : never;
-type DF7<T> = T extends any ? DFBase<T, DF8<ObjectValuesOf<T>>> : never;
-type DF8<T> = T extends any ? DFBase<T, DF9<ObjectValuesOf<T>>> : never;
-type DF9<T> = T extends any ? DFBase<T, ObjectValuesOf<T>> : never;
-
 export const {{{name}}}{{{@root.postfix}}}Url = {
   {{#each operations}}
   {{#hasLength parameters}}

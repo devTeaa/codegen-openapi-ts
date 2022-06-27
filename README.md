@@ -21,7 +21,6 @@
 - Supports only generate specified api based on the url and http method (v0.4.1)
 - Supports custom map model naming (v0.4.2)
 - Supports fetching single file and generate type from that (v0.4.3)
-- Deep fatten request query (v0.5.1)
 
 ## Install
 
