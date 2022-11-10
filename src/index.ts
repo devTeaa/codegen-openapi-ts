@@ -130,9 +130,9 @@ export async function generate({
 export async function convertAndGenerate(
     { from, to, source }: ConverterInput,
     { input, output, useOptions, useUnionTypes }: Options,
-    urlMethodMapping: [string, 'get' | 'post' | 'put' | 'delete', string][] = [],
+    urlMethodMapping: [string, 'get' | 'post' | 'put' | 'delete', string, string?][] = [],
     selectedOnly: boolean = false,
-    modelNameMapping: [string, string][] = []
+    modelNameMapping: [string, string][] = [],
   ): Promise<void> {
   try {
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
@@ -163,11 +163,17 @@ export async function convertAndGenerate(
 
     urlMethodMapping.forEach(value => {
       converted.spec.paths[value[0]][value[1]].operationId = value[2]
+
+      if (value[3]) {
+        converted.spec.paths[value[3]] = converted.spec.paths[value[0]]
+      }
+
+      delete converted.spec.paths[value[0]]
     })
 
     if (selectedOnly) {
       converted.spec.paths = Object.fromEntries(
-        Object.entries(converted.spec.paths).filter(item => urlMethodMapping.find(config => config[0] === item[0]))
+        Object.entries(converted.spec.paths).filter(item => urlMethodMapping.find(config => (config[3] || config[0]) === item[0]))
       )
     }
 

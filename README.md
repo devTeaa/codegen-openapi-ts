@@ -21,6 +21,7 @@
 - Supports only generate specified api based on the url and http method (v0.4.1)
 - Supports custom map model naming (v0.4.2)
 - Supports fetching single file and generate type from that (v0.4.3)
+- Supports custom url request mapping (ex: backend gateway) (v0.5.3)
 
 ## Install
 
@@ -50,7 +51,7 @@ module.exports = [
     from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
     output: output folder
     urlMethodMapping: [
-      [api path, http method (get/post/put/delete), output operation name]
+      [api path, http method (get/post/put/delete), output operation name, custom url api path]
     ],
     selectedOnly: this will make it so only generate services under urlMethodMapping, the default is false,
     modelNameMapping: [
@@ -101,7 +102,8 @@ module.exports = [
     from: 'openapi_3',
     output: 'src/api-types/pokemon-api', // pokemon-api
     urlMethodMapping: [
-      ['get-pokemon-list/gen1', 'get', 'GetPokemonListGen1']
+      ['get-pokemon-list/gen1', 'get', 'GetPokemonListGen1'],
+      ['get-pokemon-list/gen2', 'get', 'GetPokemonListGen2', 'gateway/get-pokemon-list/gen2'],
     ],
     selectedOnly: true,
     modelNameMapping: [
