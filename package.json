@@ -1,6 +1,6 @@
 {
     "name": "codegen-openapi-ts",
-    "version": "0.5.3",
+    "version": "0.5.4",
     "description": "Library that generates Typescript clients based on the OpenAPI specification.",
     "author": "devteaa",
     "homepage": "https://github.com/devteaa/codegen-openapi-ts",
@@ -56,7 +56,9 @@
         "prettier": "prettier \"./src/**/*.ts\" \"./bin/index.js\" \"./types/index.d.ts\" --check",
         "prettier:fix": "prettier \"./src/**/*.ts\" \"./bin/index.js\" \"./types/index.d.ts\" --write",
         "prepublishOnly": "yarn run clean && yarn run release",
-        "codecov": "codecov --token=66c30c23-8954-4892-bef9-fbaed0a2e42b"
+        "codecov": "codecov --token=66c30c23-8954-4892-bef9-fbaed0a2e42b",
+        "deploy-dry": "npm publish --dry-run",
+        "deploy-prod": "npm publish --dry-run && npm version patch"
     },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
