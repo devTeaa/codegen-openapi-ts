@@ -162,18 +162,30 @@ export async function convertAndGenerate(
     }
 
     urlMethodMapping.forEach(value => {
+      process.stdout.clearLine(0);
+      process.stdout.cursorTo(0);
+      process.stdout.write(`Processing ${value[0]}`);
+
       converted.spec.paths[value[0]][value[1]].operationId = value[2]
-
-      if (value[3]) {
-        converted.spec.paths[value[3]] = converted.spec.paths[value[0]]
-      }
-
-      delete converted.spec.paths[value[0]]
     })
+
+    process.stdout.write('\n');
 
     if (selectedOnly) {
       converted.spec.paths = Object.fromEntries(
-        Object.entries(converted.spec.paths).filter(item => urlMethodMapping.find(config => (config[3] || config[0]) === item[0]))
+        Object.entries(converted.spec.paths)
+        .map(item => {
+          const foundProxy = urlMethodMapping.find(config => config[0] === item[0])
+
+          if (foundProxy) {
+            return [foundProxy[3], item[1]]
+          }
+
+          return [...item]
+        })
+        .filter(item => urlMethodMapping.find(config => {
+          return config[3] ? config[3] === item[0] : config[0] === item[0]
+        }))
       )
     }
 
@@ -194,6 +206,7 @@ export async function convertAndGenerate(
       useUnionTypes,
     })
   } catch (err) {
+    process.stdout.write(`\n`);
     throw err
   }
 }
