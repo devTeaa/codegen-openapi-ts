@@ -17,5 +17,6 @@ samples/swagger-codegen-cli-v2.jar
 samples/swagger-codegen-cli-v3.jar
 output/*
 api-schema.json
+codegen.config.js
 
 default/
