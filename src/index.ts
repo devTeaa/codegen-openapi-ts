@@ -175,17 +175,18 @@ export async function convertAndGenerate(
       converted.spec.paths = Object.fromEntries(
         Object.entries(converted.spec.paths)
         .map(item => {
-          const foundProxy = urlMethodMapping.find(config => config[0] === item[0])
+          const foundConfig = urlMethodMapping.find(config => config[0] === item[0])
 
-          if (foundProxy) {
-            return [foundProxy[3], item[1]]
+          if (foundConfig && foundConfig[3]) {
+            return [foundConfig[3], item[1]]
           }
 
-          return [...item]
+          if (foundConfig) {
+            return item
+          }
+
+          return [undefined, item[1]]
         })
-        .filter(item => urlMethodMapping.find(config => {
-          return config[3] ? config[3] === item[0] : config[0] === item[0]
-        }))
       )
     }
 
