@@ -185,8 +185,9 @@ export async function convertAndGenerate(
             return item
           }
 
-          return [undefined, item[1]]
+          return [null, item[1]]
         })
+        .filter(item => item[0] !== null)
       )
     }
 
