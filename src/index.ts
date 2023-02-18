@@ -130,9 +130,9 @@ export async function generate({
 export async function convertAndGenerate(
     { from, to, source }: ConverterInput,
     { input, output, useOptions, useUnionTypes }: Options,
-    urlMethodMapping: [string, 'get' | 'post' | 'put' | 'delete', string, string?][] = [],
-    selectedOnly: boolean = false,
-    modelNameMapping: [string, string][] = [],
+    urlMethodMapping: BaseConfigWithMappings['urlMethodMapping'] = [],
+    selectedOnly: BaseConfigWithMappings['selectedOnly'] = false,
+    modelNameMapping: BaseConfig['modelNameMapping'] = [],
   ): Promise<void> {
   try {
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
@@ -169,6 +169,8 @@ export async function convertAndGenerate(
       converted.spec.paths[value[0]][value[1]].operationId = value[2]
     })
 
+    process.stdout.clearLine(0);
+    process.stdout.cursorTo(0);
     process.stdout.write('\n');
 
     if (selectedOnly) {
@@ -194,7 +196,7 @@ export async function convertAndGenerate(
     converted = converted.stringify()
 
     modelNameMapping.forEach(value => {
-      converted = converted.replace(value[0], value[1])
+      converted = converted.replace(new RegExp(value[0], 'g'), value[1])
     })
 
     if (typeof input === 'string') {

@@ -108,7 +108,7 @@ module.exports = [
     ],
     selectedOnly: true,
     modelNameMapping: [
-      [new RegExp('some.custom.model.naming', 'g'), 'CustomModelNaming']
+      ['some.custom.model.naming', 'CustomModelNaming']
     ],
   },
   {
