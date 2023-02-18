@@ -22,6 +22,7 @@
 - Supports custom map model naming (v0.4.2)
 - Supports fetching single file and generate type from that (v0.4.3)
 - Supports custom url request mapping (ex: backend gateway) (v0.5.3)
+- Supports config autocomplete wrapper (v0.5.8)
 
 ## Install
 
@@ -45,7 +46,7 @@ Options:
 ```
 'use strict';
 
-module.exports = [
+module.exports = defineConfig([
   {
     source: OpenAPI Swagger response (can check on the network response on the spec page),
     from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
@@ -58,7 +59,7 @@ module.exports = [
       [regex model name on schema, output model name]
     ]
   },
-];
+]);
 ```
 
 **CLI**
