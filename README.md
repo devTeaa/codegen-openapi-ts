@@ -35,7 +35,6 @@ npm install codegen-openapi-ts --save-dev
 
 ## Usage
 
-**codegen.config.js**
 ```
 codegen-openapi-ts --help
 Usage: codegen-openapi-ts [options]
@@ -45,10 +44,10 @@ Options:
   --config <value>  Path to config file (default: "codegen.config.js")
   -h, --help        display help for command
 ```
-```
-'use strict';
 
-module.exports = defineConfig([
+**codegen.config.js**
+```
+export default defineConfig([
   {
     source: OpenAPI Swagger response (can check on the network response on the spec page),
     from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
@@ -64,41 +63,9 @@ module.exports = defineConfig([
 ]);
 ```
 
-**CLI**
-```
-codegen-openapi-ts-cli --help
-Usage: codegen-openapi-ts-cli [options]
-
-Arguments:
-  from           Original response specification version
-  source         Swagger/OpenAPI response url
-  output         Output folder name (default: "output")
-
-Options:
-  -V, --version  output the version number
-  -h, --help     display help for command
-```
-
-**Node**
-```
-OpenAPI.convertAndGenerate({
-  from: string,           // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
-  to: string,             // swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl
-  source: string          // url or local file (JSON, YAML)
-}, {
-  input: string,          // generated conversion output path, also used as input
-  output: string,         // generated output folder location
-  useOptions: boolean,    // use options as url methods argument
-  useUnionTypes: boolean  // use union types instead of enum
-})
-```
-
-
 ## Example
 **codegen.config.js**
 ```javascript
-'use strict';
-
 module.exports = [
   {
     source: 'http://pokemon-api/docs/api',
@@ -122,37 +89,12 @@ module.exports = [
 ];
 ```
 
-**CLI**
-```bash
-codegen-openapi-ts-cli swagger_2 https://pokemonapi/docs/api
-codegen-openapi-ts-cli swagger_2 https://pokemonapi/docs/api pokemon-api
-```
-
-**fetch-schema.js (Node)**
-```javascript
-// fetch-schema.js
-const OpenAPI = require('codegen-openapi-ts')
-
-OpenAPI.convertAndGenerate(
-  {
-    from: process.argv[2], // swagger_2
-    to: 'openapi_3',
-    source: process.argv[3] // https://pokemon-api/docs/api
-  },
-  {
-    input: 'scripts/api-schema.json',
-    output: 'src/api-types/' + process.argv[4], // pokemon-api
-    useOptions: true,
-    useUnionTypes: true
-  }
-)
-```
+**package.json**
 ```json
-// package.json
 {
-    "scripts": {
-        "generate": "node fetch-schema.js swagger_2 https://pokemon-api/docs/api pokemon-api"
-    }
+  "scripts": {
+    "codegen": "codegen-openapi-ts"
+  }
 }
 
 // npm run generate
