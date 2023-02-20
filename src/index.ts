@@ -27,6 +27,7 @@ export type Options = {
     postfix?: string;
     request?: string;
     write?: boolean;
+    selectedOnly?: boolean
 };
 
 /**
@@ -58,6 +59,7 @@ export async function generate({
     postfix = 'Service',
     request,
     write = true,
+    selectedOnly = false
 }: Options): Promise<void> {
     const openApi = isString(input) ? await getOpenApiSpec(input) : input;
     const openApiVersion = getOpenApiVersion(openApi);
@@ -90,7 +92,7 @@ export async function generate({
         }
 
         case OpenApiVersion.V3: {
-            const client = parseV3(openApi);
+            const client = parseV3(openApi, selectedOnly);
             const clientFinal = postProcessClient(client);
             if (!write) break;
             await writeClient(
@@ -208,6 +210,7 @@ export async function convertAndGenerate(
       output,
       useOptions,
       useUnionTypes,
+      selectedOnly
     })
   } catch (err) {
     process.stdout.write(`\n`);
