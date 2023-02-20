@@ -24,6 +24,7 @@
 - Supports custom url request mapping (ex: backend gateway) (v0.5.3)
 - Supports config autocomplete wrapper (v0.5.8)
 - Supports generating relevant models if selectedOnly (v0.5.8)
+- Supports esm config (v0.6.0)
 
 ## Install
 

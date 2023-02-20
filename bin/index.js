@@ -4,6 +4,7 @@
 
 const path = require('path');
 const program = require('commander');
+const esmConfig = require('esm-config');
 const pkg = require('../package.json');
 const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
 
@@ -19,7 +20,7 @@ const params = program
 
 async function generateOnConfig () {
   try {
-    const configFile = require(path.join(appRoot, params.config))
+    const configFile = await esmConfig(path.join(appRoot, params.config))
 
     for (let i = 0; i < configFile.length; i++) {
       console.log('Generating ' + configFile[i].source)
