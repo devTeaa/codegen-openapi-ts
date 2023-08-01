@@ -4470,9 +4470,9 @@ q@0.9.7:
   version "0.9.7"
   resolved "https://registry.npmjs.org/q/-/q-0.9.7.tgz"
 
-qs@6.10.1, qs@^6.5.1:
-  version "6.10.1"
-  resolved "https://registry.npmjs.org/qs/-/qs-6.10.1.tgz"
+qs@6.11.2, qs@^6.5.1:
+  version "6.11.2"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.11.2.tgz#64bea51f12c1f5da1bc01496f48ffcff7c69d7d9"
   dependencies:
     side-channel "^1.0.4"
 
