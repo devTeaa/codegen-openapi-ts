@@ -1,6 +1,6 @@
 {
     "name": "codegen-openapi-ts",
-    "version": "0.6.1",
+    "version": "0.7.0",
     "description": "Library that generates Typescript clients based on the OpenAPI specification.",
     "author": "devteaa",
     "homepage": "https://github.com/devteaa/codegen-openapi-ts",
@@ -86,7 +86,7 @@
         "@rollup/plugin-node-resolve": "13.0.6",
         "@types/express": "4.17.13",
         "@types/glob": "7.2.0",
-        "@types/jest": "27.0.3",
+        "@types/jest": "^27.0.3",
         "@types/node": "16.11.11",
         "@types/qs": "6.9.7",
         "@typescript-eslint/eslint-plugin": "5.5.0",

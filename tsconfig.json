@@ -18,7 +18,6 @@
       "target": "es2017",
       "types": ["jest", "node"]
     },
-
     "files": [
         "./src/typings/hbs.d.ts",
         "./src/typings/camelcase.d.ts",
