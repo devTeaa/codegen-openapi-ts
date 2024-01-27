@@ -163,12 +163,12 @@ export async function convertAndGenerate(
       throw 'Please provide correct path for input file to be generated'
     }
 
-    urlMethodMapping.forEach(value => {
+    urlMethodMapping.forEach(item => {
       process.stdout.clearLine(0);
       process.stdout.cursorTo(0);
-      process.stdout.write(`Processing ${value[0]}`);
+      process.stdout.write(`Processing ${item.originalUrl}`);
 
-      converted.spec.paths[value[0]][value[1]].operationId = value[2]
+      converted.spec.paths[item.originalUrl][item.method].operationId = item.methodName
     })
 
     process.stdout.clearLine(0);
@@ -179,10 +179,10 @@ export async function convertAndGenerate(
       converted.spec.paths = Object.fromEntries(
         Object.entries(converted.spec.paths)
         .map(item => {
-          const foundConfig = urlMethodMapping.find(config => config[0] === item[0])
+          const foundConfig = urlMethodMapping.find(config => config.originalUrl === item[0])
 
-          if (foundConfig && foundConfig[3]) {
-            return [foundConfig[3], item[1]]
+          if (foundConfig && foundConfig.proxyUrl) {
+            return [foundConfig.proxyUrl, item[1]]
           }
 
           if (foundConfig) {
@@ -197,8 +197,8 @@ export async function convertAndGenerate(
 
     converted = converted.stringify()
 
-    modelNameMapping.forEach(value => {
-      converted = converted.replace(new RegExp(value[0], 'g'), value[1])
+    modelNameMapping.forEach(item => {
+      converted = converted.replace(new RegExp(item.fromRegExp, 'g'), item.newModelName)
     })
 
     if (typeof input === 'string') {
@@ -222,7 +222,10 @@ export type BaseConfig = {
   source: string
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
   output: string
-  modelNameMapping?: [string, string][]
+  modelNameMapping?: {
+    fromRegExp: RegExp
+    newModelName: string
+  }[]
 }
 
 export type BaseConfigDefault = BaseConfig & {
@@ -231,9 +234,12 @@ export type BaseConfigDefault = BaseConfig & {
 }
 
 export type BaseConfigWithMappings = BaseConfig & {
-  urlMethodMapping: [
-    string, string, 'get' | 'post' | 'put' | 'delete', string, string?
-  ][]
+  urlMethodMapping: { 
+    originalUrl: string
+    method: 'get' | 'post' | 'put' | 'delete'
+    methodName: string
+    proxyUrl?: string
+   }[]
   selectedOnly: boolean
 }
 

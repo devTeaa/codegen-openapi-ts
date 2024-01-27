@@ -25,6 +25,8 @@
 - Supports config autocomplete wrapper (v0.5.8)
 - Supports generating relevant models if selectedOnly (v0.5.8)
 - Supports esm config (v0.6.0)
+- Support defineConfig (v0.7.0)
+- New config model (v0.7.1)
 
 ## Install
 
@@ -52,13 +54,17 @@ export default defineConfig([
     source: OpenAPI Swagger response (can check on the network response on the spec page),
     from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
     output: output folder
-    urlMethodMapping: [
-      [api path, http method (get/post/put/delete), output operation name, custom url api path]
-    ],
+    urlMethodMapping: { 
+      originalUrl: api path,
+      method: http method (get/post/put/delete),
+      methodName: output operation name,
+      proxyUrl?: custom url api path
+    }[]
     selectedOnly: this will make it so only generate services under urlMethodMapping, the default is false,
-    modelNameMapping: [
-      [regex model name on schema, output model name]
-    ]
+    modelNameMapping: {
+      fromRegExp: regex model name on schema,
+      newModelName: output model name
+    }[]
   },
 ]);
 ```
@@ -72,12 +78,24 @@ module.exports = [
     from: 'openapi_3',
     output: 'src/api-types/pokemon-api', // pokemon-api
     urlMethodMapping: [
-      ['get-pokemon-list/gen1', 'get', 'GetPokemonListGen1'],
-      ['get-pokemon-list/gen2', 'get', 'GetPokemonListGen2', 'gateway/get-pokemon-list/gen2'],
+      {
+        originalUrl: 'get-pokemon-list/gen1',
+        method: 'get',
+        methodName: 'GetPokemonListGen1'
+      },
+      {
+        originalUrl: 'get-pokemon-list/gen2',
+        method: 'get',
+        methodName: 'GetPokemonListGen2',
+        proxyUrl: 'gateway/get-pokemon-list/gen2'
+      }
     ],
     selectedOnly: true,
     modelNameMapping: [
-      ['some.custom.model.naming', 'CustomModelNaming']
+      {
+        fromRegExp: /some\.custom\.model\.naming/,
+        newModelName: 'CustomModelNaming'
+      }
     ],
   },
   {
