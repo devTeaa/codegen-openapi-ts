@@ -22,23 +22,25 @@ async function generateOnConfig () {
   try {
     const configFile = await esmConfig(path.join(appRoot, params.config))
 
-    for (let i = 0; i < configFile.length; i++) {
-      console.log('Generating ' + configFile[i].source)
+    for (const configService of configFile.services) {
+      console.log('Generating ' + configService.source)
+
       await OpenAPI.convertAndGenerate(
         {
-          from: configFile[i].from,
+          from: configService.from,
           to: 'openapi_3',
-          source: configFile[i].source
+          source: configService.source
         },
         {
           input: 'api-schema.json',
-          output: configFile[i].output || 'output',
+          output: configService.output || 'output',
           useOptions: true,
-          useUnionTypes: true
+          useUnionTypes: true,
         },
-        configFile[i].urlMethodMapping || [],
-        configFile[i].selectedOnly || false,
-        configFile[i].modelNameMapping || []
+        configService.urlMethodMapping || [],
+        configService.selectedOnly || false,
+        configService.modelNameMapping || [],
+        configFile.appendTemplate
       )
     }
   } catch (err) {

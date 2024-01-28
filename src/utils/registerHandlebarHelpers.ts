@@ -40,6 +40,46 @@ export function registerHandlebarHelpers(root: {
           : options.inverse(this);
       }
     );
+
+    Handlebars.registerHelper(
+      'mapHttpApiMethod',
+      function (this: any): string {
+        switch (this.method) {
+          case 'GET':
+            return 'getDataViaApi'
+          case 'POST':
+            return 'postDataViaApi'
+          case 'PUT':
+            return 'putDataViaApi'
+          case 'DELETE':
+            return 'deleteDataViaApi'
+          default:
+            return 'getDataViaApi'
+        }
+      }
+    );
+
+    Handlebars.registerHelper(
+      'httpApiMethodIsEqual',
+      function (this: any, a: string): boolean {
+        return this.method === 'GET'
+      }
+    );
+
+    Handlebars.registerHelper(
+      'prefixHttpApiMethodParam',
+      function (this: any): string {
+        return this.path.replace(/\$\{/g, '${data.path.')
+      }
+    );
+
+    Handlebars.registerHelper(
+      'debugPrint',
+      function (this: any): any {
+        console.log(this)
+        return JSON.stringify(this)
+      }
+    );
     
     Handlebars.registerHelper(
       'hasLength',

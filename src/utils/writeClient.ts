@@ -39,7 +39,8 @@ export async function writeClient(
     exportModels: boolean,
     exportSchemas: boolean,
     postfix: string,
-    request?: string
+    request?: string,
+    appendTemplate?: string
 ): Promise<void> {
     const outputPath = resolve(process.cwd(), output);
     const outputPathCore = resolve(outputPath, 'core');
@@ -67,7 +68,8 @@ export async function writeClient(
             httpClient,
             useUnionTypes,
             useOptions,
-            postfix
+            postfix,
+            appendTemplate
         );
     }
 

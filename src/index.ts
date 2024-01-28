@@ -27,7 +27,8 @@ export type Options = {
     postfix?: string;
     request?: string;
     write?: boolean;
-    selectedOnly?: boolean
+    selectedOnly?: boolean;
+    appendTemplate?: ReturnType<typeof defineConfig>['appendTemplate']
 };
 
 /**
@@ -59,7 +60,8 @@ export async function generate({
     postfix = 'Service',
     request,
     write = true,
-    selectedOnly = false
+    selectedOnly = false,
+    appendTemplate = ''
 }: Options): Promise<void> {
     const openApi = isString(input) ? await getOpenApiSpec(input) : input;
     const openApiVersion = getOpenApiVersion(openApi);
@@ -86,7 +88,8 @@ export async function generate({
                 exportModels,
                 false,
                 postfix,
-                request
+                request,
+                appendTemplate
             );
             break;
         }
@@ -107,7 +110,8 @@ export async function generate({
                 exportModels,
                 false,
                 postfix,
-                request
+                request,
+                appendTemplate
             );
             break;
         }
@@ -132,9 +136,10 @@ export async function generate({
 export async function convertAndGenerate(
     { from, to, source }: ConverterInput,
     { input, output, useOptions, useUnionTypes }: Options,
-    urlMethodMapping: BaseConfigWithMappings['urlMethodMapping'] = [],
-    selectedOnly: BaseConfigWithMappings['selectedOnly'] = false,
-    modelNameMapping: BaseConfig['modelNameMapping'] = [],
+    urlMethodMapping: ServiceConfigWithMappings['urlMethodMapping'] = [],
+    selectedOnly: ServiceConfigWithMappings['selectedOnly'] = false,
+    modelNameMapping?: BaseServiceConfig['modelNameMapping'],
+    appendTemplate?: ReturnType<typeof defineConfig>['appendTemplate']
   ): Promise<void> {
   try {
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
@@ -197,7 +202,7 @@ export async function convertAndGenerate(
 
     converted = converted.stringify()
 
-    modelNameMapping.forEach(item => {
+    modelNameMapping && modelNameMapping.forEach(item => {
       converted = converted.replace(new RegExp(item.fromRegExp, 'g'), item.newModelName)
     })
 
@@ -210,7 +215,8 @@ export async function convertAndGenerate(
       output,
       useOptions,
       useUnionTypes,
-      selectedOnly
+      selectedOnly,
+      appendTemplate
     })
   } catch (err) {
     process.stdout.write(`\n`);
@@ -218,7 +224,7 @@ export async function convertAndGenerate(
   }
 }
 
-export type BaseConfig = {
+export type BaseServiceConfig = {
   source: string
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
   output: string
@@ -228,12 +234,12 @@ export type BaseConfig = {
   }[]
 }
 
-export type BaseConfigDefault = BaseConfig & {
+export type ServiceConfigDefault = BaseServiceConfig & {
   urlMethodMapping: undefined
   selectedOnly: undefined
 }
 
-export type BaseConfigWithMappings = BaseConfig & {
+export type ServiceConfigWithMappings = BaseServiceConfig & {
   urlMethodMapping: { 
     originalUrl: string
     method: 'get' | 'post' | 'put' | 'delete'
@@ -243,6 +249,9 @@ export type BaseConfigWithMappings = BaseConfig & {
   selectedOnly: boolean
 }
 
-export function defineConfig (config: (BaseConfigDefault | BaseConfigWithMappings)[]) {
+export function defineConfig (config: {
+  appendTemplate?: string
+  services: (ServiceConfigDefault | ServiceConfigWithMappings)[]
+}) {
   return config
 }

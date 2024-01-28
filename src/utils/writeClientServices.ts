@@ -5,6 +5,7 @@ import { HttpClient } from '../HttpClient';
 import { writeFile } from './fileSystem';
 import { format } from './format';
 import { Templates } from './registerHandlebarTemplates';
+import { defineConfig } from '..';
 
 const VERSION_TEMPLATE_STRING = 'OpenAPI.VERSION';
 
@@ -25,7 +26,8 @@ export async function writeClientServices(
     httpClient: HttpClient,
     useUnionTypes: boolean,
     useOptions: boolean,
-    postfix: string
+    postfix: string,
+    appendTemplate?: ReturnType<typeof defineConfig>['appendTemplate']
 ): Promise<void> {
     for (const service of services) {
         const file = resolve(outputPath, `${service.name}${postfix}.ts`);
@@ -37,6 +39,7 @@ export async function writeClientServices(
             useVersion,
             useOptions,
             postfix,
+            appendTemplate
         });
         await writeFile(file, format(templateResult));
     }

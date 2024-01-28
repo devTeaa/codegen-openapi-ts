@@ -5,22 +5,9 @@
 import type { {{{this}}} } from '../models/{{{this}}}';
 {{/each}}
 {{/if}}
-
-export const {{{name}}}{{{@root.postfix}}}Url = {
-  {{#each operations}}
-  {{#hasLength parameters}}
-  {{#hasProperty parameters 'path'}}
-  {{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
-    {{{name}}}{{>isRequired}},{{/equals}}{{/each}}
-  }: { {{#each parameters}}{{#equals in 'path'}}
-    {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
-  }) => `{{path}}`,
-  {{else}}
-  {{capitalizeFirstLetter name}}: '{{path}}',
-  {{/hasProperty}}
-  {{/hasLength}}
-  {{/each}}
-}
+{{#if @root.appendTemplate}}
+{{{@root.appendTemplate}}}
+{{/if}}
 
 {{#each operations}}
 {{#hasLength parameters}}
@@ -40,3 +27,31 @@ export interface {{capitalizeFirstLetter name}} {
 
 {{/hasLength}}
 {{/each}}
+
+export const {{{name}}}{{{@root.postfix}}}Url = {
+  {{#each operations}}
+  {{#hasLength parameters}}
+  {{#hasProperty parameters 'path'}}
+  {{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
+    {{{name}}}{{>isRequired}},{{/equals}}{{/each}}
+  }: { {{#each parameters}}{{#equals in 'path'}}
+    {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
+  }) => `{{path}}`,
+  {{else}}
+  {{capitalizeFirstLetter name}}: '{{path}}',
+  {{/hasProperty}}
+  {{/hasLength}}
+  {{/each}}
+}
+
+export const {{{name}}}{{{@root.postfix}}}Api = {
+  {{#each operations}}
+  {{#hasLength parameters}}
+  {{name}}: (data: {{capitalizeFirstLetter name}}['request']) => httpApi.{{mapHttpApiMethod name}}<{{capitalizeFirstLetter name}}['response']>({
+    url: `{{prefixHttpApiMethodParam path}}`{{#hasProperty parameters 'query'}},
+    queryParams: data.query{{/hasProperty}}{{#hasProperty parameters 'body'}},
+    body: data.body{{/hasProperty}}
+  }),
+  {{/hasLength}}
+  {{/each}}
+}

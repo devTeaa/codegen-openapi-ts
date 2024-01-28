@@ -34,6 +34,10 @@ const handlebarsPlugin = () => ({
                 knownHelpers: {
                     capitalizeFirstLetter: true,
                     hasProperty: true,
+                    mapHttpApiMethod: true,
+                    httpApiMethodIsEqual: true,
+                    prefixHttpApiMethodParam: true,
+                    debugPrint: true,
                     hasLength: true,
                     equals: true,
                     notEquals: true,
