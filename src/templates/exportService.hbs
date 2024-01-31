@@ -10,22 +10,14 @@ import type { {{{this}}} } from '../models/{{{this}}}';
 {{/if}}
 
 {{#each operations}}
-{{#hasLength parameters}}
-/**
-{{#each parameters}}
-{{#if default}}
- * @type {{{name}}} = {{default}}
-{{/if}}
-{{/each}}
- */
 export interface {{capitalizeFirstLetter name}} {
   {{#hasLength results}}response: {{unionTypeBesideAny results}}{{/hasLength}}
+  {{#hasLength parameters}}
   request: {
     {{>parametersType}}
   }
+  {{/hasLength}}
 }
-
-{{/hasLength}}
 {{/each}}
 
 export const {{{name}}}{{{@root.postfix}}}Url = {
@@ -34,24 +26,22 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
   {{#hasProperty parameters 'path'}}
   {{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
     {{{name}}}{{>isRequired}},{{/equals}}{{/each}}
-  }: { {{#each parameters}}{{#equals in 'path'}}
-    {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
+  }: { 
+    {{#each parameters}}{{#equals in 'path'}}{{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
   }) => `{{path}}`,
   {{else}}
-  {{capitalizeFirstLetter name}}: '{{path}}',
   {{/hasProperty}}
   {{/hasLength}}
+  {{capitalizeFirstLetter name}}: '{{path}}',
   {{/each}}
 }
 
 export const {{{name}}}{{{@root.postfix}}}Api = {
   {{#each operations}}
-  {{#hasLength parameters}}
-  {{name}}: (data: {{capitalizeFirstLetter name}}['request']) => httpApi.{{mapHttpApiMethod name}}<{{capitalizeFirstLetter name}}['response']>({
+  {{name}}: ({{#hasLength parameters}}data: {{capitalizeFirstLetter name}}['request']{{/hasLength}}) => httpApi.{{mapHttpApiMethod name}}<{{capitalizeFirstLetter name}}['response']>({
     url: `{{prefixHttpApiMethodParam path}}`{{#hasProperty parameters 'query'}},
     queryParams: data.query{{/hasProperty}}{{#hasProperty parameters 'body'}},
     body: data.body{{/hasProperty}}
   }),
-  {{/hasLength}}
   {{/each}}
 }
