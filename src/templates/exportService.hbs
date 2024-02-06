@@ -36,6 +36,7 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
   {{/each}}
 }
 
+{{#if @root.appendTemplate}}
 export const {{{name}}}{{{@root.postfix}}}Api = {
   {{#each operations}}
   {{name}}: ({{#hasLength parameters}}data: {{capitalizeFirstLetter name}}['request']{{/hasLength}}) => httpApi.{{mapHttpApiMethod name}}<{{capitalizeFirstLetter name}}['response']>({
@@ -45,3 +46,4 @@ export const {{{name}}}{{{@root.postfix}}}Api = {
   }),
   {{/each}}
 }
+{{/if}}

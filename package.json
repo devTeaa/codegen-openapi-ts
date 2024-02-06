@@ -57,7 +57,8 @@
         "prepublishOnly": "yarn run clean && yarn run release",
         "codecov": "codecov --token=66c30c23-8954-4892-bef9-fbaed0a2e42b",
         "deploy-dry": "npm publish --dry-run",
-        "deploy-prod": "npm publish && npm version patch"
+        "deploy-prod": "npm publish && npm version patch",
+        "deploy-prerelease": "npm version prerelease && npm publish"
     },
     "dependencies": {
         "@types/node-fetch": "^2.5.12",
