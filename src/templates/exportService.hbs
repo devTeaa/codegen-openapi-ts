@@ -22,7 +22,6 @@ export interface {{capitalizeFirstLetter name}} {
 
 export const {{{name}}}{{{@root.postfix}}}Url = {
   {{#each operations}}
-  {{#hasLength parameters}}
   {{#hasProperty parameters 'path'}}
   {{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
     {{{name}}}{{>isRequired}},{{/equals}}{{/each}}
@@ -30,9 +29,8 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
     {{#each parameters}}{{#equals in 'path'}}{{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
   }) => `{{path}}`,
   {{else}}
-  {{/hasProperty}}
-  {{/hasLength}}
   {{capitalizeFirstLetter name}}: '{{path}}',
+  {{/hasProperty}}
   {{/each}}
 }
 
