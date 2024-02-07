@@ -139,7 +139,8 @@ export async function convertAndGenerate(
     urlMethodMapping: ServiceConfigWithMappings['urlMethodMapping'] = [],
     selectedOnly: ServiceConfigWithMappings['selectedOnly'] = false,
     modelNameMapping?: BaseServiceConfig['modelNameMapping'],
-    appendTemplate?: ReturnType<typeof defineConfig>['appendTemplate']
+    appendTemplate?: ReturnType<typeof defineConfig>['appendTemplate'],
+    proxyConfig?: BaseServiceConfig['proxyConfig'],
   ): Promise<void> {
   try {
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
@@ -200,6 +201,20 @@ export async function convertAndGenerate(
       )
     }
 
+    if (proxyConfig) {
+      converted.spec.paths = Object.fromEntries(
+        Object.entries(converted.spec.paths)
+        .map(item => {
+          if (item[0].includes(proxyConfig.originalUrl)) {
+            console.log(item[0], item[0].replace(proxyConfig.originalUrl, proxyConfig.proxyUrl))
+            item[0] = item[0].replace(proxyConfig.originalUrl, proxyConfig.proxyUrl)
+          }
+
+          return item
+        })
+      )
+    }
+
     converted = converted.stringify()
 
     modelNameMapping && modelNameMapping.forEach(item => {
@@ -228,6 +243,10 @@ export type BaseServiceConfig = {
   source: string
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
   output: string
+  proxyConfig?: {
+    originalUrl: string,
+    proxyUrl: string
+  },
   modelNameMapping?: {
     fromRegExp: RegExp
     newModelName: string

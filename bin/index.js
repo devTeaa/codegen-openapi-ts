@@ -40,7 +40,8 @@ async function generateOnConfig () {
         configService.urlMethodMapping || [],
         configService.selectedOnly || false,
         configService.modelNameMapping || [],
-        configFile.appendTemplate
+        configFile.appendTemplate,
+        configService.proxyConfig
       )
     }
   } catch (err) {
