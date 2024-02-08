@@ -22,15 +22,11 @@ export interface {{capitalizeFirstLetter name}} {
 
 export const {{{name}}}{{{@root.postfix}}}Url = {
   {{#each operations}}
-  {{#hasProperty parameters 'path'}}
-  {{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
+  {{#hasProperty parameters 'path'}}{{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
     {{{name}}}{{>isRequired}},{{/equals}}{{/each}}
-  }: { 
-    {{#each parameters}}{{#equals in 'path'}}{{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
-  }) => `{{path}}`,
-  {{else}}
-  {{capitalizeFirstLetter name}}: '{{path}}',
-  {{/hasProperty}}
+  }: { {{#each parameters}}{{#equals in 'path'}}
+      {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
+  }) => `{{path}}`,{{else}}{{capitalizeFirstLetter name}}: '{{path}}',{{/hasProperty}}
   {{/each}}
 }
 
