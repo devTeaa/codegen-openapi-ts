@@ -134,7 +134,7 @@ export async function generate({
  * @param options.write Write the files to disk (true or false)
  */
 export async function convertAndGenerate(
-    { from, to, source }: ConverterInput,
+    { from, source }: ConverterInput,
     { input, output, useOptions, useUnionTypes }: Options,
     urlMethodMapping: ServiceConfigWithMappings['urlMethodMapping'] = [],
     selectedOnly: ServiceConfigWithMappings['selectedOnly'] = false,
@@ -155,24 +155,14 @@ export async function convertAndGenerate(
 
     let converted = await Converter.convert({
       from,
-      to,
+      to: from,
       source,
     })
-    
-    // const validationResult = await converted.validate()
-
-    // if (!validationResult.valid) {
-    //   throw validationResult.errors.message
-    // }
-
-    if (!isString(input)) {
-      throw 'Please provide correct path for input file to be generated'
-    }
 
     urlMethodMapping.forEach(item => {
       process.stdout.clearLine(0);
       process.stdout.cursorTo(0);
-      process.stdout.write(`Processing ${item.originalUrl}`);
+      process.stdout.write(`Processing ${item.originalUrl} ${item.method} ${item.methodName}`);
 
       converted.spec.paths[item.originalUrl][item.method].operationId = item.methodName
     })
@@ -181,38 +171,27 @@ export async function convertAndGenerate(
     process.stdout.cursorTo(0);
     process.stdout.write('\n');
 
-    if (selectedOnly) {
-      converted.spec.paths = Object.fromEntries(
-        Object.entries(converted.spec.paths)
-        .map(item => {
-          const foundConfig = urlMethodMapping.find(config => config.originalUrl === item[0])
+    converted.spec.paths = Object.fromEntries(
+      Object.entries(converted.spec.paths)
+      .map(item => {
+        const foundConfig = urlMethodMapping.find(config => config.originalUrl === item[0])
 
-          if (foundConfig && foundConfig.proxyUrl) {
-            return [foundConfig.proxyUrl, item[1]]
-          }
+        if (foundConfig && foundConfig.proxyUrl) {
+          return [foundConfig.proxyUrl, item[1]]
+        }
 
-          if (foundConfig) {
-            return item
-          }
-
+        if (selectedOnly && !foundConfig) {
           return [null, item[1]]
-        })
-        .filter(item => item[0] !== null)
-      )
-    }
+        }
 
-    if (proxyConfig) {
-      converted.spec.paths = Object.fromEntries(
-        Object.entries(converted.spec.paths)
-        .map(item => {
-          if (item[0].includes(proxyConfig.replace)) {
-            item[0] = item[0].replace(proxyConfig.replace, proxyConfig.with)
-          }
+        if (proxyConfig && (item[0].indexOf(proxyConfig.replace) !== -1)) {
+          return [item[0].replace(proxyConfig.replace, proxyConfig.with), item[1]]
+        }
 
-          return item
-        })
-      )
-    }
+        return [item[0], item[1]]
+      })
+      .filter(item => item[0] !== null)
+    )
 
     converted = converted.stringify()
 

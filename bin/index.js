@@ -28,7 +28,6 @@ async function generateOnConfig () {
       await OpenAPI.convertAndGenerate(
         {
           from: configService.from,
-          to: 'openapi_3',
           source: configService.source
         },
         {
