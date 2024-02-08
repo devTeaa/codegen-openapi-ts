@@ -205,9 +205,8 @@ export async function convertAndGenerate(
       converted.spec.paths = Object.fromEntries(
         Object.entries(converted.spec.paths)
         .map(item => {
-          if (item[0].includes(proxyConfig.originalUrl)) {
-            console.log(item[0], item[0].replace(proxyConfig.originalUrl, proxyConfig.proxyUrl))
-            item[0] = item[0].replace(proxyConfig.originalUrl, proxyConfig.proxyUrl)
+          if (item[0].includes(proxyConfig.replace)) {
+            item[0] = item[0].replace(proxyConfig.replace, proxyConfig.with)
           }
 
           return item
@@ -244,8 +243,8 @@ export type BaseServiceConfig = {
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
   output: string
   proxyConfig?: {
-    originalUrl: string,
-    proxyUrl: string
+    replace: string,
+    with: string
   },
   modelNameMapping?: {
     fromRegExp: RegExp
