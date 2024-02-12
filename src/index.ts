@@ -184,8 +184,8 @@ export async function convertAndGenerate(
           return [null, item[1]]
         }
 
-        if (proxyConfig && (item[0].indexOf(proxyConfig.replace) !== -1)) {
-          return [item[0].replace(proxyConfig.replace, proxyConfig.with), item[1]]
+        if (proxyConfig) {
+          return [proxyConfig(item[0]), item[1]]
         }
 
         return [item[0], item[1]]
@@ -221,10 +221,7 @@ export type BaseServiceConfig = {
   source: string
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
   output: string
-  proxyConfig?: {
-    replace: string,
-    with: string
-  },
+  proxyConfig?: (path: string) => string,
   modelNameMapping?: {
     fromRegExp: RegExp
     newModelName: string
