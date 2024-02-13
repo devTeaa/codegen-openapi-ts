@@ -222,7 +222,25 @@ export type BaseServiceConfig = {
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
   output: string
   proxyConfig?: (path: string) => string,
-  modelNameMapping?: (path: string) => string
+  /**
+   * Can be used to replace long model names specified on the schema.
+   * Please use the api-schema.json generated on root project files
+   * to debug the desired results. Also note that the original schema name
+   * with dot (.) will be generated as underscore (_). Example:
+   * some.long.name will be generated as some_long_name,
+   * if this modelNameMapping supplied
+   * @param {string} json: stringified json schema
+   * @example
+   * {
+   *  // ... other config
+   *  modelNameMapping: (json) => {
+   *    // remember to use global flag to all regexp used here
+   *    return config.replace(new RegExp('some.long.name', g), 'shortname')
+   *  }
+   * }
+   * @returns {string}
+   */
+  modelNameMapping?: (json: string) => string
 }
 
 export type ServiceConfigDefault = BaseServiceConfig & {
