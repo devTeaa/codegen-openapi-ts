@@ -218,18 +218,37 @@ export async function convertAndGenerate(
 }
 
 export type BaseServiceConfig = {
+  /**
+   * API Docs request url for the json response
+   */
   source: string
+  /**
+   * Specify the API specs response format version
+   */
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
+  /**
+   * Specify the folder for the codegen output
+   */
   output: string
+  /**
+   * Create a function for proxying the request
+   * @example
+   * {
+   *  // ... other config
+   *  proxyConfig: (path) => {
+   *    return path.replace('/api/', '/be/')
+   *  }
+   * }
+   * @param {string} path
+   */
   proxyConfig?: (path: string) => string,
   /**
    * Can be used to replace long model names specified on the schema.
-   * Please use the api-schema.json generated on root project files
+   * Please use the api-schema.json generated on root project folder
    * to debug the desired results. Also note that the original schema name
    * with dot (.) will be generated as underscore (_). Example:
    * some.long.name will be generated as some_long_name,
    * if this modelNameMapping supplied
-   * @param {string} json: stringified json schema
    * @example
    * {
    *  // ... other config
@@ -238,7 +257,8 @@ export type BaseServiceConfig = {
    *    return config.replace(new RegExp('some.long.name', g), 'shortname')
    *  }
    * }
-   * @returns {string}
+   * 
+   * @param {string} json - stringified json schema
    */
   modelNameMapping?: (json: string) => string
 }
@@ -248,19 +268,47 @@ export type ServiceConfigDefault = BaseServiceConfig & {
   selectedOnly: undefined
 }
 
-export type ServiceConfigWithMappings = BaseServiceConfig & {
-  urlMethodMapping: { 
-    originalUrl: string
-    method: 'get' | 'post' | 'put' | 'delete'
-    methodName: string
-    proxyUrl?: string
-   }[]
-  selectedOnly: boolean
-}
+export declare type ServiceConfigWithMappings = BaseServiceConfig & {
+  /**
+   * Custom spec paths mapping. You can configure to rename the method name
+   * or customise the proxyUrl for the specific API
+   * 
+   * @example
+   * {
+   *  // ... other config
+   *  urlMethodMapping: [
+   *    { originalUrl: '/pokemon-list', method: 'get', methodName: 'GetPokemonList' },
+   *    { originalUrl: '/pokemon-detail/{id}', method: 'get', methodName: 'GetPokemonList', proxyUrl: '/proxy/pokemon-detail/{id}' }
+   *  ]
+   * }
+   *
+   */
+  urlMethodMapping: {
+      originalUrl: string;
+      method: 'get' | 'post' | 'put' | 'delete';
+      methodName: string;
+      proxyUrl?: string;
+  }[];
+  /**
+   * Flag to only generate listed specs based on urlMethodMapping.
+   * The codegen will still generate all the models listed on the api specs
+   */
+  selectedOnly: boolean;
+};
 
-export function defineConfig (config: {
-  appendTemplate?: string
-  services: (ServiceConfigDefault | ServiceConfigWithMappings)[]
-}) {
-  return config
-}
+/**
+ * Type helper to make it easier to use codegen.config.js
+ */
+export declare function defineConfig(config: {
+  /**
+   * Custom api templates append on top of service files
+   */
+  appendTemplate?: string;
+  /**
+   * List config for every services
+   */
+  services: (ServiceConfigDefault | ServiceConfigWithMappings)[];
+}): {
+  appendTemplate?: string | undefined;
+  services: (ServiceConfigDefault | ServiceConfigWithMappings)[];
+};
