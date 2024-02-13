@@ -195,9 +195,9 @@ export async function convertAndGenerate(
 
     converted = converted.stringify()
 
-    modelNameMapping && modelNameMapping.forEach(item => {
-      converted = converted.replace(new RegExp(item.fromRegExp, 'g'), item.newModelName)
-    })
+    if (modelNameMapping) {
+      converted = modelNameMapping(converted)
+    }
 
     if (typeof input === 'string') {
       fs.writeFileSync(input, converted)
@@ -222,10 +222,7 @@ export type BaseServiceConfig = {
   from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl'
   output: string
   proxyConfig?: (path: string) => string,
-  modelNameMapping?: {
-    fromRegExp: RegExp
-    newModelName: string
-  }[]
+  modelNameMapping?: (path: string) => string
 }
 
 export type ServiceConfigDefault = BaseServiceConfig & {
