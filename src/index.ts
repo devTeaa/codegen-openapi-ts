@@ -299,7 +299,7 @@ export declare type ServiceConfigWithMappings = BaseServiceConfig & {
 /**
  * Type helper to make it easier to use codegen.config.js
  */
-export declare function defineConfig(config: {
+export function defineConfig(config: {
   /**
    * Custom api templates append on top of service files
    */
@@ -311,4 +311,6 @@ export declare function defineConfig(config: {
 }): {
   appendTemplate?: string | undefined;
   services: (ServiceConfigDefault | ServiceConfigWithMappings)[];
+} {
+  return config
 };
