@@ -38,7 +38,7 @@ async function generateOnConfig () {
         },
         configService.urlMethodMapping || [],
         configService.selectedOnly || false,
-        configService.modelNameMapping || [],
+        configService.modelNameMapping,
         configFile.appendTemplate,
         configService.proxyConfig
       )
