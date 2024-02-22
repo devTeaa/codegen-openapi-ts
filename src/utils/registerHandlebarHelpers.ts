@@ -86,7 +86,6 @@ export const registerHandlebarHelpers = (root: {
     Handlebars.registerHelper(
       'debugPrint',
       function (this: any): any {
-        console.log(this)
         return JSON.stringify(this)
       }
     );

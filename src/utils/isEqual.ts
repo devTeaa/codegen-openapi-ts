@@ -24,7 +24,6 @@ export const isEqual = (a: any, b: any): boolean => {
 
         for (let i = 0; i < keysA.length; i++) {
             const key = keysA[i];
-            console.log('FIRED')
             if (!Object.prototype.hasOwnProperty.call(b, key)) {
                 return false;
             }

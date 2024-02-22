@@ -1,6 +1,7 @@
 const Converter = require('api-spec-converter');
 const shell = require('shelljs')
 import fs from 'fs'
+import path from 'path';
 import { HttpClient } from './HttpClient';
 import { Indent } from './Indent';
 import { parse as parseV2 } from './openApi/v2';
@@ -169,7 +170,7 @@ export async function convertAndGenerate(
     const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(\.git)(/)?')
 
     if (sshRegex.test(source)) {
-      shell.exec(`git archive --remote=${source} | tar -xO > ./api-schema.json`)
+      shell.exec(`git archive --remote=${source} | tar -xO > ${input}`)
 
       if (typeof(input) === 'string') {
         source = input
@@ -223,7 +224,7 @@ export async function convertAndGenerate(
     }
 
     if (typeof input === 'string') {
-      fs.writeFileSync(input, converted)
+      fs.writeFileSync(path.join(process.cwd().split('node_modules')[0], `node_modules/@apidevtools/json-schema-ref-parser/dist/api-schema.json`), converted)
     }
 
     generate({
