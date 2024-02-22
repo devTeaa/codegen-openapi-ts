@@ -18,12 +18,6 @@ query: {
 }
 {{/hasProperty}}
 {{#hasProperty parameters 'body'}}
-body: {
-{{#each parameters}}
-  {{#equals in 'body'}}
-  {{{name}}}{{>isRequired}}: {{>type}}
-  {{/equals}}
-{{/each}}
-}
+body: {{{parametersBody.base}}}
 {{/hasProperty}}
 {{/if}}

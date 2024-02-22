@@ -10,7 +10,7 @@ import { getServiceVersion } from './parser/getServiceVersion';
  * all the models, services and schema's we should output.
  * @param openApi The OpenAPI spec  that we have loaded from disk.
  */
-export function parse(openApi: OpenApi, selectedOnly: boolean = false): Client {
+export const parse = (openApi: OpenApi, selectedOnly: boolean = false): Client => {
     const version = getServiceVersion(openApi.info.version);
     const server = getServer(openApi);
     let models = getModels(openApi);
@@ -28,4 +28,4 @@ export function parse(openApi: OpenApi, selectedOnly: boolean = false): Client {
     }
 
     return { version, server, models, services };
-}
+};

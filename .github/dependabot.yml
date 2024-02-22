@@ -3,12 +3,9 @@ updates:
 - package-ecosystem: npm
   directory: "/"
   schedule:
-    interval: monthly
-    time: "04:00"
-  open-pull-requests-limit: 10
+    interval: "daily"
   ignore:
     - dependency-name: "@types/node-fetch"
-    - dependency-name: "abort-controller"
-    - dependency-name: "cross-blob"
-    - dependency-name: "form-data"
     - dependency-name: "node-fetch"
+    - dependency-name: "camelcase"
+    - dependency-name: "typescript"

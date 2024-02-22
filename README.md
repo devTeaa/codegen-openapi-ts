@@ -1,234 +1,85 @@
 # OpenAPI Typescript Codegen
 
 [![NPM][npm-image]][npm-url]
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Build](https://github.com/devTeaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg)
+[![License][license-image]][license-url]
+[![Coverage][coverage-image]][coverage-url]
+[![Coverage][coverage-image]][coverage-url]
+[![Downloads][downloads-image]][downloads-url]
+[![Build][build-image]][build-url]
 
 > Node.js library that generates Typescript clients based on the OpenAPI specification.
-
-> This project is a fork from [Openapi Typescript Codegen](https://github.com/ferdikoomen/openapi-typescript-codegen) by [Ferdi Koomen](https://github.com/ferdikoomen), the reason is because I need some changes and use some of the lower level generated code that I can use on my projects.
 
 ## Why?
 - Frontend ❤️ OpenAPI, but we do not want to use JAVA codegen in our builds
 - Quick, lightweight, robust and framework-agnostic 🚀
 - Supports generation of TypeScript clients
-- Supports conversion from Swagger 1.x/2.x to OpenAPI 2.x/3.x with [`api-spec-converter`](https://github.com/LucyBot-Inc/api-spec-converter)
+- Supports generations of Fetch, Node-Fetch, Axios, Angular and XHR http clients
+- Supports OpenAPI specification v2.0 and v3.0
 - Supports JSON and YAML files for input
-- Supports generation through Node.js
+- Supports generation through CLI, Node.js and NPX
 - Supports tsc and @babel/plugin-transform-typescript
-- Supports external references using [`json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser/)
-- Supports generate multiple api based on config file 
-- Supports only generate specified api based on the url and http method (v0.4.1)
-- Supports custom map model naming (v0.4.2)
-- Supports fetching single file and generate type from that (v0.4.3)
-- Supports custom url request mapping (ex: backend gateway) (v0.5.3)
-- Supports config autocomplete wrapper (v0.5.8)
-- Supports generating relevant models if selectedOnly (v0.5.8)
-- Supports esm config (v0.6.0)
-- Support defineConfig (v0.7.0)
-- New config model (v0.7.1)
+- Supports aborting of requests (cancelable promise pattern)
+- Supports external references using [json-schema-ref-parser](https://github.com/APIDevTools/json-schema-ref-parser/)
 
 ## Install
 
 ```
-npm install codegen-openapi-ts --save-dev
+npm install openapi-typescript-codegen --save-dev
 ```
-
 
 ## Usage
 
 ```
-codegen-openapi-ts --help
-Usage: codegen-openapi-ts [options]
+$ openapi --help
 
-Options:
-  -V, --version     output the version number
-  --config <value>  Path to config file (default: "codegen.config.js")
-  -h, --help        display help for command
+  Usage: openapi [options]
+
+  Options:
+    -V, --version             output the version number
+    -i, --input <value>       OpenAPI specification, can be a path, url or string content (required)
+    -o, --output <value>      Output directory (required)
+    -c, --client <value>      HTTP client to generate [fetch, xhr, node, axios, angular] (default: "fetch")
+    --name <value>            Custom client class name
+    --useOptions              Use options instead of arguments
+    --useUnionTypes           Use union types instead of enums
+    --exportCore <value>      Write core files to disk (default: true)
+    --exportServices <value>  Write services to disk (default: true)
+    --exportModels <value>    Write models to disk (default: true)
+    --exportSchemas <value>   Write schemas to disk (default: false)
+    --indent <value>          Indentation options [4, 2, tab] (default: "4")
+    --postfixServices         Service name postfix (default: "Service")
+    --postfixModels           Model name postfix
+    --request <value>         Path to custom request file
+    -h, --help                display help for command
+
+  Examples
+    $ openapi --input ./spec.json --output ./generated
+    $ openapi --input ./spec.json --output ./generated --client xhr
 ```
 
-**codegen.config.js**
-```
-export default defineConfig([
-  {
-    source: OpenAPI Swagger response (can check on the network response on the spec page),
-    from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
-    output: output folder
-    urlMethodMapping: { 
-      originalUrl: api path,
-      method: http method (get/post/put/delete),
-      methodName: output operation name,
-      proxyUrl?: custom url api path
-    }[]
-    selectedOnly: this will make it so only generate services under urlMethodMapping, the default is false,
-    modelNameMapping: {
-      fromRegExp: regex model name on schema,
-      newModelName: output model name
-    }[]
-  },
-]);
-```
-
-## Example
-**codegen.config.js**
-```javascript
-module.exports = [
-  {
-    source: 'http://pokemon-api/docs/api',
-    from: 'openapi_3',
-    output: 'src/api-types/pokemon-api', // pokemon-api
-    urlMethodMapping: [
-      {
-        originalUrl: 'get-pokemon-list/gen1',
-        method: 'get',
-        methodName: 'GetPokemonListGen1'
-      },
-      {
-        originalUrl: 'get-pokemon-list/gen2',
-        method: 'get',
-        methodName: 'GetPokemonListGen2',
-        proxyUrl: 'gateway/get-pokemon-list/gen2'
-      }
-    ],
-    selectedOnly: true,
-    modelNameMapping: [
-      {
-        fromRegExp: /some\.custom\.model\.naming/,
-        newModelName: 'CustomModelNaming'
-      }
-    ],
-  },
-  {
-    // source: '<git repo> <branch name> <file to path>',
-    source: 'ssh://git@github.com/pokemon/pokemon-api.git master -- docs/evolution-path.json',
-    from: 'openapi_3',
-    output: 'src/api-types/evolution-path', // evolution-path
-  }, 
-];
-```
-
-**package.json**
-```json
-{
-  "scripts": {
-    "codegen": "codegen-openapi-ts"
-  }
-}
-
-// npm run generate
-```
-### Output folder
-    .
-    ├── ...
-    ├── src                         # output value ('src/api-types/')
-    │   ├── api-types               
-    │   |   ├── pokemon-api         # output
-    │   |   |   ├── models          # API schema models
-    │   |   |   ├── services        # API service level with methods/url/response/request types
-    │   |   |   └── index.ts        
-    |   |   └── ...
-    └── ...
-
-
-## Features
-### Nullable in OpenAPI v2
-In the OpenAPI v3 spec you can create properties that can be NULL, by providing a `nullable: true` in your schema.
-However, the v2 spec does not allow you to do this. You can use the unofficial `x-nullable` in your specification
-to generate nullable properties in OpenApi v2.
-
-```json
-{
-    "ModelWithNullableString": {
-        "required": ["requiredProp"],
-        "description": "This is a model with one string property",
-        "type": "object",
-        "properties": {
-            "prop": {
-                "description": "This is a simple string property",
-                "type": "string",
-                "x-nullable": true
-            },
-            "requiredProp": {
-                "description": "This is a simple string property",
-                "type": "string",
-                "x-nullable": true
-            }
-        }
-    }
-}
-```
-
-Generated code:
-```typescript
-interface ModelWithNullableString {
-    prop?: string | null,
-    requiredProp: string | null,
-}
-```
-
-### References
-
-Local references to schema definitions (those beginning with `#/definitions/schemas/`)
-will be converted to type references to the equivalent, generated top-level type.
-
-The OpenAPI generator also supports external references, which allows you to break
-down your openapi.yml into multiple sub-files, or incorporate third-party schemas
-as part of your types to ensure everything is able to be TypeScript generated.
-
-External references may be:
-* *relative references* - references to other files at the same location e.g.
-  `{ $ref: 'schemas/customer.yml' }`
-* *remote references* - fully qualified references to another remote location
-   e.g. `{ $ref: 'https://myexampledomain.com/schemas/customer_schema.yml' }`
-
-   For remote references, both files (when the file is on the current filesystem)
-   and http(s) URLs are supported.
-
-External references may also contain internal paths in the external schema (e.g.
-`schemas/collection.yml#/definitions/schemas/Customer`) and back-references to
-the base openapi file or between files (so that you can reference another
-schema in the main file as a type of an object or array property, for example).
-
-At start-up, an OpenAPI or Swagger file with external references will be "bundled",
-so that all external references and back-references will be resolved (but local
-references preserved).
-
-
-FAQ
+Documentation
 ===
 
-### Babel support
-If you use enums inside your models / definitions then those enums are by default inside a namespace with the same name
-as your model. This is called declaration merging. However, the [@babel/plugin-transform-typescript](https://babeljs.io/docs/en/babel-plugin-transform-typescript)
-does not support these namespaces, so if you are using babel in your project please use the `--useUnionTypes` flag
-to generate union types instead of traditional enums. More info can be found here: [Enums vs. Union Types](#enums-vs-union-types---useuniontypes).
+The main documentation can be found in the [openapi-typescript-codegen/wiki](https://github.com/ferdikoomen/openapi-typescript-codegen/wiki)
 
-**Note:** If you are using Babel 7 and Typescript 3.8 (or higher) then you should enable the `onlyRemoveTypeImports` to
-ignore any 'type only' imports, see https://babeljs.io/docs/en/babel-preset-typescript#onlyremovetypeimports for more info
+Sponsors
+===
 
-```javascript
-module.exports = {
-    presets: [
-        ['@babel/preset-typescript', {
-            onlyRemoveTypeImports: true,
-        }],
-    ],
-};
-```
+If you or your company use the OpenAPI Typescript Codegen, please consider supporting me. By sponsoring I can free up time to give this project some love! Details can be found here: https://github.com/sponsors/ferdikoomen
 
-In order to compile the project and resolve the imports, you will need to enable the `allowSyntheticDefaultImports`
-in your `tsconfig.json` file.
+If you're from an enterprise looking for a fully managed SDK generation, please consider our sponsor:
 
+<a href="https://speakeasyapi.dev/?utm_source=ferdi+repo&utm_medium=github+sponsorship">
+    <img alt="speakeasy" src="https://storage.googleapis.com/speakeasy-design-assets/ferdi-sponsorship.png" width="640"/>
+</a>
 
-[npm-url]: https://npmjs.org/package/
-[npm-image]: https://img.shields.io/npm/v/codegen-openapi-ts.svg
-[coverage-url]: https://codecov.io/gh/ferdikoomen/codegen-openapi-ts
-[coverage-image]: https://img.shields.io/codecov/c/github/ferdikoomen/codegen-openapi-ts.svg
-[quality-url]: https://lgtm.com/projects/g/ferdikoomen/codegen-openapi-ts
-[quality-image]: https://img.shields.io/lgtm/grade/javascript/g/ferdikoomen/codegen-openapi-ts.svg
-[climate-url]: https://codeclimate.com/github/ferdikoomen/codegen-openapi-ts
-[climate-image]: https://img.shields.io/codeclimate/maintainability/ferdikoomen/codegen-openapi-ts.svg
-[downloads-url]: http://npm-stat.com/charts.html?package=codegen-openapi-ts
-[downloads-image]: http://img.shields.io/npm/dm/codegen-openapi-ts.svg
-[build-url]: https://circleci.com/gh/ferdikoomen/codegen-openapi-ts/tree/master
-[build-image]: https://circleci.com/gh/ferdikoomen/codegen-openapi-ts/tree/master.svg?style=svg
+[npm-url]: https://npmjs.org/package/openapi-typescript-codegen
+[npm-image]: https://img.shields.io/npm/v/openapi-typescript-codegen.svg
+[license-url]: LICENSE
+[license-image]: http://img.shields.io/npm/l/openapi-typescript-codegen.svg
+[coverage-url]: https://codecov.io/gh/ferdikoomen/openapi-typescript-codegen
+[coverage-image]: https://img.shields.io/codecov/c/github/ferdikoomen/openapi-typescript-codegen.svg
+[downloads-url]: http://npm-stat.com/charts.html?package=openapi-typescript-codegen
+[downloads-image]: http://img.shields.io/npm/dm/openapi-typescript-codegen.svg
+[build-url]: https://circleci.com/gh/ferdikoomen/openapi-typescript-codegen/tree/master
+[build-image]: https://circleci.com/gh/ferdikoomen/openapi-typescript-codegen/tree/master.svg?style=svg

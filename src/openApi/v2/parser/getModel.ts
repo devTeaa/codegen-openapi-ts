@@ -3,19 +3,17 @@ import { getPattern } from '../../../utils/getPattern';
 import type { OpenApi } from '../interfaces/OpenApi';
 import type { OpenApiSchema } from '../interfaces/OpenApiSchema';
 import { extendEnum } from './extendEnum';
-import { getComment } from './getComment';
 import { getEnum } from './getEnum';
-import { getEnumFromDescription } from './getEnumFromDescription';
 import { getModelComposition } from './getModelComposition';
 import { getModelProperties } from './getModelProperties';
 import { getType } from './getType';
 
-export function getModel(
+export const getModel = (
     openApi: OpenApi,
     definition: OpenApiSchema,
     isDefinition: boolean = false,
     name: string = ''
-): Model {
+): Model => {
     const model: Model = {
         name,
         export: 'interface',
@@ -23,7 +21,7 @@ export function getModel(
         base: 'any',
         template: null,
         link: null,
-        description: getComment(definition.description),
+        description: definition.description || null,
         isDefinition,
         isReadOnly: definition.readOnly === true,
         isNullable: definition['x-nullable'] === true,
@@ -66,17 +64,6 @@ export function getModel(
             model.type = 'string';
             model.base = 'string';
             model.enum.push(...extendedEnumerators);
-            return model;
-        }
-    }
-
-    if ((definition.type === 'int' || definition.type === 'integer') && definition.description) {
-        const enumerators = getEnumFromDescription(definition.description);
-        if (enumerators.length) {
-            model.export = 'enum';
-            model.type = 'number';
-            model.base = 'number';
-            model.enum.push(...enumerators);
             return model;
         }
     }
@@ -163,4 +150,4 @@ export function getModel(
     }
 
     return model;
-}
+};

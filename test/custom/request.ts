@@ -1,13 +1,10 @@
-/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import { CancelablePromise } from './CancelablePromise';
-import { OpenAPI } from './OpenAPI';
+import type { OpenAPIConfig } from './OpenAPI';
 
-export function request<T>(options: ApiRequestOptions): CancelablePromise<T> {
+export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): CancelablePromise<T> => {
     return new CancelablePromise((resolve, reject, onCancel) => {
-        const url = `${OpenAPI.BASE}${options.path}`;
+        const url = `${config.BASE}${options.path}`.replace('{api-version}', config.VERSION);
 
         try {
             // Do your request...
@@ -31,4 +28,4 @@ export function request<T>(options: ApiRequestOptions): CancelablePromise<T> {
             reject(e);
         }
     });
-}
+};

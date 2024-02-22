@@ -3,14 +3,13 @@ import { getPattern } from '../../../utils/getPattern';
 import type { OpenApi } from '../interfaces/OpenApi';
 import type { OpenApiParameter } from '../interfaces/OpenApiParameter';
 import type { OpenApiSchema } from '../interfaces/OpenApiSchema';
-import { getComment } from './getComment';
 import { getModel } from './getModel';
 import { getModelDefault } from './getModelDefault';
 import { getOperationParameterName } from './getOperationParameterName';
 import { getRef } from './getRef';
 import { getType } from './getType';
 
-export function getOperationParameter(openApi: OpenApi, parameter: OpenApiParameter): OperationParameter {
+export const getOperationParameter = (openApi: OpenApi, parameter: OpenApiParameter): OperationParameter => {
     const operationParameter: OperationParameter = {
         in: parameter.in,
         prop: parameter.name,
@@ -20,7 +19,8 @@ export function getOperationParameter(openApi: OpenApi, parameter: OpenApiParame
         base: 'any',
         template: null,
         link: null,
-        description: getComment(parameter.description),
+        description: parameter.description || null,
+        deprecated: parameter.deprecated === true,
         isDefinition: false,
         isReadOnly: false,
         isRequired: parameter.required === true,
@@ -90,4 +90,4 @@ export function getOperationParameter(openApi: OpenApi, parameter: OpenApiParame
     }
 
     return operationParameter;
-}
+};

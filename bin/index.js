@@ -3,7 +3,7 @@
 'use strict';
 
 const path = require('path');
-const program = require('commander');
+const { program } = require('commander');
 const esmConfig = require('esm-config');
 const pkg = require('../package.json');
 const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));

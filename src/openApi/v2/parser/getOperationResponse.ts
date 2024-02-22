@@ -3,21 +3,20 @@ import { getPattern } from '../../../utils/getPattern';
 import type { OpenApi } from '../interfaces/OpenApi';
 import type { OpenApiResponse } from '../interfaces/OpenApiResponse';
 import type { OpenApiSchema } from '../interfaces/OpenApiSchema';
-import { getComment } from './getComment';
 import { getModel } from './getModel';
 import { getRef } from './getRef';
 import { getType } from './getType';
 
-export function getOperationResponse(
+export const getOperationResponse = (
     openApi: OpenApi,
     response: OpenApiResponse,
     responseCode: number
-): OperationResponse {
+): OperationResponse => {
     const operationResponse: OperationResponse = {
         in: 'response',
         name: '',
         code: responseCode,
-        description: getComment(response.description)!,
+        description: response.description || null,
         export: 'generic',
         type: 'any',
         base: 'any',
@@ -35,8 +34,8 @@ export function getOperationResponse(
 
     // If this response has a schema, then we need to check two things:
     // if this is a reference then the parameter is just the 'name' of
-    // this reference type. Otherwise it might be a complex schema and
-    // then we need to parse the schema!
+    // this reference type. Otherwise, it might be a complex schema,
+    // and then we need to parse the schema!
     let schema = response.schema;
     if (schema) {
         if (schema.$ref?.startsWith('#/responses/')) {
@@ -97,4 +96,4 @@ export function getOperationResponse(
     }
 
     return operationResponse;
-}
+};

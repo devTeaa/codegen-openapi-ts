@@ -1,22 +1,30 @@
 {{>header}}
-{{#if @root.exportCore}}
 
+{{#if @root.exportClient}}
+export { {{{clientName}}} } from './{{{clientName}}}';
+
+{{/if}}
+{{#if @root.exportCore}}
 export { ApiError } from './core/ApiError';
-export { CancelablePromise } from './core/CancelablePromise';
+{{#if @root.exportClient}}
+export { BaseHttpRequest } from './core/BaseHttpRequest';
+{{/if}}
+export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
+export type { OpenAPIConfig } from './core/OpenAPI';
 {{/if}}
 {{#if @root.exportModels}}
 {{#if models}}
 
 {{#each models}}
 {{#if @root.useUnionTypes}}
-export type { {{{name}}} } from './models/{{{name}}}';
+export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
 {{else if enum}}
-export { {{{name}}} } from './models/{{{name}}}';
+export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
 {{else if enums}}
-export { {{{name}}} } from './models/{{{name}}}';
+export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
 {{else}}
-export type { {{{name}}} } from './models/{{{name}}}';
+export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
 {{/if}}
 {{/each}}
 {{/if}}
@@ -29,11 +37,11 @@ export { ${{{name}}} } from './schemas/${{{name}}}';
 {{/each}}
 {{/if}}
 {{/if}}
-
 {{#if @root.exportServices}}
 {{#if services}}
+
 {{#each services}}
-export { {{{name}}}{{{@root.postfix}}}Url } from './services/{{{name}}}{{{@root.postfix}}}';
+export { {{{name}}}{{{@root.postfixServices}}} } from './services/{{{name}}}{{{@root.postfixServices}}}';
 {{/each}}
 {{/if}}
 {{/if}}

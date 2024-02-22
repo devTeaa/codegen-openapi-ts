@@ -1,4 +1,4 @@
-export function isEqual(a: any, b: any): boolean {
+export const isEqual = (a: any, b: any): boolean => {
     if (a === b) {
         return true;
     }
@@ -24,6 +24,7 @@ export function isEqual(a: any, b: any): boolean {
 
         for (let i = 0; i < keysA.length; i++) {
             const key = keysA[i];
+            console.log('FIRED')
             if (!Object.prototype.hasOwnProperty.call(b, key)) {
                 return false;
             }
@@ -35,4 +36,4 @@ export function isEqual(a: any, b: any): boolean {
     }
 
     return a !== a && b !== b;
-}
+};

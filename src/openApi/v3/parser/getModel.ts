@@ -3,20 +3,18 @@ import { getPattern } from '../../../utils/getPattern';
 import type { OpenApi } from '../interfaces/OpenApi';
 import type { OpenApiSchema } from '../interfaces/OpenApiSchema';
 import { extendEnum } from './extendEnum';
-import { getComment } from './getComment';
 import { getEnum } from './getEnum';
-import { getEnumFromDescription } from './getEnumFromDescription';
 import { getModelComposition } from './getModelComposition';
 import { getModelDefault } from './getModelDefault';
 import { getModelProperties } from './getModelProperties';
 import { getType } from './getType';
 
-export function getModel(
+export const getModel = (
     openApi: OpenApi,
     definition: OpenApiSchema,
     isDefinition: boolean = false,
     name: string = ''
-): Model {
+): Model => {
     const model: Model = {
         name,
         export: 'interface',
@@ -24,7 +22,8 @@ export function getModel(
         base: 'any',
         template: null,
         link: null,
-        description: getComment(definition.description),
+        description: definition.description || null,
+        deprecated: definition.deprecated === true,
         isDefinition,
         isReadOnly: definition.readOnly === true,
         isNullable: definition.nullable === true,
@@ -73,18 +72,6 @@ export function getModel(
         }
     }
 
-    if ((definition.type === 'int' || definition.type === 'integer') && definition.description) {
-        const enumerators = getEnumFromDescription(definition.description);
-        if (enumerators.length) {
-            model.export = 'enum';
-            model.type = 'number';
-            model.base = 'number';
-            model.enum.push(...enumerators);
-            model.default = getModelDefault(definition, model);
-            return model;
-        }
-    }
-
     if (definition.type === 'array' && definition.items) {
         if (definition.items.$ref) {
             const arrayItems = getType(definition.items.$ref);
@@ -108,9 +95,13 @@ export function getModel(
         }
     }
 
-    if (definition.type === 'object' && typeof definition.additionalProperties === 'object') {
-        if (definition.additionalProperties.$ref) {
-            const additionalProperties = getType(definition.additionalProperties.$ref);
+    if (
+        definition.type === 'object' &&
+        (typeof definition.additionalProperties === 'object' || definition.additionalProperties === true)
+    ) {
+        const ap = typeof definition.additionalProperties === 'object' ? definition.additionalProperties : {};
+        if (ap.$ref) {
+            const additionalProperties = getType(ap.$ref);
             model.export = 'dictionary';
             model.type = additionalProperties.type;
             model.base = additionalProperties.base;
@@ -119,7 +110,7 @@ export function getModel(
             model.default = getModelDefault(definition, model);
             return model;
         } else {
-            const additionalProperties = getModel(openApi, definition.additionalProperties);
+            const additionalProperties = getModel(openApi, ap);
             model.export = 'dictionary';
             model.type = additionalProperties.type;
             model.base = additionalProperties.base;
@@ -159,13 +150,13 @@ export function getModel(
     }
 
     if (definition.type === 'object') {
-        model.export = 'interface';
-        model.type = 'any';
-        model.base = 'any';
-        model.default = getModelDefault(definition, model);
-
         if (definition.properties) {
-            const modelProperties = getModelProperties(openApi, definition, getModel);
+            model.export = 'interface';
+            model.type = 'any';
+            model.base = 'any';
+            model.default = getModelDefault(definition, model);
+
+            const modelProperties = getModelProperties(openApi, definition, getModel, model);
             modelProperties.forEach(modelProperty => {
                 model.imports.push(...modelProperty.imports);
                 model.enums.push(...modelProperty.enums);
@@ -174,8 +165,18 @@ export function getModel(
                     model.enums.push(modelProperty);
                 }
             });
+            return model;
+        } else {
+            const additionalProperties = getModel(openApi, {});
+            model.export = 'dictionary';
+            model.type = additionalProperties.type;
+            model.base = additionalProperties.base;
+            model.template = additionalProperties.template;
+            model.link = additionalProperties;
+            model.imports.push(...additionalProperties.imports);
+            model.default = getModelDefault(definition, model);
+            return model;
         }
-        return model;
     }
 
     // If the schema has a type than it can be a basic or generic type.
@@ -192,4 +193,4 @@ export function getModel(
     }
 
     return model;
-}
+};

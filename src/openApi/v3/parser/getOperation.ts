@@ -3,11 +3,9 @@ import type { OperationParameters } from '../../../client/interfaces/OperationPa
 import type { OpenApi } from '../interfaces/OpenApi';
 import type { OpenApiOperation } from '../interfaces/OpenApiOperation';
 import type { OpenApiRequestBody } from '../interfaces/OpenApiRequestBody';
-import { getComment } from './getComment';
 import { getOperationErrors } from './getOperationErrors';
 import { getOperationName } from './getOperationName';
 import { getOperationParameters } from './getOperationParameters';
-import { getOperationPath } from './getOperationPath';
 import { getOperationRequestBody } from './getOperationRequestBody';
 import { getOperationResponseHeader } from './getOperationResponseHeader';
 import { getOperationResponses } from './getOperationResponses';
@@ -16,28 +14,26 @@ import { getRef } from './getRef';
 import { getServiceName } from './getServiceName';
 import { sortByRequired } from './sortByRequired';
 
-export function getOperation(
+export const getOperation = (
     openApi: OpenApi,
     url: string,
     method: string,
     tag: string,
     op: OpenApiOperation,
     pathParams: OperationParameters
-): Operation {
+): Operation => {
     const serviceName = getServiceName(tag);
-    const operationNameFallback = `${method}${serviceName}`;
-    const operationName = getOperationName(op.operationId || operationNameFallback);
-    const operationPath = getOperationPath(url);
+    const operationName = getOperationName(url, method, op.operationId);
 
     // Create a new operation object for this method.
     const operation: Operation = {
         service: serviceName,
         name: operationName,
-        summary: getComment(op.summary),
-        description: getComment(op.description),
+        summary: op.summary || null,
+        description: op.description || null,
         deprecated: op.deprecated === true,
         method: method.toUpperCase(),
-        path: operationPath,
+        path: url,
         parameters: [...pathParams.parameters],
         parametersPath: [...pathParams.parametersPath],
         parametersQuery: [...pathParams.parametersQuery],
@@ -88,4 +84,4 @@ export function getOperation(
     operation.parameters = operation.parameters.sort(sortByRequired);
 
     return operation;
-}
+};

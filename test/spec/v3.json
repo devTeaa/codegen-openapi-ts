@@ -10,6 +10,12 @@
         }
     ],
     "paths": {
+        "/api/v{api-version}/no-tag": {
+            "tags": [],
+            "get": {
+                "operationId": "ServiceWithEmptyTag"
+            }
+        },
         "/api/v{api-version}/simple": {
             "get": {
                 "tags": [
@@ -52,6 +58,74 @@
                     "Simple"
                 ],
                 "operationId": "PatchCallWithoutParametersAndResponse"
+            }
+        },
+        "/api/v{api-version}/descriptions/": {
+            "post": {
+                "tags": [
+                    "Descriptions"
+                ],
+                "operationId": "CallWithDescriptions",
+                "parameters": [
+                    {
+                        "description": "Testing multiline comments in string: First line\nSecond line\n\nFourth line",
+                        "name": "parameterWithBreaks",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing backticks in string: `backticks` and ```multiple backticks``` should work",
+                        "name": "parameterWithBackticks",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing slashes in string: \\backwards\\\\\\ and /forwards/// should work",
+                        "name": "parameterWithSlashes",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing expression placeholders in string: ${expression} should work",
+                        "name": "parameterWithExpressionPlaceholders",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing quotes in string: 'single quote''' and \"double quotes\"\"\" should work",
+                        "name": "parameterWithQuotes",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing reserved characters in string: /* inline */ and /** inline **/ should work",
+                        "name": "parameterWithReservedCharacters",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/api/v{api-version}/parameters/deprecated": {
+            "post": {
+                "tags": [
+                    "Deprecated"
+                ],
+                "deprecated": true,
+                "operationId": "DeprecatedCall",
+                "parameters": [
+                    {
+                        "deprecated": true,
+                        "description": "This parameter is deprecated",
+                        "name": "parameter",
+                        "in": "header",
+                        "required": true,
+                        "nullable": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/DeprecatedModel"
+                        }
+                    }
+                ]
             }
         },
         "/api/v{api-version}/parameters/{parameterPath}": {
@@ -287,7 +361,7 @@
                         "in": "query",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/components/schemas/Pageable"
                         }
                     }
                 ],
@@ -808,7 +882,7 @@
                 "operationId": "CollectionFormat",
                 "parameters": [
                     {
-                        "description": "This is an array parameter that is send as csv format (comma-separated values)",
+                        "description": "This is an array parameter that is sent as csv format (comma-separated values)",
                         "name": "parameterArrayCSV",
                         "in": "query",
                         "required": true,
@@ -822,7 +896,7 @@
                         "collectionFormat": "csv"
                     },
                     {
-                        "description": "This is an array parameter that is send as ssv format (space-separated values)",
+                        "description": "This is an array parameter that is sent as ssv format (space-separated values)",
                         "name": "parameterArraySSV",
                         "in": "query",
                         "required": true,
@@ -836,7 +910,7 @@
                         "collectionFormat": "ssv"
                     },
                     {
-                        "description": "This is an array parameter that is send as tsv format (tab-separated values)",
+                        "description": "This is an array parameter that is sent as tsv format (tab-separated values)",
                         "name": "parameterArrayTSV",
                         "in": "query",
                         "required": true,
@@ -850,7 +924,7 @@
                         "collectionFormat": "tsv"
                     },
                     {
-                        "description": "This is an array parameter that is send as pipes format (pipe-separated values)",
+                        "description": "This is an array parameter that is sent as pipes format (pipe-separated values)",
                         "name": "parameterArrayPipes",
                         "in": "query",
                         "required": true,
@@ -864,7 +938,7 @@
                         "collectionFormat": "pipes"
                     },
                     {
-                        "description": "This is an array parameter that is send as multi format (multiple parameter instances)",
+                        "description": "This is an array parameter that is sent as multi format (multiple parameter instances)",
                         "name": "parameterArrayMulti",
                         "in": "query",
                         "required": true,
@@ -1429,8 +1503,28 @@
             }
         },
         "schemas": {
-            "MultilineComment": {
-                "description": "Testing multiline comments.\nThis must go to the next line.\n\nThis will contain a break.",
+            "CommentWithBreaks": {
+                "description": "Testing multiline comments in string: First line\nSecond line\n\nFourth line",
+                "type": "integer"
+            },
+            "CommentWithBackticks": {
+                "description": "Testing backticks in string: `backticks` and ```multiple backticks``` should work",
+                "type": "integer"
+            },
+            "CommentWithSlashes": {
+                "description": "Testing slashes in string: \\backwards\\\\\\ and /forwards/// should work",
+                "type": "integer"
+            },
+            "CommentWithExpressionPlaceholders": {
+                "description": "Testing expression placeholders in string: ${expression} should work",
+                "type": "integer"
+            },
+            "CommentWithQuotes": {
+                "description": "Testing quotes in string: 'single quote''' and \"double quotes\"\"\" should work",
+                "type": "integer"
+            },
+            "CommentWithReservedCharacters": {
+                "description": "Testing reserved characters in string: /* inline */ and /** inline **/ should work",
                 "type": "integer"
             },
             "SimpleInteger": {
@@ -1465,7 +1559,9 @@
                 "enum": [
                     "Success",
                     "Warning",
-                    "Error"
+                    "Error",
+                    "'Single Quote'",
+                    "\"Double Quotes\""
                 ]
             },
             "EnumWithNumbers": {
@@ -1803,6 +1899,18 @@
                     }
                 }
             },
+            "DeprecatedModel": {
+                "deprecated": true,
+                "description": "This is a deprecated model with a deprecated property",
+                "type": "object",
+                "properties": {
+                    "prop": {
+                        "deprecated": true,
+                        "description": "This is a deprecated property",
+                        "type": "string"
+                    }
+                }
+            },
             "ModelWithCircularReference": {
                 "description": "This is a model with one property containing a circular reference",
                 "type": "object",
@@ -1860,6 +1968,55 @@
                                 "type": "integer"
                             }
                         ]
+                    }
+                }
+            },
+            "ModelCircle": {
+                "description": "Circle",
+                "type": "object",
+                "required": [
+                    "kind"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string"
+                    },
+                    "radius": {
+                        "type": "number"
+                    }
+                }
+            },
+            "ModelSquare": {
+                "description": "Square",
+                "type": "object",
+                "required": [
+                    "kind"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string"
+                    },
+                    "sideLength": {
+                        "type": "number"
+                    }
+                }
+            },
+            "CompositionWithOneOfDiscriminator": {
+                "description": "This is a model with one property with a 'one of' relationship where the options are not $ref",
+                "type": "object",
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/ModelCircle"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ModelSquare"
+                    }
+                ],
+                "discriminator": {
+                    "propertyName": "kind",
+                    "mapping": {
+                        "circle": "#/components/schemas/ModelCircle",
+                        "square": "#/components/schemas/ModelSquare"
                     }
                 }
             },
@@ -1938,6 +2095,76 @@
                             },
                             {
                                 "$ref": "#/components/schemas/ModelWithDictionary"
+                            }
+                        ]
+                    }
+                }
+            },
+            "CompositionWithOneOfAndSimpleDictionary": {
+                "description": "This is a model that contains a simple dictionary within composition",
+                "type": "object",
+                "properties": {
+                    "propA": {
+                        "oneOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "number"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "CompositionWithOneOfAndSimpleArrayDictionary": {
+                "description": "This is a model that contains a dictionary of simple arrays within composition",
+                "type": "object",
+                "properties": {
+                    "propA": {
+                        "oneOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "CompositionWithOneOfAndComplexArrayDictionary": {
+                "description": "This is a model that contains a dictionary of complex arrays (composited) within composition",
+                "type": "object",
+                "properties": {
+                    "propA": {
+                        "oneOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "array",
+                                    "items": {
+                                        "oneOf": [
+                                            {
+                                                "type": "number"
+                                            },
+                                            {
+                                                "type": "string"
+                                            }
+                                        ]
+                                    }
+                                }
                             }
                         ]
                     }
@@ -2239,8 +2466,93 @@
                     "text": {
                         "type": "string",
                         "pattern": "^\\w+$"
+                    },
+                    "patternWithSingleQuotes": {
+                        "type": "string",
+                        "pattern": "^[a-zA-Z0-9']*$"
                     }
                 }
+            },
+            "File": {
+                "required": [
+                    "mime"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "title": "Id",
+                        "type": "string",
+                        "readOnly": true,
+                        "minLength": 1
+                    },
+                    "updated_at": {
+                        "title": "Updated at",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "created_at": {
+                        "title": "Created at",
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "mime": {
+                        "title": "Mime",
+                        "type": "string",
+                        "maxLength": 24,
+                        "minLength": 1
+                    },
+                    "file": {
+                        "title": "File",
+                        "type": "string",
+                        "readOnly": true,
+                        "format": "uri"
+                    }
+                }
+            },
+            "default": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Pageable": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "minimum": 0,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "minimum": 1,
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sort": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "FreeFormObjectWithoutAdditionalProperties": {
+                "description": "This is a free-form object without additionalProperties.",
+                "type": "object"
+            },
+            "FreeFormObjectWithAdditionalPropertiesEqTrue": {
+                "description": "This is a free-form object with additionalProperties: true.",
+                "type": "object",
+                "additionalProperties": true
+            },
+            "FreeFormObjectWithAdditionalPropertiesEqEmptyObject": {
+                "description": "This is a free-form object with additionalProperties: {}.",
+                "type": "object",
+                "additionalProperties": {}
             }
         }
     }

@@ -1,16 +1,25 @@
-import * as Handlebars from 'handlebars/runtime';
+import camelCase from 'camelcase';
+import Handlebars from 'handlebars/runtime';
+import { EOL } from 'os';
 
-import { Enum } from '../client/interfaces/Enum';
-import { Model } from '../client/interfaces/Model';
-import { OperationParameter } from '../client/interfaces/OperationParameter';
-import { HttpClient } from '../HttpClient';
+import type { Enum } from '../client/interfaces/Enum';
+import type { Model } from '../client/interfaces/Model';
+import type { HttpClient } from '../HttpClient';
 import { unique } from './unique';
 
-export function registerHandlebarHelpers(root: {
+export const registerHandlebarHelpers = (root: {
     httpClient: HttpClient;
     useOptions: boolean;
     useUnionTypes: boolean;
-}): void {
+}): void => {
+    Handlebars.registerHelper('ifdef', function (this: any, ...args): string {
+        const options = args.pop();
+        if (!args.every(value => !value)) {
+            return options.fn(this);
+        }
+        return options.inverse(this);
+    });
+
     Handlebars.registerHelper(
       'unionTypeBesideAny',
       function (this: any, a: Model[]): string {
@@ -34,7 +43,7 @@ export function registerHandlebarHelpers(root: {
 
     Handlebars.registerHelper(
       'hasProperty',
-      function (this: any, a: OperationParameter[], b: string, options: Handlebars.HelperOptions): string {
+      function (this: any, a: any[], b: string, options: Handlebars.HelperOptions): string {
         return a.map(item => item.in).find(value => value === b) 
           ? options.fn(this) 
           : options.inverse(this);
@@ -69,7 +78,8 @@ export function registerHandlebarHelpers(root: {
     Handlebars.registerHelper(
       'prefixHttpApiMethodParam',
       function (this: any): string {
-        return this.path.replace(/\$\{/g, '${data.path.')
+        return this.path
+          .replace(/\{/g, '${data.path.')
       }
     );
 
@@ -159,4 +169,24 @@ export function registerHandlebarHelpers(root: {
             );
         }
     );
-}
+
+    Handlebars.registerHelper('escapeComment', function (value: string): string {
+        return value
+            .replace(/\*\//g, '*')
+            .replace(/\/\*/g, '*')
+            .replace(/\r?\n(.*)/g, (_, w) => `${EOL} * ${w.trim()}`);
+    });
+
+    Handlebars.registerHelper('registerParam', function (value: string): string {
+      return value
+          .replace(/\{/g, '${')
+    });
+
+    Handlebars.registerHelper('escapeDescription', function (value: string): string {
+        return value.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\${/g, '\\${');
+    });
+
+    Handlebars.registerHelper('camelCase', function (value: string): string {
+        return camelCase(value);
+    });
+};
