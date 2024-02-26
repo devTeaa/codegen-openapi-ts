@@ -225,6 +225,7 @@ export async function convertAndGenerate(
 
     if (typeof input === 'string') {
       fs.writeFileSync(path.join(process.cwd().split('node_modules')[0], `node_modules/@apidevtools/json-schema-ref-parser/dist/api-schema.json`), converted)
+      fs.writeFileSync(input, converted)
     }
 
     generate({
