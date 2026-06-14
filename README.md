@@ -1,85 +1,174 @@
-# OpenAPI Typescript Codegen
+# codegen-openapi-ts (alpha)
 
 [![NPM][npm-image]][npm-url]
-[![License][license-image]][license-url]
-[![Coverage][coverage-image]][coverage-url]
-[![Coverage][coverage-image]][coverage-url]
-[![Downloads][downloads-image]][downloads-url]
-[![Build][build-image]][build-url]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Build](https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg)
 
-> Node.js library that generates Typescript clients based on the OpenAPI specification.
+> Node.js library that generates TypeScript clients from OpenAPI/Swagger specifications.
+
+This project is a fork of [OpenAPI Typescript Codegen](https://github.com/ferdikoomen/openapi-typescript-codegen) by [Ferdi Koomen](https://github.com/ferdikoomen). It adds conversion helpers, a config-file driven CLI, URL/method mapping, model-name mapping, proxy support, custom append templates, and an Angular HTTP client.
+
+> ⚠️ **This branch is an alpha release (`v0.9.0-alpha.6`).** The API, config shape, and generated output may still change before `1.0.0`.
 
 ## Why?
-- Frontend ❤️ OpenAPI, but we do not want to use JAVA codegen in our builds
+
+- Frontend ❤️ OpenAPI, but we do not want to use Java codegen in our builds
 - Quick, lightweight, robust and framework-agnostic 🚀
-- Supports generation of TypeScript clients
-- Supports generations of Fetch, Node-Fetch, Axios, Angular and XHR http clients
-- Supports OpenAPI specification v2.0 and v3.0
-- Supports JSON and YAML files for input
-- Supports generation through CLI, Node.js and NPX
-- Supports tsc and @babel/plugin-transform-typescript
-- Supports aborting of requests (cancelable promise pattern)
-- Supports external references using [json-schema-ref-parser](https://github.com/APIDevTools/json-schema-ref-parser/)
+- Supports TypeScript client generation
+- Supports conversion from Swagger 1.x/2.x and other formats to OpenAPI via [`api-spec-converter`](https://github.com/LucyBot-Inc/api-spec-converter)
+- Supports JSON and YAML input files and URLs
+- Supports Fetch, Node-Fetch, Axios, XHR, and Angular HTTP clients
+- Supports config-file driven generation with `defineConfig`
+- Supports selecting only specific paths/methods and proxying them
+- Supports external references via [`@apidevtools/json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser)
 
 ## Install
 
-```
-npm install openapi-typescript-codegen --save-dev
-```
-
-## Usage
-
-```
-$ openapi --help
-
-  Usage: openapi [options]
-
-  Options:
-    -V, --version             output the version number
-    -i, --input <value>       OpenAPI specification, can be a path, url or string content (required)
-    -o, --output <value>      Output directory (required)
-    -c, --client <value>      HTTP client to generate [fetch, xhr, node, axios, angular] (default: "fetch")
-    --name <value>            Custom client class name
-    --useOptions              Use options instead of arguments
-    --useUnionTypes           Use union types instead of enums
-    --exportCore <value>      Write core files to disk (default: true)
-    --exportServices <value>  Write services to disk (default: true)
-    --exportModels <value>    Write models to disk (default: true)
-    --exportSchemas <value>   Write schemas to disk (default: false)
-    --indent <value>          Indentation options [4, 2, tab] (default: "4")
-    --postfixServices         Service name postfix (default: "Service")
-    --postfixModels           Model name postfix
-    --request <value>         Path to custom request file
-    -h, --help                display help for command
-
-  Examples
-    $ openapi --input ./spec.json --output ./generated
-    $ openapi --input ./spec.json --output ./generated --client xhr
+```bash
+npm install codegen-openapi-ts --save-dev
 ```
 
-Documentation
-===
+## CLI usage
 
-The main documentation can be found in the [openapi-typescript-codegen/wiki](https://github.com/ferdikoomen/openapi-typescript-codegen/wiki)
+`codegen-openapi-ts` is driven by a config file.
 
-Sponsors
-===
+```bash
+$ codegen-openapi-ts --help
+Usage: codegen-openapi-ts [options]
 
-If you or your company use the OpenAPI Typescript Codegen, please consider supporting me. By sponsoring I can free up time to give this project some love! Details can be found here: https://github.com/sponsors/ferdikoomen
+Options:
+  -V, --version     output the version number
+  --config <value>  Path to config file (default: "codegen.config.js")
+  -h, --help        display help for command
+```
 
-If you're from an enterprise looking for a fully managed SDK generation, please consider our sponsor:
+Create a `codegen.config.js` in your project root:
 
-<a href="https://speakeasyapi.dev/?utm_source=ferdi+repo&utm_medium=github+sponsorship">
-    <img alt="speakeasy" src="https://storage.googleapis.com/speakeasy-design-assets/ferdi-sponsorship.png" width="640"/>
-</a>
+```javascript
+const { defineConfig } = require('codegen-openapi-ts');
 
-[npm-url]: https://npmjs.org/package/openapi-typescript-codegen
-[npm-image]: https://img.shields.io/npm/v/openapi-typescript-codegen.svg
-[license-url]: LICENSE
-[license-image]: http://img.shields.io/npm/l/openapi-typescript-codegen.svg
-[coverage-url]: https://codecov.io/gh/ferdikoomen/openapi-typescript-codegen
-[coverage-image]: https://img.shields.io/codecov/c/github/ferdikoomen/openapi-typescript-codegen.svg
-[downloads-url]: http://npm-stat.com/charts.html?package=openapi-typescript-codegen
-[downloads-image]: http://img.shields.io/npm/dm/openapi-typescript-codegen.svg
-[build-url]: https://circleci.com/gh/ferdikoomen/openapi-typescript-codegen/tree/master
-[build-image]: https://circleci.com/gh/ferdikoomen/openapi-typescript-codegen/tree/master.svg?style=svg
+module.exports = defineConfig({
+  // Optional: path to a Handlebars file appended to every generated service
+  appendTemplate: './custom-append.hbs',
+
+  services: [
+    {
+      source: 'https://example.com/openapi.json',
+      from: 'openapi_3', // or 'swagger_1', 'swagger_2', 'api_blueprint', 'io_docs', 'google', 'raml', 'wadl'
+      output: 'src/api-types/example-api',
+
+      // Optional: global path proxy
+      proxyConfig: (path) => path.replace('/api/', '/backend/'),
+
+      // Optional: rename models in the stringified spec before generation
+      modelNameMapping: (json) => json.replace(/some\.long\.name/g, 'ShortName'),
+
+      // Optional: pick and rename specific paths/methods
+      urlMethodMapping: [
+        { originalUrl: '/pokemon-list', method: 'get', methodName: 'GetPokemonList' },
+        { originalUrl: '/pokemon-detail/{id}', method: 'get', methodName: 'GetPokemonDetail', proxyUrl: '/proxy/pokemon-detail/{id}' }
+      ],
+
+      // Optional: only generate paths listed in urlMethodMapping
+      selectedOnly: true
+    }
+  ]
+});
+```
+
+Add a script to `package.json`:
+
+```json
+{
+  "scripts": {
+    "codegen": "codegen-openapi-ts"
+  }
+}
+```
+
+Then run:
+
+```bash
+npm run codegen
+```
+
+## Programmatic API
+
+```javascript
+const { generate, convertAndGenerate } = require('codegen-openapi-ts');
+
+// Generate directly from an OpenAPI spec
+await generate({
+  input: './spec.json',
+  output: './generated',
+  httpClient: 'fetch', // 'fetch' | 'xhr' | 'node' | 'axios' | 'angular'
+  clientName: 'MyClient',
+  useUnionTypes: true,
+  exportCore: true,
+  exportServices: true,
+  exportModels: true,
+  exportSchemas: false,
+  indent: '4', // '4' | '2' | 'tab'
+  postfixServices: 'Service',
+  postfixModels: ''
+});
+
+// Convert from another spec format and generate with mappings
+await convertAndGenerate(
+  { from: 'swagger_2', source: 'https://example.com/swagger.json' },
+  { input: './api-schema.json', output: './generated', useUnionTypes: true },
+  [
+    { originalUrl: '/users', method: 'get', methodName: 'GetUsers' }
+  ],
+  true,                         // selectedOnly
+  (json) => json.replace(/OldName/g, 'NewName'), // modelNameMapping
+  '',                           // appendTemplate
+  (path) => path.replace('/v1/', '/v2/') // proxyConfig
+);
+```
+
+## Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `input` | `string \| object` | — | OpenAPI spec path, URL, or parsed object |
+| `output` | `string` | — | Output directory |
+| `httpClient` | `HttpClient` | `'fetch'` | `'fetch'`, `'xhr'`, `'node'`, `'axios'`, `'angular'` |
+| `clientName` | `string` | — | Custom client class name |
+| `useOptions` | `boolean` | `false` | Use options argument for service methods |
+| `useUnionTypes` | `boolean` | `false` | Use union types instead of enums |
+| `exportCore` | `boolean` | `true` | Write `core/` files |
+| `exportServices` | `boolean` | `true` | Write `services/` files |
+| `exportModels` | `boolean` | `true` | Write `models/` files |
+| `exportSchemas` | `boolean` | `false` | Write `schemas/` files |
+| `indent` | `Indent \| '4' \| '2' \| 'tab'` | `'4'` | Indentation style |
+| `postfixServices` | `string` | `'Service'` | Postfix for service names |
+| `postfixModels` | `string` | `''` | Postfix for model names |
+| `request` | `string` | — | Path to a custom request file |
+| `write` | `boolean` | `true` | Write files to disk |
+| `selectedOnly` | `boolean` | `false` | Only generate selected paths (V3) |
+| `appendTemplate` | `string` | — | Path to a Handlebars template appended to services |
+
+## Output folder
+
+The current CLI and `generate()` entry point create:
+
+```text
+output/
+├── models/          # API schema models
+├── services/        # API service classes
+└── index.ts         # barrel exports
+```
+
+The lower-level writer API can also produce `core/` (runtime request helpers, `OpenAPI` config, `CancelablePromise`, etc.) and `schemas/` folders, but these are not generated by the default entry points in this alpha release.
+
+## Alpha caveats
+
+- `convertAndGenerate()` writes a temporary `api-schema.json` to your project root and also stores a copy inside `node_modules/@apidevtools/json-schema-ref-parser/dist/` for `$ref` resolution.
+- The CLI hardcodes `useOptions: true` and `useUnionTypes: true` for config-file generation.
+- `useOptions`, `exportCore`, and `exportSchemas` are accepted by the programmatic API but currently forced to `false` internally. Use the lower-level writer API if you need direct control over these flags.
+
+[npm-url]: https://npmjs.org/package/codegen-openapi-ts
+[npm-image]: https://img.shields.io/npm/v/codegen-openapi-ts.svg
+[build-url]: https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml
+[build-image]: https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg
