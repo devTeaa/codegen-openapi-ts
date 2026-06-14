@@ -2,7 +2,7 @@
 
 [![NPM][npm-image]][npm-url]
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Build](https://github.com/devTeaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg)
+![Build](https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg)
 
 > Node.js library that generates Typescript clients based on the OpenAPI specification.
 
@@ -48,26 +48,34 @@ Options:
 ```
 
 **codegen.config.js**
-```
-export default defineConfig([
+```javascript
+const { defineConfig } = require('codegen-openapi-ts');
+
+module.exports = defineConfig([
   {
-    source: OpenAPI Swagger response (can check on the network response on the spec page),
-    from: swagger_1, swagger_2, openapi_3, api_blueprint, io_docs, google, raml, wadl,
-    output: output folder
-    urlMethodMapping: { 
-      originalUrl: api path,
-      method: http method (get/post/put/delete),
-      methodName: output operation name,
-      proxyUrl?: custom url api path
-    }[]
-    selectedOnly: this will make it so only generate services under urlMethodMapping, the default is false,
-    modelNameMapping: {
-      fromRegExp: regex model name on schema,
-      newModelName: output model name
-    }[]
+    source: 'OpenAPI Swagger response (can check on the network response on the spec page)',
+    from: 'swagger_1', // or 'swagger_2', 'openapi_3', 'api_blueprint', 'io_docs', 'google', 'raml', 'wadl'
+    output: 'output folder',
+    urlMethodMapping: [
+      {
+        originalUrl: 'api path',
+        method: 'http method (get/post/put/delete)',
+        methodName: 'output operation name',
+        proxyUrl: 'custom url api path' // optional
+      }
+    ],
+    selectedOnly: false, // only generate services under urlMethodMapping, default is false
+    modelNameMapping: [
+      {
+        fromRegExp: /regex model name on schema/,
+        newModelName: 'output model name'
+      }
+    ]
   },
 ]);
 ```
+
+You can also omit `defineConfig` and export a plain array, as shown in the next example.
 
 ## Example
 **codegen.config.js**
@@ -115,19 +123,24 @@ module.exports = [
   }
 }
 
-// npm run generate
+// npm run codegen
 ```
 ### Output folder
+
+By default the generator creates:
+
     .
     ├── ...
     ├── src                         # output value ('src/api-types/')
     │   ├── api-types               
     │   |   ├── pokemon-api         # output
     │   |   |   ├── models          # API schema models
-    │   |   |   ├── services        # API service level with methods/url/response/request types
-    │   |   |   └── index.ts        
+    │   |   |   ├── services        # API service classes with methods/url/response/request types
+    │   |   |   └── index.ts        # barrel exports
     |   |   └── ...
     └── ...
+
+Additional folders (`core/` and `schemas/`) are available through the lower-level writer API.
 
 
 ## Features
@@ -168,8 +181,9 @@ interface ModelWithNullableString {
 
 ### References
 
-Local references to schema definitions (those beginning with `#/definitions/schemas/`)
-will be converted to type references to the equivalent, generated top-level type.
+Local references to schema definitions (those beginning with `#/definitions/`)
+will be converted to type references to the equivalent generated top-level type.
+For example, `#/definitions/Customer` becomes the type `Customer`.
 
 The OpenAPI generator also supports external references, which allows you to break
 down your openapi.yml into multiple sub-files, or incorporate third-party schemas
@@ -200,8 +214,8 @@ FAQ
 ### Babel support
 If you use enums inside your models / definitions then those enums are by default inside a namespace with the same name
 as your model. This is called declaration merging. However, the [@babel/plugin-transform-typescript](https://babeljs.io/docs/en/babel-plugin-transform-typescript)
-does not support these namespaces, so if you are using babel in your project please use the `--useUnionTypes` flag
-to generate union types instead of traditional enums. More info can be found here: [Enums vs. Union Types](#enums-vs-union-types---useuniontypes).
+does not support these namespaces, so if you are using the programmatic `generate()` API with Babel, pass `useUnionTypes: true`
+to generate union types instead of traditional enums. The CLI enables union types by default. More info can be found here: [Enums vs. Union Types](#enums-vs-union-types---useuniontypes).
 
 **Note:** If you are using Babel 7 and Typescript 3.8 (or higher) then you should enable the `onlyRemoveTypeImports` to
 ignore any 'type only' imports, see https://babeljs.io/docs/en/babel-preset-typescript#onlyremovetypeimports for more info
@@ -220,15 +234,15 @@ In order to compile the project and resolve the imports, you will need to enable
 in your `tsconfig.json` file.
 
 
-[npm-url]: https://npmjs.org/package/
+[npm-url]: https://npmjs.org/package/codegen-openapi-ts
 [npm-image]: https://img.shields.io/npm/v/codegen-openapi-ts.svg
-[coverage-url]: https://codecov.io/gh/ferdikoomen/codegen-openapi-ts
-[coverage-image]: https://img.shields.io/codecov/c/github/ferdikoomen/codegen-openapi-ts.svg
-[quality-url]: https://lgtm.com/projects/g/ferdikoomen/codegen-openapi-ts
-[quality-image]: https://img.shields.io/lgtm/grade/javascript/g/ferdikoomen/codegen-openapi-ts.svg
-[climate-url]: https://codeclimate.com/github/ferdikoomen/codegen-openapi-ts
-[climate-image]: https://img.shields.io/codeclimate/maintainability/ferdikoomen/codegen-openapi-ts.svg
+[coverage-url]: https://codecov.io/gh/devteaa/codegen-openapi-ts
+[coverage-image]: https://img.shields.io/codecov/c/github/devteaa/codegen-openapi-ts.svg
+[quality-url]: https://lgtm.com/projects/g/devteaa/codegen-openapi-ts
+[quality-image]: https://img.shields.io/lgtm/grade/javascript/g/devteaa/codegen-openapi-ts.svg
+[climate-url]: https://codeclimate.com/github/devteaa/codegen-openapi-ts
+[climate-image]: https://img.shields.io/codeclimate/maintainability/devteaa/codegen-openapi-ts.svg
 [downloads-url]: http://npm-stat.com/charts.html?package=codegen-openapi-ts
 [downloads-image]: http://img.shields.io/npm/dm/codegen-openapi-ts.svg
-[build-url]: https://circleci.com/gh/ferdikoomen/codegen-openapi-ts/tree/master
-[build-image]: https://circleci.com/gh/ferdikoomen/codegen-openapi-ts/tree/master.svg?style=svg
+[build-url]: https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml
+[build-image]: https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg
