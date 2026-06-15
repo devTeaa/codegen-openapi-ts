@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { cleanup } from './scripts/cleanup';
 import { compileWithTypescript } from './scripts/compileWithTypescript';
 import { generateClient } from './scripts/generateClient';
@@ -16,8 +18,8 @@ describe('client.node', () => {
     });
 
     it('requests token', async () => {
-        const { ApiClient } = require('./generated/client/node/index.js');
-        const tokenRequest = jest.fn().mockResolvedValue('MY_TOKEN');
+        const { ApiClient } = await import('./generated/client/node/index.js');
+        const tokenRequest = vi.fn().mockResolvedValue('MY_TOKEN');
         const client = new ApiClient({
             TOKEN: tokenRequest,
             USERNAME: undefined,
@@ -29,7 +31,7 @@ describe('client.node', () => {
     });
 
     it('uses credentials', async () => {
-        const { ApiClient } = require('./generated/client/node/index.js');
+        const { ApiClient } = await import('./generated/client/node/index.js');
         const client = new ApiClient({
             TOKEN: undefined,
             USERNAME: 'username',
@@ -40,7 +42,7 @@ describe('client.node', () => {
     });
 
     it('supports complex params', async () => {
-        const { ApiClient } = require('./generated/client/node/index.js');
+        const { ApiClient } = await import('./generated/client/node/index.js');
         const client = new ApiClient();
         const result = await client.complex.complexTypes({
             first: {
@@ -53,7 +55,7 @@ describe('client.node', () => {
     });
 
     it('support form data', async () => {
-        const { ApiClient } = require('./generated/client/node/index.js');
+        const { ApiClient } = await import('./generated/client/node/index.js');
         const client = new ApiClient();
         const result = await client.parameters.callWithParameters(
             'valueHeader',
@@ -71,7 +73,7 @@ describe('client.node', () => {
     it('can abort the request', async () => {
         let error;
         try {
-            const { ApiClient } = require('./generated/client/node/index.js');
+            const { ApiClient } = await import('./generated/client/node/index.js');
             const client = new ApiClient();
             const promise = client.simple.getCallWithoutParametersAndResponse();
             setTimeout(() => {
@@ -87,7 +89,7 @@ describe('client.node', () => {
     it('should throw known error (500)', async () => {
         let error;
         try {
-            const { ApiClient } = require('./generated/client/node/index.js');
+            const { ApiClient } = await import('./generated/client/node/index.js');
             const client = new ApiClient();
             await client.error.testErrorCode(500);
         } catch (e) {
@@ -119,7 +121,7 @@ describe('client.node', () => {
     it('should throw unknown error (409)', async () => {
         let error;
         try {
-            const { ApiClient } = require('./generated/client/node/index.js');
+            const { ApiClient } = await import('./generated/client/node/index.js');
             const client = new ApiClient();
             await client.error.testErrorCode(409);
         } catch (e) {

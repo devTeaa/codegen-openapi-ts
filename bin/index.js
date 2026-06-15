@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 
-'use strict';
+import { program } from 'commander';
+import { createRequire } from 'module';
+import path from 'path';
+import { pathToFileURL } from 'url';
 
-const path = require('path');
-const { program } = require('commander');
-const esmConfig = require('esm-config');
+import { convertAndGenerate } from '../dist/index.js';
+
+const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
-const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
 
-const appRoot = process.cwd().split('/node_modules')[0]
+const appRoot = process.cwd().split('/node_modules')[0];
 
 const params = program
     .name('codegen-openapi-ts')
@@ -18,34 +20,41 @@ const params = program
     .parse(process.argv)
     .opts();
 
-async function generateOnConfig () {
-  try {
-    const configFile = await esmConfig(path.join(appRoot, params.config))
-
-    for (const configService of configFile.services) {
-      console.log('Generating ' + configService.source)
-
-      await OpenAPI.convertAndGenerate(
-        {
-          from: configService.from,
-          source: configService.source
-        },
-        {
-          input: 'api-schema.json',
-          output: configService.output || 'output',
-          useOptions: true,
-          useUnionTypes: true,
-        },
-        configService.urlMethodMapping || [],
-        configService.selectedOnly || false,
-        configService.modelNameMapping,
-        configFile.appendTemplate,
-        configService.proxyConfig
-      )
-    }
-  } catch (err) {
-    console.log(err)
-  }
+async function loadConfig(configPath) {
+    const absolutePath = path.resolve(appRoot, configPath);
+    const configUrl = pathToFileURL(absolutePath).href;
+    const module = await import(configUrl);
+    return module.default ?? module;
 }
 
-generateOnConfig()
+async function generateOnConfig() {
+    try {
+        const configFile = await loadConfig(params.config);
+
+        for (const configService of configFile.services) {
+            console.log('Generating ' + configService.source);
+
+            await convertAndGenerate(
+                {
+                    from: configService.from,
+                    source: configService.source,
+                },
+                {
+                    input: 'api-schema.json',
+                    output: configService.output || 'output',
+                    useOptions: true,
+                    useUnionTypes: true,
+                },
+                configService.urlMethodMapping || [],
+                configService.selectedOnly || false,
+                configService.modelNameMapping,
+                configFile.appendTemplate,
+                configService.proxyConfig
+            );
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+generateOnConfig();

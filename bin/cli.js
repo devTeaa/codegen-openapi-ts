@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
-'use strict';
+import { program } from 'commander';
+import { createRequire } from 'module';
 
-const path = require('path');
-const { program } = require('commander');
+import { generate } from '../dist/index.js';
+
+const require = createRequire(import.meta.url);
 const pkg = require('../package.json');
 
 const params = program
@@ -27,30 +29,26 @@ const params = program
     .parse(process.argv)
     .opts();
 
-const OpenAPI = require(path.resolve(__dirname, '../dist/index.js'));
-
-if (OpenAPI) {
-    OpenAPI.generate({
-        input: params.input,
-        output: params.output,
-        httpClient: params.client,
-        clientName: params.name,
-        useOptions: params.useOptions,
-        useUnionTypes: params.useUnionTypes,
-        exportCore: JSON.parse(params.exportCore) === true,
-        exportServices: JSON.parse(params.exportServices) === true,
-        exportModels: JSON.parse(params.exportModels) === true,
-        exportSchemas: JSON.parse(params.exportSchemas) === true,
-        indent: params.indent,
-        postfixServices: params.postfixServices,
-        postfixModels: params.postfixModels,
-        request: params.request,
+generate({
+    input: params.input,
+    output: params.output,
+    httpClient: params.client,
+    clientName: params.name,
+    useOptions: params.useOptions,
+    useUnionTypes: params.useUnionTypes,
+    exportCore: JSON.parse(params.exportCore) === true,
+    exportServices: JSON.parse(params.exportServices) === true,
+    exportModels: JSON.parse(params.exportModels) === true,
+    exportSchemas: JSON.parse(params.exportSchemas) === true,
+    indent: params.indent,
+    postfixServices: params.postfixServices,
+    postfixModels: params.postfixModels,
+    request: params.request,
+})
+    .then(() => {
+        process.exit(0);
     })
-        .then(() => {
-            process.exit(0);
-        })
-        .catch(error => {
-            console.error(error);
-            process.exit(1);
-        });
-}
+    .catch(error => {
+        console.error(error);
+        process.exit(1);
+    });

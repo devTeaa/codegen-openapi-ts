@@ -20,84 +20,58 @@ export const registerHandlebarHelpers = (root: {
         return options.inverse(this);
     });
 
-    Handlebars.registerHelper(
-      'unionTypeBesideAny',
-      function (this: any, a: Model[]): string {
-        const listType = a.map(item => item.type)
-        const listTypeWithoutAny = listType.filter(value => value !== 'any')
+    Handlebars.registerHelper('unionTypeBesideAny', function (this: any, a: Model[]): string {
+        const listType = a.map(item => item.type);
+        const listTypeWithoutAny = listType.filter(value => value !== 'any');
 
         if (listTypeWithoutAny.length === 0) {
-          return listType.join(' | ')
+            return listType.join(' | ');
         }
 
-        return listTypeWithoutAny.join(' | ')
-      }
-    );
+        return listTypeWithoutAny.join(' | ');
+    });
+
+    Handlebars.registerHelper('capitalizeFirstLetter', function (this: any, a: string): string {
+        return a.charAt(0).toUpperCase() + a.slice(1);
+    });
 
     Handlebars.registerHelper(
-      'capitalizeFirstLetter',
-      function (this: any, a: string): string {
-        return a.charAt(0).toUpperCase() + a.slice(1)
-      }
+        'hasProperty',
+        function (this: any, a: any[], b: string, options: Handlebars.HelperOptions): string {
+            return a.map(item => item.in).find(value => value === b) ? options.fn(this) : options.inverse(this);
+        }
     );
 
-    Handlebars.registerHelper(
-      'hasProperty',
-      function (this: any, a: any[], b: string, options: Handlebars.HelperOptions): string {
-        return a.map(item => item.in).find(value => value === b) 
-          ? options.fn(this) 
-          : options.inverse(this);
-      }
-    );
-
-    Handlebars.registerHelper(
-      'mapHttpApiMethod',
-      function (this: any): string {
+    Handlebars.registerHelper('mapHttpApiMethod', function (this: any): string {
         switch (this.method) {
-          case 'GET':
-            return 'getDataViaApi'
-          case 'POST':
-            return 'postDataViaApi'
-          case 'PUT':
-            return 'putDataViaApi'
-          case 'DELETE':
-            return 'deleteDataViaApi'
-          default:
-            return 'getDataViaApi'
+            case 'GET':
+                return 'getDataViaApi';
+            case 'POST':
+                return 'postDataViaApi';
+            case 'PUT':
+                return 'putDataViaApi';
+            case 'DELETE':
+                return 'deleteDataViaApi';
+            default:
+                return 'getDataViaApi';
         }
-      }
-    );
+    });
 
-    Handlebars.registerHelper(
-      'httpApiMethodIsEqual',
-      function (this: any, a: string): boolean {
-        return this.method === 'GET'
-      }
-    );
+    Handlebars.registerHelper('httpApiMethodIsEqual', function (this: any, a: string): boolean {
+        return this.method === 'GET';
+    });
 
-    Handlebars.registerHelper(
-      'prefixHttpApiMethodParam',
-      function (this: any): string {
-        return this.path
-          .replace(/\{/g, '${data.path.')
-      }
-    );
+    Handlebars.registerHelper('prefixHttpApiMethodParam', function (this: any): string {
+        return this.path.replace(/\{/g, '${data.path.');
+    });
 
-    Handlebars.registerHelper(
-      'debugPrint',
-      function (this: any): any {
-        return JSON.stringify(this)
-      }
-    );
-    
-    Handlebars.registerHelper(
-      'hasLength',
-      function (this: any, a: any[], options: Handlebars.HelperOptions): string {
-        return a.length > 0
-          ? options.fn(this) 
-          : options.inverse(this);
-      }
-    );
+    Handlebars.registerHelper('debugPrint', function (this: any): any {
+        return JSON.stringify(this);
+    });
+
+    Handlebars.registerHelper('hasLength', function (this: any, a: any[], options: Handlebars.HelperOptions): string {
+        return a.length > 0 ? options.fn(this) : options.inverse(this);
+    });
 
     Handlebars.registerHelper(
         'equals',
@@ -177,8 +151,7 @@ export const registerHandlebarHelpers = (root: {
     });
 
     Handlebars.registerHelper('registerParam', function (value: string): string {
-      return value
-          .replace(/\{/g, '${')
+        return value.replace(/\{/g, '${');
     });
 
     Handlebars.registerHelper('escapeDescription', function (value: string): string {

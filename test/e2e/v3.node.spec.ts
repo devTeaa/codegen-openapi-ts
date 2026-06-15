@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { cleanup } from './scripts/cleanup';
 import { compileWithTypescript } from './scripts/compileWithTypescript';
 import { generateClient } from './scripts/generateClient';
@@ -16,8 +18,8 @@ describe('v3.node', () => {
     });
 
     it('requests token', async () => {
-        const { OpenAPI, SimpleService } = require('./generated/v3/node/index.js');
-        const tokenRequest = jest.fn().mockResolvedValue('MY_TOKEN');
+        const { OpenAPI, SimpleService } = await import('./generated/v3/node/index.js');
+        const tokenRequest = vi.fn().mockResolvedValue('MY_TOKEN');
         OpenAPI.TOKEN = tokenRequest;
         OpenAPI.USERNAME = undefined;
         OpenAPI.PASSWORD = undefined;
@@ -27,7 +29,7 @@ describe('v3.node', () => {
     });
 
     it('uses credentials', async () => {
-        const { OpenAPI, SimpleService } = require('./generated/v3/node/index.js');
+        const { OpenAPI, SimpleService } = await import('./generated/v3/node/index.js');
         OpenAPI.TOKEN = undefined;
         OpenAPI.USERNAME = 'username';
         OpenAPI.PASSWORD = 'password';
@@ -36,7 +38,7 @@ describe('v3.node', () => {
     });
 
     it('supports complex params', async () => {
-        const { ComplexService } = require('./generated/v3/node/index.js');
+        const { ComplexService } = await import('./generated/v3/node/index.js');
         const result = await ComplexService.complexTypes({
             first: {
                 second: {
@@ -48,7 +50,7 @@ describe('v3.node', () => {
     });
 
     it('support form data', async () => {
-        const { ParametersService } = require('./generated/v3/node/index.js');
+        const { ParametersService } = await import('./generated/v3/node/index.js');
         const result = await ParametersService.callWithParameters(
             'valueHeader',
             'valueQuery',
@@ -65,7 +67,7 @@ describe('v3.node', () => {
     it('can abort the request', async () => {
         let error;
         try {
-            const { SimpleService } = require('./generated/v3/node/index.js');
+            const { SimpleService } = await import('./generated/v3/node/index.js');
             const promise = SimpleService.getCallWithoutParametersAndResponse();
             setTimeout(() => {
                 promise.cancel();
@@ -80,7 +82,7 @@ describe('v3.node', () => {
     it('should throw known error (500)', async () => {
         let error;
         try {
-            const { ErrorService } = require('./generated/v3/node/index.js');
+            const { ErrorService } = await import('./generated/v3/node/index.js');
             await ErrorService.testErrorCode(500);
         } catch (e) {
             const err = e as any;
@@ -111,7 +113,7 @@ describe('v3.node', () => {
     it('should throw unknown error (409)', async () => {
         let error;
         try {
-            const { ErrorService } = require('./generated/v3/node/index.js');
+            const { ErrorService } = await import('./generated/v3/node/index.js');
             await ErrorService.testErrorCode(409);
         } catch (e) {
             const err = e as any;
@@ -141,7 +143,7 @@ describe('v3.node', () => {
     });
 
     it('it should parse query params', async () => {
-        const { ParametersService } = require('./generated/v3/node/index.js');
+        const { ParametersService } = await import('./generated/v3/node/index.js');
         const result = (await ParametersService.postCallWithOptionalParam({
             page: 0,
             size: 1,

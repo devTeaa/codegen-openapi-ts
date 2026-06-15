@@ -1,5 +1,6 @@
 import { EOL } from 'os';
 import { resolve } from 'path';
+import { vi } from 'vitest';
 
 import type { Service } from '../client/interfaces/Service';
 import { HttpClient } from '../HttpClient';
@@ -8,7 +9,7 @@ import { writeFile } from './fileSystem';
 import type { Templates } from './registerHandlebarTemplates';
 import { writeClientServices } from './writeClientServices';
 
-jest.mock('./fileSystem');
+vi.mock('./fileSystem');
 
 describe('writeClientServices', () => {
     it('should write to filesystem', async () => {

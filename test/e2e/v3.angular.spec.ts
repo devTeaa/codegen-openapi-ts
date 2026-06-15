@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import browser from './scripts/browser';
 import { buildAngularProject } from './scripts/buildAngularProject';
 import { cleanup } from './scripts/cleanup';
@@ -23,7 +25,7 @@ describe('v3.angular', () => {
     });
 
     it('requests token', async () => {
-        await browser.exposeFunction('tokenRequest', jest.fn().mockResolvedValue('MY_TOKEN'));
+        await browser.exposeFunction('tokenRequest', vi.fn().mockResolvedValue('MY_TOKEN'));
         const result = await browser.evaluate(async () => {
             return await new Promise<any>(resolve => {
                 const { OpenAPI, SimpleService } = (window as any).api;

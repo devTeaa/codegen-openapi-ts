@@ -1,23 +1,18 @@
-'use strict';
+import fetch from 'node-fetch';
 
-const OpenAPI = require('../');
-const fetch = require('node-fetch');
+import { generate, HttpClient } from '../dist/index.js';
 
-const generate = async (input, output) => {
-    await OpenAPI.generate({
+const generateSpec = async (input, output) => {
+    await generate({
         input,
         output,
-        httpClient: OpenAPI.HttpClient.FETCH,
+        httpClient: HttpClient.FETCH,
         useOptions: true,
         useUnionTypes: false,
         exportCore: true,
         exportSchemas: true,
         exportModels: true,
         exportServices: true,
-        // clientName: 'Demo',
-        // indent: OpenAPI.Indent.SPACE_2,
-        // postfix: 'Service',
-        // request: './test/custom/request.ts',
     });
 };
 
@@ -52,13 +47,13 @@ const generateRealWorldSpecs = async () => {
 
     for (let i = 0; i < specs.length; i++) {
         const spec = specs[i];
-        await generate(spec.url, `./test/generated/${spec.name}/`);
+        await generateSpec(spec.url, `./test/generated/${spec.name}/`);
     }
 };
 
 const main = async () => {
-    await generate('./test/spec/v2.json', './test/generated/v2/');
-    await generate('./test/spec/v3.json', './test/generated/v3/');
+    await generateSpec('./test/spec/v2.json', './test/generated/v2/');
+    await generateSpec('./test/spec/v3.json', './test/generated/v3/');
     // await generateRealWorldSpecs();
 };
 

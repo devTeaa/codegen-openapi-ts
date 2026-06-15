@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import type { Client } from '../client/interfaces/Client';
 import { HttpClient } from '../HttpClient';
 import { Indent } from '../Indent';
@@ -5,7 +7,7 @@ import { writeFile } from './fileSystem';
 import type { Templates } from './registerHandlebarTemplates';
 import { writeClientClass } from './writeClientClass';
 
-jest.mock('./fileSystem');
+vi.mock('./fileSystem');
 
 describe('writeClientClass', () => {
     it('should write to filesystem', async () => {

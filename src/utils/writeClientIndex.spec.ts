@@ -1,11 +1,12 @@
 import { resolve } from 'path';
+import { vi } from 'vitest';
 
 import type { Client } from '../client/interfaces/Client';
 import { writeFile } from './fileSystem';
 import type { Templates } from './registerHandlebarTemplates';
 import { writeClientIndex } from './writeClientIndex';
 
-jest.mock('./fileSystem');
+vi.mock('./fileSystem');
 
 describe('writeClientIndex', () => {
     it('should write to filesystem', async () => {

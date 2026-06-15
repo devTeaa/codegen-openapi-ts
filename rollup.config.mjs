@@ -81,8 +81,9 @@ export default {
     output: {
         exports: 'named',
         file: './dist/index.js',
-        format: 'cjs',
+        format: 'es',
+        sourcemap: true,
     },
-    external: ['camelcase', 'commander', 'fs-extra', 'handlebars', '@apidevtools/json-schema-ref-parser'],
+    external: ['api-spec-converter', 'camelcase', 'commander', 'fs-extra', 'handlebars', 'shelljs', '@apidevtools/json-schema-ref-parser'],
     plugins: getPlugins(),
 };

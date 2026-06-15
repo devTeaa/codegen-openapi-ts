@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 
+import { defineConfig } from '..';
 import type { Service } from '../client/interfaces/Service';
 import type { HttpClient } from '../HttpClient';
 import type { Indent } from '../Indent';
@@ -8,7 +9,6 @@ import { formatCode as f } from './formatCode';
 import { formatIndentation as i } from './formatIndentation';
 import { isDefined } from './isDefined';
 import type { Templates } from './registerHandlebarTemplates';
-import { defineConfig } from '..';
 
 /**
  * Generate Services using the Handlebar template and write to disk.
@@ -43,7 +43,7 @@ export const writeClientServices = async (
             useOptions,
             postfix,
             exportClient: isDefined(clientName),
-            appendTemplate
+            appendTemplate,
         });
         await writeFile(file, i(f(templateResult), indent));
     }
