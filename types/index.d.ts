@@ -3,7 +3,6 @@ export declare enum HttpClient {
     XHR = 'xhr',
     NODE = 'node',
     AXIOS = 'axios',
-    ANGULAR = 'angular',
 }
 
 export declare enum Indent {
@@ -15,7 +14,7 @@ export declare enum Indent {
 export type Options = {
     input: string | Record<string, any>;
     output: string;
-    httpClient?: HttpClient | 'fetch' | 'xhr' | 'node' | 'axios' | 'angular';
+    httpClient?: HttpClient | 'fetch' | 'xhr' | 'node' | 'axios';
     clientName?: string;
     useOptions?: boolean;
     useUnionTypes?: boolean;

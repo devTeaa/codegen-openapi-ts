@@ -2,11 +2,18 @@
 
 {{#if imports}}
 {{#each imports}}
-import type { {{{this}}} } from '../models/{{{this}}}';
+import type { {{{this}}} } from '../models/{{{this}}}.js';
 {{/each}}
 {{/if}}
 {{#if @root.appendTemplate}}
 {{{@root.appendTemplate}}}
+{{/if}}
+
+import { CancelablePromise } from '../core/CancelablePromise.js';
+import { OpenAPI } from '../core/OpenAPI.js';
+import { request as __request } from '../core/request.js';
+{{#if @root.exportClient}}
+import type { BaseHttpRequest } from '../core/BaseHttpRequest.js';
 {{/if}}
 
 {{#each operations}}
@@ -23,67 +30,47 @@ export interface {{capitalizeFirstLetter name}} {
 export const {{{name}}}{{{@root.postfix}}}Url = {
   {{#each operations}}
   {{#hasProperty parameters 'path'}}{{capitalizeFirstLetter name}}: ({ {{#each parameters}}{{#equals in 'path'}}
-    {{{name}}}{{>isRequired}},{{/equals}}{{/each}}
+    {{{name}}},{{/equals}}{{/each}}
   }: { {{#each parameters}}{{#equals in 'path'}}
       {{{name}}}{{>isRequired}}: {{>type}}{{#if default}} = {{{default}}}{{/if}}{{/equals}}{{/each}}
   }) => `{{{registerParam path}}}`,{{else}}{{capitalizeFirstLetter name}}: '{{path}}',{{/hasProperty}}
   {{/each}}
 }
 
-
-{{#if @root.appendTemplate}}
-export const {{{name}}}{{{@root.postfix}}}Api = {
-  {{#each operations}}
-  {{name}}: ({{#hasLength parameters}}data: {{capitalizeFirstLetter name}}['request']{{/hasLength}}) => httpApi.{{mapHttpApiMethod name}}<{{capitalizeFirstLetter name}}['response']>({
-    url: `{{prefixHttpApiMethodParam path}}`{{#hasProperty parameters 'query'}},
-    queryParams: data.query{{/hasProperty}}{{#hasProperty parameters 'body'}},
-    body: data.body{{/hasProperty}}
-  }),
-  {{/each}}
-}
+export class {{{name}}}{{{@root.postfix}}} {
+{{#if @root.exportClient}}
+	constructor(
+		private readonly httpRequest: BaseHttpRequest,
+	) {}
 {{/if}}
 
-{{!-- 
-export class {{{name}}}{{{@root.postfix}}} {
-	{{#each operations}}
-	/**
+{{#each operations}}
 	{{#if deprecated}}
-	 * @deprecated
+	/** @deprecated */
 	{{/if}}
 	{{#if summary}}
-	 * {{{escapeComment summary}}}
+	/** {{{escapeComment summary}}} */
 	{{/if}}
 	{{#if description}}
-	 * {{{escapeComment description}}}
+	/** {{{escapeComment description}}} */
 	{{/if}}
 	{{#unless @root.useOptions}}
 	{{#if parameters}}
 	{{#each parameters}}
-	 * @param {{{name}}} {{#if description}}{{{escapeComment description}}}{{/if}}
+	/** @param {{{name}}} {{#if description}}{{{escapeComment description}}}{{/if}} */
 	{{/each}}
 	{{/if}}
 	{{/unless}}
 	{{#each results}}
-	 * @returns {{{type}}} {{#if description}}{{{escapeComment description}}}{{/if}}
+	/** @returns {{{type}}} {{#if description}}{{{escapeComment description}}}{{/if}} */
 	{{/each}}
-	 * @throws ApiError
-	 */
+	/** @throws ApiError */
 	{{#if @root.exportClient}}
-	{{#equals @root.httpClient 'angular'}}
-	public {{{name}}}({{>parameters}}): Observable<{{>result}}> {
-		return this.httpRequest.request({
-	{{else}}
 	public {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
 		return this.httpRequest.request({
-	{{/equals}}
-	{{else}}
-	{{#equals @root.httpClient 'angular'}}
-	public {{{name}}}({{>parameters}}): Observable<{{>result}}> {
-		return __request(OpenAPI, this.http, {
 	{{else}}
 	public static {{{name}}}({{>parameters}}): CancelablePromise<{{>result}}> {
 		return __request(OpenAPI, {
-	{{/equals}}
 	{{/if}}
 			method: '{{{method}}}',
 			url: '{{{path}}}',
@@ -146,5 +133,5 @@ export class {{{name}}}{{{@root.postfix}}} {
 		});
 	}
 
-	{{/each}}
-} --}}
+{{/each}}
+}

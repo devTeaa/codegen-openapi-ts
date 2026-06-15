@@ -6,7 +6,7 @@
 
 > Node.js library that generates TypeScript clients from OpenAPI/Swagger specifications.
 
-This project is a fork of [OpenAPI Typescript Codegen](https://github.com/ferdikoomen/openapi-typescript-codegen) by [Ferdi Koomen](https://github.com/ferdikoomen). It adds conversion helpers, a config-file driven CLI, URL/method mapping, model-name mapping, proxy support, custom append templates, and an Angular HTTP client.
+This project is a fork of [OpenAPI Typescript Codegen](https://github.com/ferdikoomen/openapi-typescript-codegen) by [Ferdi Koomen](https://github.com/ferdikoomen). It adds conversion helpers, a config-file driven CLI, URL/method mapping, model-name mapping, proxy support, and custom append templates.
 
 > ⚠️ **This branch is an alpha release (`v0.9.0-alpha.6`).** The API, config shape, and generated output may still change before `1.0.0`.
 
@@ -17,7 +17,7 @@ This project is a fork of [OpenAPI Typescript Codegen](https://github.com/ferdik
 - Supports TypeScript client generation
 - Supports conversion from Swagger 1.x/2.x and other formats to OpenAPI via [`api-spec-converter`](https://github.com/LucyBot-Inc/api-spec-converter)
 - Supports JSON and YAML input files and URLs
-- Supports Fetch, Node-Fetch, Axios, XHR, and Angular HTTP clients
+- Supports Fetch, Node-Fetch, Axios, and XHR HTTP clients
 - Supports config-file driven generation with `defineConfig`
 - Supports selecting only specific paths/methods and proxying them
 - Supports external references via [`@apidevtools/json-schema-ref-parser`](https://github.com/APIDevTools/json-schema-ref-parser)
@@ -101,7 +101,7 @@ const { generate, convertAndGenerate } = require('codegen-openapi-ts');
 await generate({
   input: './spec.json',
   output: './generated',
-  httpClient: 'fetch', // 'fetch' | 'xhr' | 'node' | 'axios' | 'angular'
+  httpClient: 'fetch', // 'fetch' | 'xhr' | 'node' | 'axios'
   clientName: 'MyClient',
   useUnionTypes: true,
   exportCore: true,
@@ -133,7 +133,7 @@ await convertAndGenerate(
 |---|---|---|---|
 | `input` | `string \| object` | — | OpenAPI spec path, URL, or parsed object |
 | `output` | `string` | — | Output directory |
-| `httpClient` | `HttpClient` | `'fetch'` | `'fetch'`, `'xhr'`, `'node'`, `'axios'`, `'angular'` |
+| `httpClient` | `HttpClient` | `'fetch'` | `'fetch'`, `'xhr'`, `'node'`, `'axios'` |
 | `clientName` | `string` | — | Custom client class name |
 | `useOptions` | `boolean` | `false` | Use options argument for service methods |
 | `useUnionTypes` | `boolean` | `false` | Use union types instead of enums |

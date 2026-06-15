@@ -57,10 +57,6 @@ export const registerHandlebarHelpers = (root: {
         }
     });
 
-    Handlebars.registerHelper('httpApiMethodIsEqual', function (this: any, a: string): boolean {
-        return this.method === 'GET';
-    });
-
     Handlebars.registerHelper('prefixHttpApiMethodParam', function (this: any): string {
         return this.path.replace(/\{/g, '${data.path.');
     });
@@ -76,14 +72,22 @@ export const registerHandlebarHelpers = (root: {
     Handlebars.registerHelper(
         'equals',
         function (this: any, a: string, b: string, options: Handlebars.HelperOptions): string {
-            return a === b ? options.fn(this) : options.inverse(this);
+            const result = a === b;
+            if (typeof options.fn === 'function' && typeof options.inverse === 'function') {
+                return result ? options.fn(this) : options.inverse(this);
+            }
+            return result ? 'true' : '';
         }
     );
 
     Handlebars.registerHelper(
         'notEquals',
         function (this: any, a: string, b: string, options: Handlebars.HelperOptions): string {
-            return a !== b ? options.fn(this) : options.inverse(this);
+            const result = a !== b;
+            if (typeof options.fn === 'function' && typeof options.inverse === 'function') {
+                return result ? options.fn(this) : options.inverse(this);
+            }
+            return result ? 'true' : '';
         }
     );
 
@@ -151,7 +155,12 @@ export const registerHandlebarHelpers = (root: {
     });
 
     Handlebars.registerHelper('registerParam', function (value: string): string {
-        return value.replace(/\{/g, '${');
+        return value.replace(/\{([^{}]+)\}/g, (_, name: string) => {
+            if (/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
+                return '${' + name + '}';
+            }
+            return '\\{' + name + '\\}';
+        });
     });
 
     Handlebars.registerHelper('escapeDescription', function (value: string): string {

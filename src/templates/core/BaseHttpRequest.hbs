@@ -1,31 +1,12 @@
 {{>header}}
 
-{{#equals @root.httpClient 'angular'}}
-import type { HttpClient } from '@angular/common/http';
-import type { Observable } from 'rxjs';
-
-import type { ApiRequestOptions } from './ApiRequestOptions';
-import type { OpenAPIConfig } from './OpenAPI';
-{{else}}
-import type { ApiRequestOptions } from './ApiRequestOptions';
-import type { CancelablePromise } from './CancelablePromise';
-import type { OpenAPIConfig } from './OpenAPI';
-{{/equals}}
+import type { ApiRequestOptions } from './ApiRequestOptions.js';
+import type { CancelablePromise } from './CancelablePromise.js';
+import type { OpenAPIConfig } from './OpenAPI.js';
 
 export abstract class BaseHttpRequest {
 
-	{{#equals @root.httpClient 'angular'}}
-	constructor(
-		public readonly config: OpenAPIConfig,
-		public readonly http: HttpClient,
-	) {}
-	{{else}}
 	constructor(public readonly config: OpenAPIConfig) {}
-	{{/equals}}
 
-	{{#equals @root.httpClient 'angular'}}
-	public abstract request<T>(options: ApiRequestOptions): Observable<T>;
-	{{else}}
 	public abstract request<T>(options: ApiRequestOptions): CancelablePromise<T>;
-	{{/equals}}
 }

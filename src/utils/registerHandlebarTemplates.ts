@@ -2,12 +2,6 @@ import Handlebars from 'handlebars/runtime';
 
 import { HttpClient } from '../HttpClient';
 import templateClient from '../templates/client.hbs';
-import angularGetHeaders from '../templates/core/angular/getHeaders.hbs';
-import angularGetRequestBody from '../templates/core/angular/getRequestBody.hbs';
-import angularGetResponseBody from '../templates/core/angular/getResponseBody.hbs';
-import angularGetResponseHeader from '../templates/core/angular/getResponseHeader.hbs';
-import angularRequest from '../templates/core/angular/request.hbs';
-import angularSendRequest from '../templates/core/angular/sendRequest.hbs';
 import templateCoreApiError from '../templates/core/ApiError.hbs';
 import templateCoreApiRequestOptions from '../templates/core/ApiRequestOptions.hbs';
 import templateCoreApiResult from '../templates/core/ApiResult.hbs';
@@ -213,14 +207,6 @@ export const registerHandlebarTemplates = (root: {
     Handlebars.registerPartial('axios/getResponseHeader', Handlebars.template(axiosGetResponseHeader));
     Handlebars.registerPartial('axios/sendRequest', Handlebars.template(axiosSendRequest));
     Handlebars.registerPartial('axios/request', Handlebars.template(axiosRequest));
-
-    // Specific files for the angular client implementation
-    Handlebars.registerPartial('angular/getHeaders', Handlebars.template(angularGetHeaders));
-    Handlebars.registerPartial('angular/getRequestBody', Handlebars.template(angularGetRequestBody));
-    Handlebars.registerPartial('angular/getResponseBody', Handlebars.template(angularGetResponseBody));
-    Handlebars.registerPartial('angular/getResponseHeader', Handlebars.template(angularGetResponseHeader));
-    Handlebars.registerPartial('angular/sendRequest', Handlebars.template(angularSendRequest));
-    Handlebars.registerPartial('angular/request', Handlebars.template(angularRequest));
 
     return templates;
 };

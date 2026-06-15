@@ -1,30 +1,30 @@
 {{>header}}
 
 {{#if @root.exportClient}}
-export { {{{clientName}}} } from './{{{clientName}}}';
+export { {{{clientName}}} } from './{{{clientName}}}.js';
 
 {{/if}}
 {{#if @root.exportCore}}
-export { ApiError } from './core/ApiError';
+export { ApiError } from './core/ApiError.js';
 {{#if @root.exportClient}}
-export { BaseHttpRequest } from './core/BaseHttpRequest';
+export { BaseHttpRequest } from './core/BaseHttpRequest.js';
 {{/if}}
-export { CancelablePromise, CancelError } from './core/CancelablePromise';
-export { OpenAPI } from './core/OpenAPI';
-export type { OpenAPIConfig } from './core/OpenAPI';
+export { CancelablePromise, CancelError } from './core/CancelablePromise.js';
+export { OpenAPI } from './core/OpenAPI.js';
+export type { OpenAPIConfig } from './core/OpenAPI.js';
 {{/if}}
 {{#if @root.exportModels}}
 {{#if models}}
 
 {{#each models}}
 {{#if @root.useUnionTypes}}
-export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
+export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{else if enum}}
-export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
+export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{else if enums}}
-export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
+export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{else}}
-export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}';
+export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{/if}}
 {{/each}}
 {{/if}}
@@ -33,7 +33,7 @@ export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfi
 {{#if models}}
 
 {{#each models}}
-export { ${{{name}}} } from './schemas/${{{name}}}';
+export { ${{{name}}} } from './schemas/${{{name}}}.js';
 {{/each}}
 {{/if}}
 {{/if}}
@@ -41,7 +41,8 @@ export { ${{{name}}} } from './schemas/${{{name}}}';
 {{#if services}}
 
 {{#each services}}
-export { {{{name}}}{{{@root.postfixServices}}}Url } from './services/{{{name}}}{{{@root.postfixServices}}}';
+export { {{{name}}}{{{@root.postfixServices}}} } from './services/{{{name}}}{{{@root.postfixServices}}}.js';
+export { {{{name}}}{{{@root.postfixServices}}}Url } from './services/{{{name}}}{{{@root.postfixServices}}}.js';
 {{/each}}
 {{/if}}
 {{/if}}

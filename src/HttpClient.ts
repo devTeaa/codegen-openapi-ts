@@ -3,5 +3,4 @@ export enum HttpClient {
     XHR = 'xhr',
     NODE = 'node',
     AXIOS = 'axios',
-    ANGULAR = 'angular',
 }

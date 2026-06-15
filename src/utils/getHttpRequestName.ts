@@ -14,7 +14,5 @@ export const getHttpRequestName = (httpClient: HttpClient): string => {
             return 'NodeHttpRequest';
         case HttpClient.AXIOS:
             return 'AxiosHttpRequest';
-        case HttpClient.ANGULAR:
-            return 'AngularHttpRequest';
     }
 };

@@ -81,17 +81,6 @@
         "shelljs": "^0.8.5"
     },
     "devDependencies": {
-        "@angular-devkit/build-angular": "17.0.9",
-        "@angular/animations": "17.0.8",
-        "@angular/cli": "17.0.9",
-        "@angular/common": "17.0.8",
-        "@angular/compiler": "17.0.8",
-        "@angular/compiler-cli": "17.0.8",
-        "@angular/core": "17.0.8",
-        "@angular/forms": "17.0.8",
-        "@angular/platform-browser": "17.0.8",
-        "@angular/platform-browser-dynamic": "17.0.8",
-        "@angular/router": "17.0.8",
         "@babel/core": "7.23.9",
         "@babel/preset-env": "7.23.9",
         "@babel/preset-typescript": "7.23.3",
@@ -127,11 +116,9 @@
         "qs": "6.11.2",
         "rimraf": "5.0.5",
         "rollup": "4.7.0",
-        "rxjs": "7.8.1",
         "tslib": "2.6.2",
         "typescript": "5.2.2",
-        "vitest": "^2.1.0",
-        "zone.js": "0.14.3"
+        "vitest": "^2.1.0"
     },
     "overrides": {
         "node-fetch": "2.7.0",

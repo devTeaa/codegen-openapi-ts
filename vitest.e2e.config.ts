@@ -6,6 +6,7 @@ export default defineConfig({
         globals: true,
         include: ['test/e2e/**/*.spec.ts'],
         exclude: ['node_modules', 'test/e2e/generated'],
+        fileParallelism: false,
         coverage: {
             enabled: false,
         },

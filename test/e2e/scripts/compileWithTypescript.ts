@@ -16,7 +16,7 @@ export const compileWithTypescript = (dir: string) => {
         compilerOptions: {
             target: 'es2020',
             module: 'es2020',
-            moduleResolution: 'node',
+            moduleResolution: 'bundler',
             lib: ['es2020', 'dom'],
             declaration: false,
             declarationMap: false,
@@ -53,6 +53,6 @@ export const compileWithTypescript = (dir: string) => {
             getCanonicalFileName: f => f,
             getNewLine: () => EOL,
         });
-        console.log(message);
+        throw new Error(`TypeScript compilation failed for ${cwd}:\n${message}`);
     }
 };
