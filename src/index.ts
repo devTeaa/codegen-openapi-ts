@@ -155,6 +155,24 @@ export default {
  * @param options.request: Path to custom request file
  * @param options.write Write the files to disk (true or false)
  */
+
+/**
+ * Load the spec and convert it to a plain OpenAPI object. OpenAPI 3.1 specs
+ * are not supported by api-spec-converter (frozen at 3.0), so they bypass the
+ * converter entirely and are passed through as-is.
+ */
+const loadSpec = async (from: string, source: string): Promise<{ spec: any; stringify: () => string }> => {
+    if (from === 'openapi_3') {
+        const spec = await getOpenApiSpec(source);
+        if (typeof spec?.openapi === 'string' && spec.openapi.startsWith('3.1')) {
+            return { spec, stringify: () => JSON.stringify(spec, null, 4) };
+        }
+    }
+
+    const { default: Converter } = await import('api-spec-converter');
+    return await Converter.convert({ from, to: from, source });
+};
+
 export async function convertAndGenerate(
     { from, source }: { from: string; source: string },
     { input, output, useOptions, useUnionTypes }: Options,
@@ -166,7 +184,6 @@ export async function convertAndGenerate(
 ): Promise<void> {
     try {
         const { default: shell } = await import('shelljs');
-        const { default: Converter } = await import('api-spec-converter');
 
         const sshRegex = new RegExp('((git|ssh|http(s)?)|(git@[w.]+))(:(//)?)([w.@:/-~]+)(.git)(/)?');
 
@@ -178,18 +195,19 @@ export async function convertAndGenerate(
             }
         }
 
-        const converted = await Converter.convert({
-            from,
-            to: from,
-            source,
-        });
+        const converted = await loadSpec(from, source);
 
         urlMethodMapping.forEach(item => {
             clearLine();
             cursorToStart();
             process.stdout.write(`Processing ${item.originalUrl} ${item.method} ${item.methodName}`);
 
-            converted.spec.paths[item.originalUrl][item.method].operationId = item.methodName;
+            const operation = converted.spec.paths?.[item.originalUrl]?.[item.method];
+            if (operation) {
+                operation.operationId = item.methodName;
+            } else {
+                process.stdout.write(` (warning: path not found in spec)`);
+            }
         });
 
         clearLine();
