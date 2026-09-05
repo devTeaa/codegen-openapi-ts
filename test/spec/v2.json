@@ -10,6 +10,12 @@
         "http"
     ],
     "paths": {
+        "/api/v{api-version}/no-tag": {
+            "tags": [],
+            "get": {
+                "operationId": "ServiceWithEmptyTag"
+            }
+        },
         "/api/v{api-version}/simple": {
             "get": {
                 "tags": [
@@ -54,6 +60,52 @@
                 "operationId": "PatchCallWithoutParametersAndResponse"
             }
         },
+        "/api/v{api-version}/descriptions/": {
+            "post": {
+                "tags": [
+                    "Descriptions"
+                ],
+                "operationId": "CallWithDescriptions",
+                "parameters": [
+                    {
+                        "description": "Testing multiline comments in string: First line\nSecond line\n\nFourth line",
+                        "name": "parameterWithBreaks",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing backticks in string: `backticks` and ```multiple backticks``` should work",
+                        "name": "parameterWithBackticks",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing slashes in string: \\backwards\\\\\\ and /forwards/// should work",
+                        "name": "parameterWithSlashes",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing expression placeholders in string: ${expression} should work",
+                        "name": "parameterWithExpressionPlaceholders",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing quotes in string: 'single quote''' and \"double quotes\"\"\" should work",
+                        "name": "parameterWithQuotes",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "description": "Testing reserved characters in string: /* inline */ and /** inline **/ should work",
+                        "name": "parameterWithReservedCharacters",
+                        "in": "query",
+                        "type": "string"
+                    }
+                ]
+            }
+        },
         "/api/v{api-version}/parameters/{parameterPath}": {
             "post": {
                 "tags": [
@@ -83,7 +135,7 @@
                         "required": true
                     },
                     {
-                        "description": "This is the parameter that is send as request body",
+                        "description": "This is the parameter that is sent as request body",
                         "name": "parameterBody",
                         "in": "body",
                         "type": "string",
@@ -162,7 +214,7 @@
                         "required": true
                     },
                     {
-                        "description": "This is the parameter that is send as request body",
+                        "description": "This is the parameter that is sent as request body",
                         "name": "PARAMETER-BODY",
                         "in": "body",
                         "type": "string",
@@ -568,7 +620,7 @@
                 "operationId": "CollectionFormat",
                 "parameters": [
                     {
-                        "description": "This is an array parameter that is send as csv format (comma-separated values)",
+                        "description": "This is an array parameter that is sent as csv format (comma-separated values)",
                         "name": "parameterArrayCSV",
                         "in": "query",
                         "required": true,
@@ -579,7 +631,7 @@
                         "collectionFormat": "csv"
                     },
                     {
-                        "description": "This is an array parameter that is send as ssv format (space-separated values)",
+                        "description": "This is an array parameter that is sent as ssv format (space-separated values)",
                         "name": "parameterArraySSV",
                         "in": "query",
                         "required": true,
@@ -590,7 +642,7 @@
                         "collectionFormat": "ssv"
                     },
                     {
-                        "description": "This is an array parameter that is send as tsv format (tab-separated values)",
+                        "description": "This is an array parameter that is sent as tsv format (tab-separated values)",
                         "name": "parameterArrayTSV",
                         "in": "query",
                         "required": true,
@@ -601,7 +653,7 @@
                         "collectionFormat": "tsv"
                     },
                     {
-                        "description": "This is an array parameter that is send as pipes format (pipe-separated values)",
+                        "description": "This is an array parameter that is sent as pipes format (pipe-separated values)",
                         "name": "parameterArrayPipes",
                         "in": "query",
                         "required": true,
@@ -612,7 +664,7 @@
                         "collectionFormat": "pipes"
                     },
                     {
-                        "description": "This is an array parameter that is send as multi format (multiple parameter instances)",
+                        "description": "This is an array parameter that is sent as multi format (multiple parameter instances)",
                         "name": "parameterArrayMulti",
                         "in": "query",
                         "required": true,
@@ -856,8 +908,28 @@
         }
     },
     "definitions": {
-        "MultilineComment": {
-            "description": "Testing multiline comments.\nThis must go to the next line.\n\nThis will contain a break.",
+        "CommentWithBreaks": {
+            "description": "Testing multiline comments in string: First line\nSecond line\n\nFourth line",
+            "type": "integer"
+        },
+        "CommentWithBackticks": {
+            "description": "Testing backticks in string: `backticks` and ```multiple backticks``` should work",
+            "type": "integer"
+        },
+        "CommentWithSlashes": {
+            "description": "Testing slashes in string: \\backwards\\\\\\ and /forwards/// should work",
+            "type": "integer"
+        },
+        "CommentWithExpressionPlaceholders": {
+            "description": "Testing expression placeholders in string: ${expression} should work",
+            "type": "integer"
+        },
+        "CommentWithQuotes": {
+            "description": "Testing quotes in string: 'single quote''' and \"double quotes\"\"\" should work",
+            "type": "integer"
+        },
+        "CommentWithReservedCharacters": {
+            "description": "Testing reserved characters in string: /* inline */ and /** inline **/ should work",
             "type": "integer"
         },
         "SimpleInteger": {
@@ -891,7 +963,9 @@
             "enum": [
                 "Success",
                 "Warning",
-                "Error"
+                "Error",
+                "'Single Quote'",
+                "\"Double Quotes\""
             ]
         },
         "EnumWithNumbers": {
@@ -1392,6 +1466,14 @@
                 }
             ]
         },
+        "default": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "ModelWithPattern": {
             "description": "This is a model that contains a some patterns",
             "type": "object",
@@ -1425,6 +1507,10 @@
                 "text": {
                     "type": "string",
                     "pattern": "^\\w+$"
+                },
+                "patternWithSingleQuotes": {
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9']*$"
                 }
             }
         }

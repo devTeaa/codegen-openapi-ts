@@ -1,10 +1,15 @@
+import { EOL } from 'os';
+import { resolve } from 'path';
+import { vi } from 'vitest';
+
 import type { Service } from '../client/interfaces/Service';
 import { HttpClient } from '../HttpClient';
+import { Indent } from '../Indent';
 import { writeFile } from './fileSystem';
-import { Templates } from './registerHandlebarTemplates';
+import type { Templates } from './registerHandlebarTemplates';
 import { writeClientServices } from './writeClientServices';
 
-jest.mock('./fileSystem');
+vi.mock('./fileSystem');
 
 describe('writeClientServices', () => {
     it('should write to filesystem', async () => {
@@ -18,6 +23,7 @@ describe('writeClientServices', () => {
 
         const templates: Templates = {
             index: () => 'index',
+            client: () => 'client',
             exports: {
                 model: () => 'model',
                 schema: () => 'schema',
@@ -30,11 +36,13 @@ describe('writeClientServices', () => {
                 apiResult: () => 'apiResult',
                 cancelablePromise: () => 'cancelablePromise',
                 request: () => 'request',
+                baseHttpRequest: () => 'baseHttpRequest',
+                httpRequest: () => 'httpRequest',
             },
         };
 
-        await writeClientServices(services, templates, '/', HttpClient.FETCH, false, false, 'Service');
+        await writeClientServices(services, templates, '/', HttpClient.FETCH, false, false, Indent.SPACE_4, 'Service');
 
-        expect(writeFile).toBeCalledWith('/UserService.ts', 'service');
+        expect(writeFile).toBeCalledWith(resolve('/', '/UserService.ts'), `service${EOL}`);
     });
 });

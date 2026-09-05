@@ -1,9 +1,12 @@
+import { resolve } from 'path';
+import { vi } from 'vitest';
+
 import type { Client } from '../client/interfaces/Client';
 import { writeFile } from './fileSystem';
-import { Templates } from './registerHandlebarTemplates';
+import type { Templates } from './registerHandlebarTemplates';
 import { writeClientIndex } from './writeClientIndex';
 
-jest.mock('./fileSystem');
+vi.mock('./fileSystem');
 
 describe('writeClientIndex', () => {
     it('should write to filesystem', async () => {
@@ -16,6 +19,7 @@ describe('writeClientIndex', () => {
 
         const templates: Templates = {
             index: () => 'index',
+            client: () => 'client',
             exports: {
                 model: () => 'model',
                 schema: () => 'schema',
@@ -28,11 +32,13 @@ describe('writeClientIndex', () => {
                 apiResult: () => 'apiResult',
                 cancelablePromise: () => 'cancelablePromise',
                 request: () => 'request',
+                baseHttpRequest: () => 'baseHttpRequest',
+                httpRequest: () => 'httpRequest',
             },
         };
 
-        await writeClientIndex(client, templates, '/', true, true, true, true, true, 'Service');
+        await writeClientIndex(client, templates, '/', true, true, true, true, true, 'Service', '');
 
-        expect(writeFile).toBeCalledWith('/index.ts', 'index');
+        expect(writeFile).toBeCalledWith(resolve('/', '/index.ts'), 'index');
     });
 });

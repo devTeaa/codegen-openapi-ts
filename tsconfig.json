@@ -1,36 +1,36 @@
 {
     "compilerOptions": {
-      "allowSyntheticDefaultImports": true,
-      "declaration": true,
-      "declarationMap": false,
-      "lib": ["es6", "es2017", "dom"],
-      "module": "es6",
-      "moduleResolution": "node",
-      "noImplicitAny": true,
-      "noImplicitReturns": true,
-      "noImplicitThis": true,
-      "outDir": "./dist",
-      "skipLibCheck": true,
-      "sourceMap": true,
-      "strict": true,
-      "strictFunctionTypes": true,
-      "strictNullChecks": true,
-      "target": "es2017",
-      "types": ["jest", "node"]
+        "outDir": "./dist",
+        "target": "ES2022",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "lib": ["ES2022", "dom"],
+        "types": ["vitest/globals", "node"],
+        "declaration": false,
+        "declarationMap": false,
+        "sourceMap": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true
     },
+
     "files": [
         "./src/typings/hbs.d.ts",
-        "./src/typings/camelcase.d.ts",
-        "./src/typings/mkdirp.d.ts",
-        "./src/typings/rimraf.d.ts"
+        "./src/typings/api-spec-converter.d.ts"
     ],
 
     "include": [
-        "./src/**/*.ts"
+        "./src/**/*.ts",
+        "./vitest.config.ts"
     ],
 
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "**/__mocks__"
     ]
 }
-

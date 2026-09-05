@@ -1,18 +1,18 @@
 declare module 'api-spec-converter' {
-  export default {
-    convert({
-      from,
-      to,
-      source,
-    }: ConverterInput): {
-      validate: () => void
-      stringify: () => any
+    export interface ConvertInput {
+        from: string;
+        to: string;
+        source: string;
     }
-  }
 
-  export type ConverterInput = {
-    from: 'swagger_1' | 'swagger_2' | 'openapi_3'
-    to: 'swagger_2' | 'openapi_3'
-    source: string
-  } 
+    export interface ConvertedSpec {
+        spec: Record<string, any>;
+        stringify: () => string;
+    }
+
+    export function convert(input: ConvertInput): Promise<ConvertedSpec>;
+
+    export default {
+        convert,
+    };
 }

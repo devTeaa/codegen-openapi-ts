@@ -1,25 +1,23 @@
-'use strict';
+import fetch from 'node-fetch';
 
-const OpenAPI = require('../dist');
-const fetch = require('node-fetch');
+import { generate, HttpClient } from '../dist/index.js';
 
-async function generate(input, output) {
-    await OpenAPI.generate({
+const generateSpec = async (input, output) => {
+    await generate({
         input,
         output,
-        httpClient: OpenAPI.HttpClient.FETCH,
-        useOptions: false,
+        httpClient: HttpClient.FETCH,
+        useOptions: true,
         useUnionTypes: false,
         exportCore: true,
         exportSchemas: true,
         exportModels: true,
         exportServices: true,
-        // postfix: 'Api',
-        // request: './test/custom/request.ts',
     });
-}
+};
 
-async function generateRealWorldSpecs() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const generateRealWorldSpecs = async () => {
     const response = await fetch('https://api.apis.guru/v2/list.json');
 
     const list = await response.json();
@@ -49,14 +47,14 @@ async function generateRealWorldSpecs() {
 
     for (let i = 0; i < specs.length; i++) {
         const spec = specs[i];
-        await generate(spec.url, `./test/generated/${spec.name}/`);
+        await generateSpec(spec.url, `./test/generated/${spec.name}/`);
     }
-}
+};
 
-async function main() {
-    await generate('./test/spec/v2.json', './test/generated/v2/');
-    await generate('./test/spec/v3.json', './test/generated/v3/');
+const main = async () => {
+    await generateSpec('./test/spec/v2.json', './test/generated/v2/');
+    await generateSpec('./test/spec/v3.json', './test/generated/v3/');
     // await generateRealWorldSpecs();
-}
+};
 
 main();

@@ -3,22 +3,21 @@ import { getPattern } from '../../../utils/getPattern';
 import type { OpenApi } from '../interfaces/OpenApi';
 import type { OpenApiResponse } from '../interfaces/OpenApiResponse';
 import type { OpenApiSchema } from '../interfaces/OpenApiSchema';
-import { getComment } from './getComment';
 import { getContent } from './getContent';
 import { getModel } from './getModel';
 import { getRef } from './getRef';
 import { getType } from './getType';
 
-export function getOperationResponse(
+export const getOperationResponse = (
     openApi: OpenApi,
     response: OpenApiResponse,
     responseCode: number
-): OperationResponse {
+): OperationResponse => {
     const operationResponse: OperationResponse = {
         in: 'response',
         name: '',
         code: responseCode,
-        description: getComment(response.description)!,
+        description: response.description || null,
         export: 'generic',
         type: 'any',
         base: 'any',
@@ -96,4 +95,4 @@ export function getOperationResponse(
     }
 
     return operationResponse;
-}
+};

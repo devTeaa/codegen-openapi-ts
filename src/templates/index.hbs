@@ -1,22 +1,30 @@
 {{>header}}
-{{#if @root.exportCore}}
 
-export { ApiError } from './core/ApiError';
-export { CancelablePromise } from './core/CancelablePromise';
-export { OpenAPI } from './core/OpenAPI';
+{{#if @root.exportClient}}
+export { {{{clientName}}} } from './{{{clientName}}}.js';
+
+{{/if}}
+{{#if @root.exportCore}}
+export { ApiError } from './core/ApiError.js';
+{{#if @root.exportClient}}
+export { BaseHttpRequest } from './core/BaseHttpRequest.js';
+{{/if}}
+export { CancelablePromise, CancelError } from './core/CancelablePromise.js';
+export { OpenAPI } from './core/OpenAPI.js';
+export type { OpenAPIConfig } from './core/OpenAPI.js';
 {{/if}}
 {{#if @root.exportModels}}
 {{#if models}}
 
 {{#each models}}
 {{#if @root.useUnionTypes}}
-export type { {{{name}}} } from './models/{{{name}}}';
+export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{else if enum}}
-export { {{{name}}} } from './models/{{{name}}}';
+export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{else if enums}}
-export { {{{name}}} } from './models/{{{name}}}';
+export { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{else}}
-export type { {{{name}}} } from './models/{{{name}}}';
+export type { {{{name}}}{{#if @root.postfixModels}} as {{{name}}}{{{@root.postfixModels}}}{{/if}} } from './models/{{{name}}}.js';
 {{/if}}
 {{/each}}
 {{/if}}
@@ -25,15 +33,16 @@ export type { {{{name}}} } from './models/{{{name}}}';
 {{#if models}}
 
 {{#each models}}
-export { ${{{name}}} } from './schemas/${{{name}}}';
+export { ${{{name}}} } from './schemas/${{{name}}}.js';
 {{/each}}
 {{/if}}
 {{/if}}
-
 {{#if @root.exportServices}}
 {{#if services}}
+
 {{#each services}}
-export { {{{name}}}{{{@root.postfix}}}Url } from './services/{{{name}}}{{{@root.postfix}}}';
+export { {{{name}}}{{{@root.postfixServices}}} } from './services/{{{name}}}{{{@root.postfixServices}}}.js';
+export { {{{name}}}{{{@root.postfixServices}}}Url } from './services/{{{name}}}{{{@root.postfixServices}}}.js';
 {{/each}}
 {{/if}}
 {{/if}}
