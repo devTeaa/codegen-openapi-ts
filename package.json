@@ -93,9 +93,9 @@
         "@types/fs-extra": "^11.0.4",
         "@types/glob": "8.1.0",
         "@types/node": "^24.0.0",
-        "@types/shelljs": "^0.8.15",
         "@types/node-fetch": "2.6.10",
         "@types/qs": "6.9.11",
+        "@types/shelljs": "^0.8.15",
         "@typescript-eslint/eslint-plugin": "6.20.0",
         "@typescript-eslint/parser": "6.20.0",
         "@vitest/coverage-v8": "^2.1.0",
@@ -116,6 +116,7 @@
         "qs": "6.11.2",
         "rimraf": "5.0.5",
         "rollup": "4.7.0",
+        "rollup-plugin-dts": "6.5.1",
         "tslib": "2.6.2",
         "typescript": "5.2.2",
         "vitest": "^2.1.0"

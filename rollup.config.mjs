@@ -2,6 +2,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
+import dts from 'rollup-plugin-dts';
 import { readFileSync } from 'fs';
 import handlebars from 'handlebars';
 import { dirname, extname, resolve } from 'path';
@@ -76,14 +77,24 @@ const getPlugins = () => {
     return [...plugins, terser()];
 };
 
-export default {
-    input: './src/index.ts',
-    output: {
-        exports: 'named',
-        file: './dist/index.js',
-        format: 'es',
-        sourcemap: true,
+export default [
+    {
+        input: './src/index.ts',
+        output: {
+            exports: 'named',
+            file: './dist/index.js',
+            format: 'es',
+            sourcemap: true,
+        },
+        external: ['api-spec-converter', 'camelcase', 'commander', 'fs-extra', 'handlebars', 'shelljs', '@apidevtools/json-schema-ref-parser'],
+        plugins: getPlugins(),
     },
-    external: ['api-spec-converter', 'camelcase', 'commander', 'fs-extra', 'handlebars', 'shelljs', '@apidevtools/json-schema-ref-parser'],
-    plugins: getPlugins(),
-};
+    {
+        input: './src/index.ts',
+        output: {
+            file: './dist/index.d.ts',
+            format: 'es',
+        },
+        plugins: [dts()],
+    },
+];
