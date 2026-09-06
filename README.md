@@ -1,4 +1,4 @@
-# codegen-openapi-ts (alpha)
+# codegen-openapi-ts
 
 [![NPM][npm-image]][npm-url]
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,13 +8,12 @@
 
 This project is a fork of [OpenAPI Typescript Codegen](https://github.com/ferdikoomen/openapi-typescript-codegen) by [Ferdi Koomen](https://github.com/ferdikoomen). It adds conversion helpers, a config-file driven CLI, URL/method mapping, model-name mapping, proxy support, and custom append templates.
 
-> ⚠️ **This branch is an alpha release (`v0.9.0-alpha.6`).** The API, config shape, and generated output may still change before `1.0.0`.
-
 ## Why?
 
 - Frontend ❤️ OpenAPI, but we do not want to use Java codegen in our builds
 - Quick, lightweight, robust and framework-agnostic 🚀
 - Supports TypeScript client generation
+- Supports OpenAPI 3.1 specs natively (bypasses the frozen `api-spec-converter` and passes the spec straight to the parser)
 - Supports conversion from Swagger 1.x/2.x and other formats to OpenAPI via [`api-spec-converter`](https://github.com/LucyBot-Inc/api-spec-converter)
 - Supports JSON and YAML input files and URLs
 - Supports Fetch, Node-Fetch, Axios, and XHR HTTP clients
@@ -28,6 +27,8 @@ This project is a fork of [OpenAPI Typescript Codegen](https://github.com/ferdik
 npm install codegen-openapi-ts --save-dev
 ```
 
+Requires Node.js >= 24 (ESM only).
+
 ## CLI usage
 
 `codegen-openapi-ts` is driven by a config file.
@@ -38,16 +39,24 @@ Usage: codegen-openapi-ts [options]
 
 Options:
   -V, --version     output the version number
-  --config <value>  Path to config file (default: "codegen.config.js")
+  --config <value>  Path to config file
   -h, --help        display help for command
 ```
 
-Create a `codegen.config.js` in your project root:
+If `--config` is omitted, the CLI looks for a config file in the project root in this order:
+
+1. `codegen.config.js`
+2. `codegen.config.mjs`
+3. `codegen.config.cjs`
+
+> **Note:** this library is ESM-only. If your project does not have `"type": "module"` in its `package.json`, name your config `codegen.config.mjs` — that extension is always loaded as ESM, regardless of your package type.
+
+Create a `codegen.config.mjs` (or `.js` in an ESM project) in your project root:
 
 ```javascript
-const { defineConfig } = require('codegen-openapi-ts');
+import { defineConfig } from 'codegen-openapi-ts';
 
-module.exports = defineConfig({
+export default defineConfig({
   // Optional: path to a Handlebars file appended to every generated service
   appendTemplate: './custom-append.hbs',
 
@@ -63,7 +72,7 @@ module.exports = defineConfig({
       // Optional: rename models in the stringified spec before generation
       modelNameMapping: (json) => json.replace(/some\.long\.name/g, 'ShortName'),
 
-      // Optional: pick and rename specific paths/methods
+      // Optional: pick and rename specific paths/methods (object form only)
       urlMethodMapping: [
         { originalUrl: '/pokemon-list', method: 'get', methodName: 'GetPokemonList' },
         { originalUrl: '/pokemon-detail/{id}', method: 'get', methodName: 'GetPokemonDetail', proxyUrl: '/proxy/pokemon-detail/{id}' }
@@ -92,12 +101,18 @@ Then run:
 npm run codegen
 ```
 
+Paths listed in `urlMethodMapping` that do not exist in the spec are skipped with a warning instead of failing the run.
+
+## OpenAPI 3.1 support
+
+`api-spec-converter` is frozen at OpenAPI 3.0 and rejects 3.1 specs (`Unsupported version`). When `from` is `openapi_3` and the fetched spec declares `"openapi": "3.1.x"`, the converter is bypassed entirely: the spec is loaded and `$ref`-bundled with `@apidevtools/json-schema-ref-parser` and passed straight to the generator (all `urlMethodMapping`, `proxyConfig`, and `modelNameMapping` transforms still apply). Swagger 1.x/2.x and other formats continue to go through `api-spec-converter`.
+
 ## Programmatic API
 
 ```javascript
-const { generate, convertAndGenerate } = require('codegen-openapi-ts');
+import { generate, convertAndGenerate } from 'codegen-openapi-ts';
 
-// Generate directly from an OpenAPI spec
+// Generate directly from an OpenAPI spec (2.0, 3.0, or 3.1)
 await generate({
   input: './spec.json',
   output: './generated',
@@ -120,10 +135,10 @@ await convertAndGenerate(
   [
     { originalUrl: '/users', method: 'get', methodName: 'GetUsers' }
   ],
-  true,                         // selectedOnly
-  (json) => json.replace(/OldName/g, 'NewName'), // modelNameMapping
-  '',                           // appendTemplate
-  (path) => path.replace('/v1/', '/v2/') // proxyConfig
+  true,                                           // selectedOnly
+  (json) => json.replace(/OldName/g, 'NewName'),  // modelNameMapping
+  '',                                             // appendTemplate
+  (path) => path.replace('/v1/', '/v2/')          // proxyConfig
 );
 ```
 
@@ -160,15 +175,16 @@ output/
 └── index.ts         # barrel exports
 ```
 
-The lower-level writer API can also produce `core/` (runtime request helpers, `OpenAPI` config, `CancelablePromise`, etc.) and `schemas/` folders, but these are not generated by the default entry points in this alpha release.
+The lower-level writer API can also produce `core/` (runtime request helpers, `OpenAPI` config, `CancelablePromise`, etc.) and `schemas/` folders, but these are not generated by the default entry points.
 
-## Alpha caveats
+## Known caveats
 
+- `urlMethodMapping` accepts the object form only. The tuple form (`['/path', 'get', 'Method']`) from the old alpha releases (`0.x`) is no longer supported.
 - `convertAndGenerate()` writes a temporary `api-schema.json` to your project root and also stores a copy inside `node_modules/@apidevtools/json-schema-ref-parser/dist/` for `$ref` resolution.
 - The CLI hardcodes `useOptions: true` and `useUnionTypes: true` for config-file generation.
 - `useOptions`, `exportCore`, and `exportSchemas` are accepted by the programmatic API but currently forced to `false` internally. Use the lower-level writer API if you need direct control over these flags.
 
-[npm-url]: https://npmjs.org/package/codegen-openapi-ts
+[npm-url]: https://npmjs.com/package/codegen-openapi-ts
 [npm-image]: https://img.shields.io/npm/v/codegen-openapi-ts.svg
 [build-url]: https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml
 [build-image]: https://github.com/devteaa/codegen-openapi-ts/actions/workflows/CI.yml/badge.svg
