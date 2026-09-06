@@ -41,7 +41,9 @@ export { ${{{name}}} } from './schemas/${{{name}}}.js';
 {{#if services}}
 
 {{#each services}}
+{{#if @root.exportCore}}
 export { {{{name}}}{{{@root.postfixServices}}} } from './services/{{{name}}}{{{@root.postfixServices}}}.js';
+{{/if}}
 export { {{{name}}}{{{@root.postfixServices}}}Url } from './services/{{{name}}}{{{@root.postfixServices}}}.js';
 {{/each}}
 {{/if}}
