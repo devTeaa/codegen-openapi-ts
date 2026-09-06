@@ -80,6 +80,7 @@ export const writeClient = async (
             indent,
             postfixServices,
             clientName,
+            exportCore,
             appendTemplate
         );
     }

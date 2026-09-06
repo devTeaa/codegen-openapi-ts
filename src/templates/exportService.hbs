@@ -9,9 +9,11 @@ import type { {{{this}}} } from '../models/{{{this}}}.js';
 {{{@root.appendTemplate}}}
 {{/if}}
 
+{{#if @root.exportCore}}
 import { CancelablePromise } from '../core/CancelablePromise.js';
 import { OpenAPI } from '../core/OpenAPI.js';
 import { request as __request } from '../core/request.js';
+{{/if}}
 {{#if @root.exportClient}}
 import type { BaseHttpRequest } from '../core/BaseHttpRequest.js';
 {{/if}}
@@ -37,6 +39,7 @@ export const {{{name}}}{{{@root.postfix}}}Url = {
   {{/each}}
 }
 
+{{#if @root.exportCore}}
 export class {{{name}}}{{{@root.postfix}}} {
 {{#if @root.exportClient}}
 	constructor(
@@ -135,3 +138,4 @@ export class {{{name}}}{{{@root.postfix}}} {
 
 {{/each}}
 }
+{{/if}}

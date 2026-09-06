@@ -32,6 +32,7 @@ export const writeClientServices = async (
     indent: Indent,
     postfix: string,
     clientName?: string,
+    exportCore?: boolean,
     appendTemplate?: ReturnType<typeof defineConfig>['appendTemplate']
 ): Promise<void> => {
     for (const service of services) {
@@ -43,6 +44,7 @@ export const writeClientServices = async (
             useOptions,
             postfix,
             exportClient: isDefined(clientName),
+            exportCore: exportCore !== false,
             appendTemplate,
         });
         await writeFile(file, i(f(templateResult), indent));
