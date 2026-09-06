@@ -258,6 +258,7 @@ export async function convertAndGenerate(
             output,
             useOptions,
             useUnionTypes,
+            exportCore: false,
             selectedOnly,
             appendTemplate,
         });

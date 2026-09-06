@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { program } from 'commander';
-import { createRequire } from 'module';
 import fs from 'fs';
+import { createRequire } from 'module';
 import path from 'path';
 import { pathToFileURL } from 'url';
 
@@ -29,7 +29,9 @@ function resolveConfigPath() {
     }
     const found = DEFAULT_CONFIG_CANDIDATES.find(candidate => fs.existsSync(path.resolve(appRoot, candidate)));
     if (!found) {
-        throw new Error(`Config file not found. Create a codegen.config.js (or .mjs/.cjs) in ${appRoot}, or pass --config.`);
+        throw new Error(
+            `Config file not found. Create a codegen.config.js (or .mjs/.cjs) in ${appRoot}, or pass --config.`
+        );
     }
     return path.resolve(appRoot, found);
 }
