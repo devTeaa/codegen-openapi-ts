@@ -13,8 +13,8 @@ This project is a fork of [OpenAPI Typescript Codegen](https://github.com/ferdik
 - Frontend ❤️ OpenAPI, but we do not want to use Java codegen in our builds
 - Quick, lightweight, robust and framework-agnostic 🚀
 - Supports TypeScript client generation
-- Supports OpenAPI 3.1 specs natively (bypasses the frozen `api-spec-converter` and passes the spec straight to the parser)
-- Supports conversion from Swagger 1.x/2.x and other formats to OpenAPI via [`api-spec-converter`](https://github.com/LucyBot-Inc/api-spec-converter)
+- Supports OpenAPI 3.0 and 3.1 specs natively (no converter in the path)
+- Converts Swagger 2.0 to OpenAPI 3 via [`swagger2openapi`](https://github.com/mermade/swagger2openapi)
 - Supports JSON and YAML input files and URLs
 - Supports Fetch, Node-Fetch, Axios, and XHR HTTP clients
 - Supports config-file driven generation with `defineConfig`
@@ -63,7 +63,7 @@ export default defineConfig({
   services: [
     {
       source: 'https://example.com/openapi.json',
-      from: 'openapi_3', // or 'swagger_1', 'swagger_2', 'api_blueprint', 'io_docs', 'google', 'raml', 'wadl'
+      from: 'openapi_3', // or 'swagger_2'
       output: 'src/api-types/example-api',
 
       // Optional: global path proxy
@@ -103,9 +103,16 @@ npm run codegen
 
 Paths listed in `urlMethodMapping` that do not exist in the spec are skipped with a warning instead of failing the run.
 
-## OpenAPI 3.1 support
+## Spec format support
 
-`api-spec-converter` is frozen at OpenAPI 3.0 and rejects 3.1 specs (`Unsupported version`). When `from` is `openapi_3` and the fetched spec declares `"openapi": "3.1.x"`, the converter is bypassed entirely: the spec is loaded and `$ref`-bundled with `@apidevtools/json-schema-ref-parser` and passed straight to the generator (all `urlMethodMapping`, `proxyConfig`, and `modelNameMapping` transforms still apply). Swagger 1.x/2.x and other formats continue to go through `api-spec-converter`.
+| `from` | Handling |
+|---|---|
+| `openapi_3` | Loaded and `$ref`-bundled with `@apidevtools/json-schema-ref-parser` — works for both **3.0.x and 3.1.x**, no converter in the path |
+| `swagger_2` | Converted to OpenAPI 3 by [`swagger2openapi`](https://github.com/mermade/swagger2openapi) v7 (`patch: true, warnOnly: true`) |
+
+All `urlMethodMapping`, `proxyConfig`, and `modelNameMapping` transforms apply in both paths.
+
+> **Breaking:** formats previously delegated to `api-spec-converter` (`swagger_1`, `raml`, `wadl`, `api_blueprint`, `io_docs`, `google`) are no longer supported — that package is unmaintained (frozen since 2021) and its dependency tree carried multiple HIGH/CRITICAL CVEs (jsonpath, static-eval, underscore, validator, form-data, cross-spawn). Convert those formats to OpenAPI 3 yourself before generating if you need them.
 
 ## Programmatic API
 
@@ -190,8 +197,8 @@ output/
 ## Known caveats
 
 - `urlMethodMapping` accepts the object form only. The tuple form (`['/path', 'get', 'Method']`) from the old alpha releases (`0.x`) is no longer supported.
-- `convertAndGenerate()` writes a temporary `api-schema.json` to your project root and also stores a copy inside `node_modules/@apidevtools/json-schema-ref-parser/dist/` for `$ref` resolution.
-- The CLI hardcodes `useOptions: true` and `useUnionTypes: true` for config-file generation.
+- `convertAndGenerate()` writes a temporary `api-schema.json` to your project root.
+- The CLI hardcodes `useOptions: true` and `useUnionTypes: true` for config-file generation, and does not generate the `core/` runtime folder.
 - `useOptions`, `exportCore`, and `exportSchemas` are accepted by the programmatic API but currently forced to `false` internally. Use the lower-level writer API if you need direct control over these flags.
 
 [npm-url]: https://npmjs.com/package/codegen-openapi-ts

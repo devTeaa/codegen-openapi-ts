@@ -86,7 +86,7 @@ export default [
             format: 'es',
             sourcemap: true,
         },
-        external: ['api-spec-converter', 'camelcase', 'commander', 'fs-extra', 'handlebars', 'shelljs', '@apidevtools/json-schema-ref-parser'],
+        external: ['camelcase', 'commander', 'fs-extra', 'handlebars', 'shelljs', 'swagger2openapi', '@apidevtools/json-schema-ref-parser'],
         plugins: getPlugins(),
     },
     {

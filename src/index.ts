@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { createRequire } from 'module';
 
 import { HttpClient } from './HttpClient';
 import { Indent } from './Indent';
@@ -157,20 +156,34 @@ export default {
  */
 
 /**
- * Load the spec and convert it to a plain OpenAPI object. OpenAPI 3.1 specs
- * are not supported by api-spec-converter (frozen at 3.0), so they bypass the
- * converter entirely and are passed through as-is.
+ * Load the spec and convert it to a plain OpenAPI object.
+ * - openapi_3 (incl. 3.1): fetched and $ref-bundled directly, no converter involved.
+ * - swagger_2: converted to OpenAPI 3 via swagger2openapi.
  */
 const loadSpec = async (from: string, source: string): Promise<{ spec: any; stringify: () => string }> => {
+    const passthrough = (spec: any) => ({ spec, stringify: () => JSON.stringify(spec, null, 4) });
+
     if (from === 'openapi_3') {
         const spec = await getOpenApiSpec(source);
-        if (typeof spec?.openapi === 'string' && spec.openapi.startsWith('3.1')) {
-            return { spec, stringify: () => JSON.stringify(spec, null, 4) };
-        }
+        return passthrough(spec);
     }
 
-    const { default: Converter } = await import('api-spec-converter');
-    return await Converter.convert({ from, to: from, source });
+    if (from === 'swagger_2') {
+        const { default: converter } = await import('swagger2openapi');
+        const swagger = await getOpenApiSpec(source);
+        const openapi = await new Promise<Record<string, any>>((resolve, reject) =>
+            converter.convertObj(swagger, { patch: true, warnOnly: true }, (err: Error | null, options: any) =>
+                err ? reject(err) : resolve(options.openapi)
+            )
+        );
+        return passthrough(openapi);
+    }
+
+    throw new Error(
+        `Unsupported spec format "${from}". Supported values: 'openapi_3' and 'swagger_2'. ` +
+            `Conversion from other formats (swagger_1, raml, wadl, api_blueprint, io_docs, google) was removed. ` +
+            `Use api-spec-converter yourself to convert those to OpenAPI 3 before generating.`
+    );
 };
 
 export async function convertAndGenerate(
@@ -243,13 +256,6 @@ export async function convertAndGenerate(
         }
 
         if (typeof input === 'string') {
-            try {
-                const require = createRequire(import.meta.url);
-                const refParserSchemaPath = require.resolve('@apidevtools/json-schema-ref-parser/dist/api-schema.json');
-                fs.writeFileSync(refParserSchemaPath, convertedString);
-            } catch {
-                // Ignore: the ref-parser schema file is optional for normal operation.
-            }
             fs.writeFileSync(input, convertedString);
         }
 
@@ -279,7 +285,7 @@ export type BaseServiceConfig = {
     /**
      * Specify the API specs response format version
      */
-    from: 'swagger_1' | 'swagger_2' | 'openapi_3' | 'api_blueprint' | 'io_docs' | 'google' | 'raml' | 'wadl';
+    from: 'openapi_3' | 'swagger_2';
     /**
      * Specify the folder for the codegen output
      */

@@ -21,7 +21,7 @@
 
     "files": [
         "./src/typings/hbs.d.ts",
-        "./src/typings/api-spec-converter.d.ts"
+        "./src/typings/swagger2openapi.d.ts"
     ],
 
     "include": [
